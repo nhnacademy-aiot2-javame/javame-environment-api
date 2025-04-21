@@ -19,14 +19,14 @@ public class ServerEnvironmentService {
 
     private final QueryApi queryApi;
     private final String bucket;
-    private final String org;
+    private final String influxOrganization;
 
     public ServerEnvironmentService(QueryApi queryApi,
                                     @Qualifier("influxBucket") String bucket,
-                                    @Qualifier("influxOrganization") String org) {
+                                    @Qualifier("influxOrganization") String influxOrganization) {
         this.queryApi = queryApi;
         this.bucket = bucket;
-        this.org = org;
+        this.influxOrganization = influxOrganization;
     }
 
     public List<ResourceDataDto> getResourceData(String measurement, String field, Map<String, String> tags, int minutes) {
@@ -46,7 +46,7 @@ public class ServerEnvironmentService {
         List<ResourceDataDto> result = new ArrayList<>();
 
         try {
-            List<FluxTable> tables = queryApi.query(query.toString(), org);
+            List<FluxTable> tables = queryApi.query(query.toString(), influxOrganization);
             for (FluxTable table : tables) {
                 for (FluxRecord record : table.getRecords()) {
                     result.add(new ResourceDataDto(
