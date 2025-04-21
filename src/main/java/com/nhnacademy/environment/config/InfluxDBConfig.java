@@ -1,5 +1,6 @@
 package com.nhnacademy.environment.config;
 
+import com.influxdb.client.QueryApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,5 +43,11 @@ public class InfluxDBConfig {
     @Bean(name = "influxOrganization") // <<< 이름 변경!
     public String influxOrganization() {
         return orgValue;
+    }
+
+    @Bean
+    public QueryApi queryApi() {
+        InfluxDBClient client = InfluxDBClientFactory.create(url, token.toCharArray(), orgValue, bucket);
+        return client.getQueryApi();
     }
 }
