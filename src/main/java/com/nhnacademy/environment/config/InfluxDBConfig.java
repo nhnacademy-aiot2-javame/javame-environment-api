@@ -1,6 +1,7 @@
 package com.nhnacademy.environment.config;
 
 import com.influxdb.client.QueryApi;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import com.influxdb.client.InfluxDBClientFactory;
  * InfluxDB 연결을 위한 Bean 설정 클래스.
  */
 @Configuration
+@Slf4j
 public class InfluxDBConfig {
 
     @Value("${influxdb.url}")
@@ -31,7 +33,12 @@ public class InfluxDBConfig {
      */
     @Bean
     public InfluxDBClient influxDBClient() {
-        return InfluxDBClientFactory.create(url, token.toCharArray(), orgValue, bucket);
+        log.info("[InfluxDB 연결 정보]");
+        log.info("▶ URL    : {}", url);
+        log.info("▶ Token  : {}", token);
+        log.info("▶ Org    : {}", orgValue);
+        log.info("▶ Bucket : {}", bucket);
+        return InfluxDBClientFactory.create(url, token.toCharArray());
     }
 
     @Bean(name = "influxBucket")
@@ -46,8 +53,7 @@ public class InfluxDBConfig {
     }
 
     @Bean
-    public QueryApi queryApi() {
-        InfluxDBClient client = InfluxDBClientFactory.create(url, token.toCharArray(), orgValue, bucket);
-        return client.getQueryApi();
+    public QueryApi queryApi(InfluxDBClient influxDBClient) {
+        return influxDBClient.getQueryApi();
     }
 }

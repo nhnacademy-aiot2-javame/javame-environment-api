@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+
+    <Appenders>
+        <!-- 콘솔 로그 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
+        </Console>
+
+        <!-- 환경 API 로그 저장 -->
+        <RollingFile name="EnvironmentRollingFile"
+                     fileName="logs/environment/environment.log"
+                     filePattern="logs/environment/%d{yyyy-MM-dd-HH}.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- 환경 API Logger -->
+        <Logger name="com.nhnacademy.environment" level="debug" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="EnvironmentRollingFile" />
+        </Logger>
+
+        <!-- 루트 로거: 모든 로그 수준 info 이상 콘솔 + 파일 출력 -->
+        <Root level="info">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="EnvironmentRollingFile" />
+        </Root>
+    </Loggers>
+</Configuration>
