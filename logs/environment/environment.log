@@ -1,0 +1,31 @@
+2025-04-24 16:01:42 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-04-24 16:02:04 [SpringApplicationShutdownHook] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry - Unregistering application ENVIRONMENT-API with eureka with status DOWN
+2025-04-24 16:02:04 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1745478124969, current=DOWN, previous=UP]
+2025-04-24 16:02:04 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.100:ENVIRONMENT-API:10273: registering service...
+2025-04-24 16:02:04 [SpringApplicationShutdownHook] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-24 16:02:04 [tomcat-shutdown] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-04-24 16:02:04 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.100:ENVIRONMENT-API:10273 - registration status: 204
+2025-04-24 16:02:04 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Shutting down DiscoveryClient ...
+2025-04-24 16:02:07 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Unregistering ...
+2025-04-24 16:02:07 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.100:ENVIRONMENT-API:10273 - deregister  status: 200
+2025-04-24 16:02:07 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Completed shut down of DiscoveryClient
+2025-04-24 16:42:08 [main] DEBUG com.nhnacademy.environment.service.SensorDataService - Generated Flux query: from(bucket: "test-bucket") |> range(start: -60m) |> filter(fn: (r) => r["origin"] == "sensor_data") |> filter(fn: (r) => r["companyDomain"] == "nhnacademy") |> filter(fn: (r) => r["building"] == "gyeongnam_campus") |> keep(columns: ["_time", "_field", "_value", "_measurement", "companyDomain", "building", "place", "deviceId", "location", "origin"]) |> sort(columns: ["_time"]) 
+2025-04-24 16:42:08 [main] INFO  com.nhnacademy.environment.service.SensorDataService - ▶ Measurement: temperature (1건)
+2025-04-24 16:42:08 [main] INFO  com.nhnacademy.environment.service.SensorDataService - [2025-04-24T05:00:00Z] sensor_data server_room: 24.5
+2025-04-24 16:42:08 [main] INFO  com.nhnacademy.environment.service.SensorDataService - 전체 응답 Map 데이터:
+{
+  "temperature" : [ {
+    "time" : "2025-04-24T05:00:00Z",
+    "field" : "value",
+    "value" : 24.5,
+    "measurement" : "temperature",
+    "tags" : {
+      "origin" : "sensor_data",
+      "location" : "입구",
+      "place" : "server_room",
+      "companyDomain" : "nhnacademy",
+      "deviceId" : "device-01",
+      "building" : "gyeongnam_campus"
+    }
+  } ]
+}

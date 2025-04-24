@@ -101,7 +101,7 @@ public class SensorSseController {
     }
 
 
-    @GetMapping("/sensor-locations")
+    @GetMapping(value="/sensor-locations", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<String>> getSensorLocations(
             @PathVariable String companyDomain,
             @RequestParam(defaultValue = "sensor_data") String origin
