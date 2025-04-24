@@ -33,6 +33,7 @@ class SensorDataServiceTest {
     @Test
     void testGetSonsorDataByOrigin() {
 
+
         // given
         FluxRecord mockRecord = mock(FluxRecord.class);
         when(mockRecord.getTime()).thenReturn(Instant.parse("2025-04-24T05:00:00Z"));
