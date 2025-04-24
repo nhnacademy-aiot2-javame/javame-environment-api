@@ -12,6 +12,7 @@ public class ResourceDataDto {
     private final String field;
     private final Double value;
 
+
     public ResourceDataDto(String time, String field, Double value) {
         this.time = time;
         this.field = field;

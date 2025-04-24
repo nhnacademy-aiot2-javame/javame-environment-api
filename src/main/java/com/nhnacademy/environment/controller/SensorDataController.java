@@ -31,18 +31,18 @@ public class SensorDataController {
      * @return 태그별 센서 데이터 목록
      */
     @GetMapping("/sensor-data")
-    public ResponseEntity<Map<String, List<ResourceDataDto>>> getSensorData(
+    public ResponseEntity<Map<String, List<SensorDataDto>>> getSensorData(
             @PathVariable("companyDomain") String companyDomain,
-            @RequestParam String measurement,
-            @RequestParam(defaultValue = "60") int range,
+            @RequestParam String origin,
+            @RequestParam(defaultValue = "180") int range,
             @RequestParam Map<String, String> allParams) {
 
-        allParams.remove("measurement");
         allParams.remove("range");
 
-        Map<String, List<ResourceDataDto>> result =
-                sensorDataService.getSensorData(measurement, allParams, range);
+        Map<String, List<SensorDataDto>> result =
+                sensorDataService.getSensorDataByOrigin(origin, allParams, range);
 
         return ResponseEntity.ok(result);
     }
+
 }
