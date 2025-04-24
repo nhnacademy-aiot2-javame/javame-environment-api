@@ -122,7 +122,7 @@ public class SensorDataService {
 
     public List<String> getTagValues(String column, Map<String, String> filters) {
         StringBuilder flux = new StringBuilder(
-                String.format("from(bucket: \"%s\") |> range(start: -1h)", bucket)
+                String.format("from(bucket: \"%s\") |> range(start: -12h)", bucket)
         );
 
         filters.forEach((key, value) ->
@@ -144,15 +144,19 @@ public class SensorDataService {
     }
 
     public List<String> getMeasurementList() {
-        String flux = String.format("import \"influxdata/influxdb/schema\"\n" +
-                "schema.measurements(bucket: \"%s\")", bucket);
+        String flux = String.format(
+                "from(bucket: \"%s\") |> range(start: -12h) " +
+                        "|> keep(columns: [\"_measurement\"]) |> distinct(column: \"_measurement\")",
+                bucket
+        );
 
         log.debug("measurement 쿼리: {}", flux);
 
         try {
             return queryApi.query(flux, influxOrg).stream()
                     .flatMap(table -> table.getRecords().stream())
-                    .map(record -> (String) record.getValueByKey("_value"))
+                    .map(record -> (String) record.getValueByKey("measurement"))
+                    .filter(Objects::nonNull)
                     .distinct()
                     .collect(Collectors.toList());
         } catch (Exception e) {

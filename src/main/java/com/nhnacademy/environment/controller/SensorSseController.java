@@ -25,11 +25,11 @@ public class SensorSseController {
     /**
      * SSE 방식으로 센서 데이터 스트리밍 + measurement 목록 전송
      */
-    @GetMapping(value = "/sensor-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/sensor-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE + ";charset=UTF-8") // 백엔드에서 인코딩 후 넘겨야한대서 넣어봤지만 여전히 안됨
     public SseEmitter streamSensorData(
             @PathVariable String companyDomain,
             @RequestParam String origin,
-            @RequestParam(defaultValue = "360") int range,
+            @RequestParam(defaultValue = "720") int range,
             @RequestParam Map<String, String> allParams
     ) {
         allParams.remove("range");
@@ -39,7 +39,7 @@ public class SensorSseController {
             try {
                 // 초기 측정값 목록 전송
                 emitter.send(SseEmitter.event()
-                        .name("origin")
+                        .name("measurements")
                         .data(objectMapper.writeValueAsString(sensorDataService.getMeasurementList())));
 
                 // 실시간 센서 데이터 전송
@@ -84,6 +84,7 @@ public class SensorSseController {
      * 센서 필터용 드롭다운 데이터 제공
      * getSensorMeasurements() 는 InfluxDB의 스키마 정보를 사용하는 별도의 쿼리이기 때문에 단독으로 사용함
      * getSensorOrigins() 를 통해 사용자가 sensor_data 등 원하는 센서를 선택해야 하기 때문에 단독으로 사용함
+     * 이 구조를 유지하면 JS 에서 "sensor-companyDomains" 와 같이 API 만 바꿔가며 요청 가능함.
      */
     @GetMapping("/sensor-measurements")
     public ResponseEntity<List<String>> getSensorMeasurements(
@@ -94,7 +95,7 @@ public class SensorSseController {
 
     @GetMapping("/sensor-origins")
     public ResponseEntity<List<String>> getSensorOrigins(
-            @RequestParam(defaultValue = "nhnacademy") String companyDomain
+            @PathVariable String companyDomain
     ) {
         return ResponseEntity.ok(sensorDataService.getOriginList(companyDomain));
     }
@@ -132,10 +133,11 @@ public class SensorSseController {
         return getDropdownResponse("deviceId", companyDomain, origin);
     }
 
-    @GetMapping("/sensor-companyDomains")
-    public ResponseEntity<List<String>> getSensorCompanyDomains(
-            @RequestParam(defaultValue = "sensor_data") String origin
-    ) {
-        return getDropdownResponse("companyDomain", null, origin);
-    }
+    // CompanyDomainController 와 역할을 분리하기 위해 주석처리
+//    @GetMapping("/sensor-companyDomains")
+//    public ResponseEntity<List<String>> getSensorCompanyDomains(
+//            @RequestParam(defaultValue = "sensor_data") String origin
+//    ) {
+//        return getDropdownResponse("companyDomain", null, origin);
+//    }
 }
