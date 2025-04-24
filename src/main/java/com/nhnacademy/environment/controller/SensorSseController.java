@@ -62,47 +62,29 @@ public class SensorSseController {
     }
 
     /**
-     * 센서 필터용 드롭다운 데이터 제공
+     *
+     * 드롭다운 메서드의 ResponseEntity<List<String>> 반환 구조를 하나의 공용 메서드로 사용하기 위한 메서드.
+     * @param column
+     * @param companyDomain
+     * @param origin
+     * @return
      */
-    @GetMapping("/sensor-locations")
-    public ResponseEntity<List<String>> getSensorLocations(
-            @PathVariable String companyDomain,
-            @RequestParam(defaultValue = "sensor_data") String origin
-    ) {
-        return ResponseEntity.ok(sensorDataService.getLocationList(origin, companyDomain));
+    private ResponseEntity<List<String>> getDropdownResponse(String column, String companyDomain, String origin) {
+        List<String> values = switch (column) {
+            case "companyDomain" -> sensorDataService.getCompanyDomainList(origin);
+            case "location", "building", "place", "deviceId", "origin" ->
+                    sensorDataService.getTagValues(column, Map.of("origin", origin, "companyDomain", companyDomain));
+            default -> List.of();
+        };
+        return ResponseEntity.ok(values);
     }
 
-    @GetMapping("/sensor-buildings")
-    public ResponseEntity<List<String>> getSensorBuildings(
-            @PathVariable String companyDomain,
-            @RequestParam(defaultValue = "sensor_data") String origin
-    ) {
-        return ResponseEntity.ok(sensorDataService.getBuildingList(origin, companyDomain));
-    }
 
-    @GetMapping("/sensor-places")
-    public ResponseEntity<List<String>> getSensorPlaces(
-            @PathVariable String companyDomain,
-            @RequestParam(defaultValue = "sensor_data") String origin
-    ) {
-        return ResponseEntity.ok(sensorDataService.getPlaceList(origin, companyDomain));
-    }
-
-    @GetMapping("/sensor-deviceIds")
-    public ResponseEntity<List<String>> getSensorDeviceIds(
-            @PathVariable String companyDomain,
-            @RequestParam(defaultValue = "sensor_data") String origin
-    ) {
-        return ResponseEntity.ok(sensorDataService.getDeviceIdList(origin, companyDomain));
-    }
-
-    @GetMapping("/sensor-companyDomains")
-    public ResponseEntity<List<String>> getSensorCompanyDomains(
-            @RequestParam(defaultValue = "sensor_data") String origin
-    ) {
-        return ResponseEntity.ok(sensorDataService.getCompanyDomainList(origin));
-    }
-
+    /**
+     * 센서 필터용 드롭다운 데이터 제공
+     * getSensorMeasurements() 는 InfluxDB의 스키마 정보를 사용하는 별도의 쿼리이기 때문에 단독으로 사용함
+     * getSensorOrigins() 를 통해 사용자가 sensor_data 등 원하는 센서를 선택해야 하기 때문에 단독으로 사용함
+     */
     @GetMapping("/sensor-measurements")
     public ResponseEntity<List<String>> getSensorMeasurements(
             @PathVariable String companyDomain
@@ -112,9 +94,48 @@ public class SensorSseController {
 
     @GetMapping("/sensor-origins")
     public ResponseEntity<List<String>> getSensorOrigins(
-            @PathVariable String companyDomain
+            @RequestParam(defaultValue = "nhnacademy") String companyDomain
     ) {
         return ResponseEntity.ok(sensorDataService.getOriginList(companyDomain));
     }
 
+
+    @GetMapping("/sensor-locations")
+    public ResponseEntity<List<String>> getSensorLocations(
+            @PathVariable String companyDomain,
+            @RequestParam(defaultValue = "sensor_data") String origin
+    ) {
+        return getDropdownResponse("location", companyDomain, origin);
+    }
+
+    @GetMapping("/sensor-buildings")
+    public ResponseEntity<List<String>> getSensorBuildings(
+            @PathVariable String companyDomain,
+            @RequestParam(defaultValue = "sensor_data") String origin
+    ) {
+        return getDropdownResponse("building", companyDomain, origin);
+    }
+
+    @GetMapping("/sensor-places")
+    public ResponseEntity<List<String>> getSensorPlaces(
+            @PathVariable String companyDomain,
+            @RequestParam(defaultValue = "sensor_data") String origin
+    ) {
+        return getDropdownResponse("place", companyDomain, origin);
+    }
+
+    @GetMapping("/sensor-deviceIds")
+    public ResponseEntity<List<String>> getSensorDeviceIds(
+            @PathVariable String companyDomain,
+            @RequestParam(defaultValue = "sensor_data") String origin
+    ) {
+        return getDropdownResponse("deviceId", companyDomain, origin);
+    }
+
+    @GetMapping("/sensor-companyDomains")
+    public ResponseEntity<List<String>> getSensorCompanyDomains(
+            @RequestParam(defaultValue = "sensor_data") String origin
+    ) {
+        return getDropdownResponse("companyDomain", null, origin);
+    }
 }

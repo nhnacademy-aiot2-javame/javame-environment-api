@@ -120,9 +120,35 @@ public class SensorDataService {
         }
     }
 
+    public List<String> getTagValues(String column, Map<String, String> filters) {
+        StringBuilder flux = new StringBuilder(
+                String.format("from(bucket: \"%s\") |> range(start: -1h)", bucket)
+        );
+
+        filters.forEach((key, value) ->
+                flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value)));
+        flux.append(String.format("|> keep(columns: [\"%s\"]) |> distinct(column: \"%s\")", column, column));
+
+        log.debug("{} 쿼리 : {}", column, flux);
+
+        try{
+            return queryApi.query(flux.toString(), influxOrg).stream()
+                    .flatMap(table -> table.getRecords().stream())
+                    .map(record -> (String) record.getValueByKey(column))
+                    .distinct()
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("{} 리스트 조회 실패", column, e);
+            return Collections.emptyList();
+        }
+    }
+
     public List<String> getMeasurementList() {
         String flux = String.format("import \"influxdata/influxdb/schema\"\n" +
                 "schema.measurements(bucket: \"%s\")", bucket);
+
+        log.debug("measurement 쿼리: {}", flux);
+
         try {
             return queryApi.query(flux, influxOrg).stream()
                     .flatMap(table -> table.getRecords().stream())
@@ -131,145 +157,32 @@ public class SensorDataService {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("Measurement 리스트 조회 실패", e);
-
             return Collections.emptyList();
         }
     }
 
     public List<String> getLocationList(String origin, String companyDomain) {
-        String flux = String.format(
-                "from(bucket: \"%s\") |> range(start: -1h) " +
-                        "|> filter(fn: (r) => r[\"origin\"] == \"%s\") " +
-                        "|> filter(fn: (r) => r[\"companyDomain\"] == \"%s\") " +
-                        "|> keep(columns: [\"location\"]) |> distinct(column: \"location\")",
-                bucket, origin, companyDomain
-        );
-
-        try {
-            return queryApi.query(flux, influxOrg).stream()
-                    .flatMap(table -> table.getRecords().stream())
-                    .map(record -> (String) record.getValueByKey("location"))
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            log.error("Location 리스트 조회 실패", e);
-
-            return Collections.emptyList();
-        }
+        return getTagValues("location", Map.of("origin", origin, "companyDomain", companyDomain));
     }
 
     public List<String> getCompanyDomainList(String origin) {
-        String flux = String.format(
-                "from(bucket: \"%s\") |> range(start: -1h) " +
-                        "|> filter(fn: (r) => r[\"origin\"] == \"%s\") " +
-                        "|> keep(columns: [\"companyDomain\"]) |> distinct(column: \"companyDomain\")",
-                bucket, origin
-        );
-
-        try {
-            return queryApi.query(flux, influxOrg).stream()
-                    .flatMap(table -> table.getRecords().stream())
-                    .map(record -> (String) record.getValueByKey("companyDomain"))
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            log.error("CompanyDomain 리스트 조회 실패", e);
-
-            return Collections.emptyList();
-        }
+        return getTagValues("companyDomain", Map.of("origin", origin));
     }
 
     public List<String> getBuildingList(String origin, String companyDomain) {
-        String flux = String.format(
-                "from(bucket: \"%s\") |> range(start: -1h) " +
-                        "|> filter(fn: (r) => r[\"origin\"] == \"%s\") " +
-                        "|> filter(fn: (r) => r[\"companyDomain\"] == \"%s\") " +
-                        "|> keep(columns: [\"building\"]) |> distinct(column: \"building\")",
-                bucket, origin, companyDomain
-        );
-
-        try {
-            return queryApi.query(flux, influxOrg).stream()
-                    .flatMap(table -> table.getRecords().stream())
-                    .map(record -> (String) record.getValueByKey("building"))
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            log.error("Building 리스트 조회 실패", e);
-
-            return Collections.emptyList();
-        }
+        return getTagValues("building", Map.of("origin", origin, "companyDomain", companyDomain));
     }
 
     public List<String> getPlaceList(String origin, String companyDomain) {
-        String flux = String.format(
-                "from(bucket: \"%s\") |> range(start: -1h) " +
-                        "|> filter(fn: (r) => r[\"origin\"] == \"%s\") " +
-                        "|> filter(fn: (r) => r[\"companyDomain\"] == \"%s\") " +
-                        "|> keep(columns: [\"place\"]) |> distinct(column: \"place\")",
-                bucket, origin, companyDomain
-        );
-
-        try {
-            return queryApi.query(flux, influxOrg).stream()
-                    .flatMap(table -> table.getRecords().stream())
-                    .map(record -> (String) record.getValueByKey("place"))
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            log.error("Place 리스트 조회 실패", e);
-
-            return Collections.emptyList();
-        }
+        return getTagValues("place", Map.of("origin", origin, "companyDomain", companyDomain));
     }
 
     public List<String> getDeviceIdList(String origin, String companyDomain) {
-        String flux = String.format(
-                "from(bucket: \"%s\") |> range(start: -1h) " +
-                        "|> filter(fn: (r) => r[\"origin\"] == \"%s\") " +
-                        "|> filter(fn: (r) => r[\"companyDomain\"] == \"%s\") " +
-                        "|> keep(columns: [\"deviceId\"]) |> distinct(column: \"deviceId\")",
-                bucket, origin, companyDomain
-        );
-
-        try {
-            return queryApi.query(flux, influxOrg).stream()
-                    .flatMap(table -> table.getRecords().stream())
-                    .map(record -> (String) record.getValueByKey("deviceId"))
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            log.error("DeviceId 리스트 조회 실패", e);
-
-            return Collections.emptyList();
-        }
+        return getTagValues("deviceId", Map.of("origin", origin, "companyDomain", companyDomain));
     }
 
     public List<String> getOriginList(String companyDomain) {
-        String flux = String.format(
-                "from(bucket: \"%s\") |> range(start: -1h) " +
-                        "|> filter(fn: (r) => r[\"companyDomain\"] == \"%s\") " +
-                        "|> keep(columns: [\"origin\"]) |> distinct(column: \"origin\")",
-                bucket, companyDomain
-        );
-
-        try {
-            return queryApi.query(flux, influxOrg).stream()
-                    .flatMap(table -> table.getRecords().stream())
-                    .map(record -> (String) record.getValueByKey("origin"))
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            log.error("Origin 리스트 조회 실패", e);
-
-            return Collections.emptyList();
-        }
+        return getTagValues("origin", Map.of("companyDomain", companyDomain));
     }
 
 }
