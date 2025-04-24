@@ -29,7 +29,7 @@ public class SensorSseController {
     public SseEmitter streamSensorData(
             @PathVariable String companyDomain,
             @RequestParam String origin,
-            @RequestParam(defaultValue = "180") int range,
+            @RequestParam(defaultValue = "360") int range,
             @RequestParam Map<String, String> allParams
     ) {
         allParams.remove("range");
@@ -108,6 +108,13 @@ public class SensorSseController {
             @PathVariable String companyDomain
     ) {
         return ResponseEntity.ok(sensorDataService.getMeasurementList());
+    }
+
+    @GetMapping("/sensor-origins")
+    public ResponseEntity<List<String>> getSensorOrigins(
+            @PathVariable String companyDomain
+    ) {
+        return ResponseEntity.ok(sensorDataService.getOriginList(companyDomain));
     }
 
 }

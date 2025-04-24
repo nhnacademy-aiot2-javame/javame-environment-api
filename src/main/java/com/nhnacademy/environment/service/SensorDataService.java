@@ -116,6 +116,7 @@ public class SensorDataService {
             log.info("전체 응답 Map 데이터:\n{}", jsonOutput);
         } catch (Exception e) {
             log.error("JSON 직렬화 실패", e);
+
         }
     }
 
@@ -130,6 +131,7 @@ public class SensorDataService {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("Measurement 리스트 조회 실패", e);
+
             return Collections.emptyList();
         }
     }
@@ -152,6 +154,7 @@ public class SensorDataService {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("Location 리스트 조회 실패", e);
+
             return Collections.emptyList();
         }
     }
@@ -173,6 +176,7 @@ public class SensorDataService {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("CompanyDomain 리스트 조회 실패", e);
+
             return Collections.emptyList();
         }
     }
@@ -195,6 +199,7 @@ public class SensorDataService {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("Building 리스트 조회 실패", e);
+
             return Collections.emptyList();
         }
     }
@@ -217,6 +222,7 @@ public class SensorDataService {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("Place 리스트 조회 실패", e);
+
             return Collections.emptyList();
         }
     }
@@ -239,6 +245,29 @@ public class SensorDataService {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("DeviceId 리스트 조회 실패", e);
+
+            return Collections.emptyList();
+        }
+    }
+
+    public List<String> getOriginList(String companyDomain) {
+        String flux = String.format(
+                "from(bucket: \"%s\") |> range(start: -1h) " +
+                        "|> filter(fn: (r) => r[\"companyDomain\"] == \"%s\") " +
+                        "|> keep(columns: [\"origin\"]) |> distinct(column: \"origin\")",
+                bucket, companyDomain
+        );
+
+        try {
+            return queryApi.query(flux, influxOrg).stream()
+                    .flatMap(table -> table.getRecords().stream())
+                    .map(record -> (String) record.getValueByKey("origin"))
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Origin 리스트 조회 실패", e);
+
             return Collections.emptyList();
         }
     }
