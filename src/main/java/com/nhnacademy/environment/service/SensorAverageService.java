@@ -37,25 +37,25 @@ public class SensorAverageService {
     ) {
         String flux = buildFluxQuery(origin, measurement, "value", additionalFilters, rangeMinutes, true);
 
-        System.out.println("5분 단위 평균 Flux 쿼리: {}"+ flux);
+        log.debug("1시간 단위 평균 Flux 쿼리: {}", flux);
 
         try {
             List<FluxTable> tables = queryApi.query(flux, influxOrg);
 
             List<Double> averages = tables.stream()
                     .flatMap(table -> table.getRecords().stream())
-                    .map(this::getNumericValue)
+                    .map(record -> (Double) record.getValue())
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
             if (averages.isEmpty()) {
-                System.out.println("▶ 5분 단위 평균 조회 결과 없음 - measurement: {}"+ measurement);
+                log.error("▶ 1시간 단위 평균 조회 결과 없음 - measurement: {}", measurement);
             } else {
-                System.out.println("▶ 5분 단위 평균 조회 성공 - measurement: {}, 데이터 건수: {}"+ measurement + averages.size());
+                log.debug("▶ 1시간 단위 평균 조회 성공 - measurement: {}, 데이터 건수: {}", measurement , averages.size());
             }
             return averages;
         } catch (Exception e) {
-            log.error("▶ 5분 단위 평균 조회 실패 - measurement: {}", measurement, e);
+            log.error("▶ 1시간 단위 평균 조회 실패 - measurement: {}", measurement, e);
             return List.of();
         }
     }
@@ -78,12 +78,12 @@ public class SensorAverageService {
 
             return tables.stream()
                     .flatMap(table -> table.getRecords().stream())
-                    .map(this::getNumericValue)
+                    .map(record -> (Double) record.getValue())
                     .filter(Objects::nonNull)
                     .findFirst()
                     .orElse(null);
         } catch (Exception e) {
-            System.out.println("▶ 전체 평균 조회 실패 - measurement: {}"+ measurement + e);
+            log.error("▶ 전체 평균 조회 실패 - measurement: {}", measurement, e);
             return null;
         }
     }
@@ -103,9 +103,11 @@ public class SensorAverageService {
         flux.append(String.format(" |> filter(fn: (r) => r[\"_field\"] == \"%s\")", field));
 
         if (additionalFilters != null) {
-            additionalFilters.forEach((key, value) ->
-                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value))
-            );
+            additionalFilters.forEach((key, value) -> {
+                if (!key.equals("origin") && !key.equals("measurement") && !key.equals("field")) {
+                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value));
+                }
+            });
         }
 
         if (aggregateWindow) {
@@ -115,13 +117,5 @@ public class SensorAverageService {
         }
 
         return flux.toString();
-    }
-
-    /**
-     * FluxRecord에서 숫자 값만 안전하게 가져오기
-     */
-    private Double getNumericValue(FluxRecord record) {
-        Object value = record.getValue();
-        return (value instanceof Number) ? ((Number) value).doubleValue() : null;
     }
 }

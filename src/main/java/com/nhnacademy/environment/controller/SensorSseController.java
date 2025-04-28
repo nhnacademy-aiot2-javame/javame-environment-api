@@ -51,7 +51,7 @@ public class SensorSseController {
                             .name("sensor-update")
                             .data(objectMapper.writeValueAsBytes(result), MediaType.APPLICATION_JSON));
 
-                    Thread.sleep(1000);
+                    Thread.sleep(300000);
                 }
             } catch (Exception e) {
                 emitter.completeWithError(e);
