@@ -1,6 +1,7 @@
 package com.nhnacademy.environment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.environment.dto.ChartDataDto;
 import com.nhnacademy.environment.dto.ResourceDataDto;
 import com.nhnacademy.environment.dto.SensorDataDto;
 import com.nhnacademy.environment.service.SensorDataService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -133,11 +135,29 @@ public class SensorSseController {
         return getDropdownResponse("deviceId", companyDomain, origin);
     }
 
-    // CompanyDomainController 와 역할을 분리하기 위해 주석처리
-//    @GetMapping("/sensor-companyDomains")
-//    public ResponseEntity<List<String>> getSensorCompanyDomains(
-//            @RequestParam(defaultValue = "sensor_data") String origin
-//    ) {
-//        return getDropdownResponse("companyDomain", null, origin);
-//    }
+    @GetMapping("/chart/type/{sensor_type}")
+    public ResponseEntity<ChartDataDto> getChartDataForSensorType(
+            @PathVariable String companyDomain,
+            @PathVariable String sensor_type,
+            @RequestParam(defaultValue = "sensor_data") String origin
+    ) {
+        Map<String, String> filters = new HashMap<>();
+        filters.put("origin", origin);
+        filters.put("companyDomain", companyDomain);
+        ChartDataDto chartData = sensorDataService.getChartData(sensor_type, "value", filters, 60); // field, rangeMinutes는 필요에 따라 조정
+        return ResponseEntity.ok(chartData);
+    }
+
+    @GetMapping("/chart/pie")
+    public ResponseEntity<ChartDataDto> getPieChartData(
+            @PathVariable String companyDomain,
+            @RequestParam(defaultValue = "sensor_data") String origin
+    ) {
+        Map<String, String> filters = new HashMap<>();
+        filters.put("origin", origin);
+        filters.put("companyDomain", companyDomain);
+        ChartDataDto chartData = sensorDataService.getPieChartData(filters);
+        return ResponseEntity.ok(chartData);
+    }
+
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.influxdb.client.QueryApi;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
+import com.nhnacademy.environment.dto.ChartDataDto;
 import com.nhnacademy.environment.dto.SensorDataDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -155,7 +158,7 @@ public class SensorDataService {
         try {
             return queryApi.query(flux, influxOrg).stream()
                     .flatMap(table -> table.getRecords().stream())
-                    .map(record -> (String) record.getValueByKey("measurement"))
+                    .map(record -> (String) record.getValueByKey("_measurement"))
                     .filter(Objects::nonNull)
                     .distinct()
                     .collect(Collectors.toList());
@@ -164,6 +167,97 @@ public class SensorDataService {
             return Collections.emptyList();
         }
     }
+
+    public ChartDataDto getChartData(String measurement, String field, Map<String, String> filters, int rangeMinutes) {
+        StringBuilder flux = new StringBuilder(
+                String.format("from(bucket: \"%s\") |> range(start: -%dm)", bucket, rangeMinutes)
+        );
+        flux.append(String.format(" |> filter(fn: (r) => r[\"_measurement\"] == \"%s\")", measurement));
+        flux.append(String.format(" |> filter(fn: (r) => r[\"_field\"] == \"%s\")", field));
+
+        if (filters != null) {
+            filters.forEach((key, value) -> {
+                if (value != null && !value.isEmpty()) {
+                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value));
+                }
+            });
+        }
+
+        flux.append(" |> sort(columns: [\"_time\"])");
+
+        log.debug("ChartDataDto Flux 쿼리: {}", flux);
+
+        List<String> labels = new ArrayList<>();
+        List<Double> values = new ArrayList<>();
+
+        try{
+            List<FluxTable> tables = queryApi.query(flux.toString(), influxOrg);
+            for (FluxTable table : tables) {
+                for (FluxRecord record : table.getRecords()) {
+                    Instant time = record.getTime();
+                    String label = DateTimeFormatter.ofPattern("HH:mm:ss")
+                            .withZone(ZoneId.systemDefault())
+                            .format(time);
+                    Double value = ((Number) record.getValue()).doubleValue();
+
+                    labels.add(label);
+                    values.add(value);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return new ChartDataDto(labels, values, measurement + "_" + field);
+
+    }
+
+    /**
+     * 파이 차트용 데이터 생성 (측정값별 데이터 개수)
+     * @param filters 태그 필터 (origin, companyDomain 등)
+     * @return ChartDataDto (labels: 측정값명, values: 카운트, title: "Measurement 분포")
+     */
+    public ChartDataDto getPieChartData(Map<String, String> filters) {
+        StringBuilder flux = new StringBuilder(
+                String.format("from(bucket: \"%s\") |> range(start: -12h)", bucket)
+        );
+        // 태그 필터 추가
+        if (filters != null) {
+            filters.forEach((key, value) -> {
+                if (value != null && !value.isEmpty()) {
+                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value));
+                }
+            });
+        }
+        // 측정값별 그룹화 및 카운트
+        flux.append(" |> group(columns: [\"_measurement\"])");
+        flux.append(" |> count()");
+        flux.append(" |> keep(columns: [\"_measurement\", \"_value\"])");
+
+        log.debug("PieChartDataDto Flux 쿼리: {}", flux);
+
+        List<String> labels = new ArrayList<>();
+        List<Double> values = new ArrayList<>();
+
+        try {
+            List<FluxTable> tables = queryApi.query(flux.toString(), influxOrg);
+            for (FluxTable table : tables) {
+                for (FluxRecord record : table.getRecords()) {
+                    String measurement = (String) record.getValueByKey("_measurement");
+                    Double count = ((Number) record.getValue()).doubleValue();
+
+                    labels.add(measurement);
+                    values.add(count);
+                }
+            }
+        } catch (Exception e) {
+            log.error("파이 차트 데이터 쿼리 실패", e);
+        }
+
+        return new ChartDataDto(labels, values, "Measurement 분포");
+    }
+
+
 
     public List<String> getLocationList(String origin, String companyDomain) {
         return getTagValues("location", Map.of("origin", origin, "companyDomain", companyDomain));
@@ -188,5 +282,4 @@ public class SensorDataService {
     public List<String> getOriginList(String companyDomain) {
         return getTagValues("origin", Map.of("companyDomain", companyDomain));
     }
-
 }
