@@ -29,7 +29,7 @@ public class SensorSseController {
     public SseEmitter streamSensorData(
             @PathVariable String companyDomain,
             @RequestParam String origin,
-            @RequestParam(defaultValue = "720") int range,
+            @RequestParam(defaultValue = "3600") int range,
             @RequestParam Map<String, String> allParams
     ) {
         allParams.remove("range");
@@ -49,7 +49,7 @@ public class SensorSseController {
 
                     emitter.send(SseEmitter.event()
                             .name("sensor-update")
-                            .data(objectMapper.writeValueAsString(result)));
+                            .data(objectMapper.writeValueAsBytes(result), MediaType.APPLICATION_JSON));
 
                     Thread.sleep(1000);
                 }
