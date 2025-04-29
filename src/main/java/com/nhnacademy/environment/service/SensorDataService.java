@@ -125,7 +125,7 @@ public class SensorDataService {
 
     public List<String> getTagValues(String column, Map<String, String> filters) {
         StringBuilder flux = new StringBuilder(
-                String.format("from(bucket: \"%s\") |> range(start: -12h)", bucket)
+                String.format("from(bucket: \"%s\") |> range(start: -24h)", bucket)
         );
 
         filters.forEach((key, value) ->
@@ -148,7 +148,7 @@ public class SensorDataService {
 
     public List<String> getMeasurementList() {
         String flux = String.format(
-                "from(bucket: \"%s\") |> range(start: -12h) " +
+                "from(bucket: \"%s\") |> range(start: -24h) " +
                         "|> keep(columns: [\"_measurement\"]) |> distinct(column: \"_measurement\")",
                 bucket
         );
