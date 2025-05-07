@@ -1,4 +1,4 @@
-package com.nhnacademy.environment.dto;
+package com.nhnacademy.environment.timeseries.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SensorDataDto {
+public class TimeSeriesDataDto {
 
     /**
      * Instant time
@@ -22,10 +22,10 @@ public class SensorDataDto {
 
     /**
      * String field
-     * → InfluxDB의 _field 값(예: usage_idle, used_percent 등).
-     * 여러 필드를 가진 measurement에서 어떤 필드 값인지 구분할 때 필요합니다.
+     * → InfluxDB의 location 값(예: cpu, mem, 입구 등).
+     * 여러 필드를 가진 _measurement에서 어떤 location 에서 받은 값인지 구분할 때 필요합니다.
      */
-    private String field;
+    private String location;
 
     /**
      * Double value
@@ -36,17 +36,16 @@ public class SensorDataDto {
 
     /**
      * String measurement
-     * → InfluxDB의 measurement 값(예: cpu, mem 등).
-     * 여러 measurement에서 어떤 측정값인지 구분할 때 필요합니다.
+     * → InfluxDB의 _measurement 값(예: usage_idle, usage_percent, temperature, humidity 등).
+     * 여러 _measurement 에서 어떤 측정값인지 구분할 때 필요합니다.
      */
     private String measurement;
 
     /**
      Map<String, String> tags
-     → InfluxDB의 태그(예: companyDomain, deviceId, location 등).
+     → InfluxDB의 태그(예: building, device_id 등 센서별로 추가 될 가능성이 있기 때문에 유동적으로 사용합니다).
      태그 기반 필터링, 화면 표시, 상세 정보 제공에 유용합니다.
      */
     private Map<String, String> tags;
-
 }
 

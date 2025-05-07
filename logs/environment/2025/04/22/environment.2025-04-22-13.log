@@ -24,7 +24,7 @@ com.influxdb.exceptions.UnauthorizedException: HTTP status code: 401; Message: u
 	at com.influxdb.client.internal.QueryApiImpl.query(QueryApiImpl.java:123) ~[influxdb-client-java-6.6.0.jar:6.6.0]
 	at com.influxdb.client.internal.QueryApiImpl.query(QueryApiImpl.java:85) ~[influxdb-client-java-6.6.0.jar:6.6.0]
 	at com.nhnacademy.environment.service.ServerEnvironmentService.getDynamicResourceData(ServerEnvironmentService.java:57) ~[classes/:?]
-	at com.nhnacademy.environment.controller.EnvironmentController.getEnvironmentData(EnvironmentController.java:47) ~[classes/:?]
+	at com.nhnacademy.environment.controller.ServerDataController.getEnvironmentData(ServerDataController.java:47) ~[classes/:?]
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
 	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.5.jar:6.2.5]
