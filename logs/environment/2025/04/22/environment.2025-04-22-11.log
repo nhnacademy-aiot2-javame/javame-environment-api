@@ -1,6 +1,0 @@
-2025-04-22 11:18:27 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.5 with PID 511744 (/home/nhnacademy/IdeaProjects/javame-environment-api/target/classes started by nhnacademy in /home/nhnacademy/IdeaProjects/javame-environment-api)
-2025-04-22 11:18:27 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - No active profile set, falling back to 1 default profile: "default"
-2025-04-22 11:27:32 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Started JavameEnvironmentApiApplication in 545.787 seconds (process running for 545.916)
-2025-04-22 11:35:54 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.5 with PID 514929 (/home/nhnacademy/IdeaProjects/javame-environment-api/target/classes started by nhnacademy in /home/nhnacademy/IdeaProjects/javame-environment-api)
-2025-04-22 11:35:54 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - No active profile set, falling back to 1 default profile: "default"
-2025-04-22 11:35:58 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Started JavameEnvironmentApiApplication in 5.474 seconds (process running for 6.243)
