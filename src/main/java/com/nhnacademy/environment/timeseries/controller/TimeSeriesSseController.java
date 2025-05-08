@@ -6,7 +6,11 @@ import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
@@ -19,7 +23,14 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 public class TimeSeriesSseController {
 
+    /**
+     * 시계열 데이터를 조회 및 가공하는 서비스.
+     */
     private final TimeSeriesDataService timeSeriesDataService;
+
+    /**
+     * JSON 직렬화에 사용되는 Jackson ObjectMapper.
+     */
     private final ObjectMapper objectMapper;
 
     /**
@@ -55,6 +66,9 @@ public class TimeSeriesSseController {
 
                     Thread.sleep(30000); // 5분 간격
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // 현재 스레드에 인터럽트 상태 복구
+                emitter.completeWithError(e);
             } catch (Exception e) {
                 emitter.completeWithError(e);
             }

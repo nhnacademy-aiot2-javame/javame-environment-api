@@ -1,13 +1,23 @@
 package com.nhnacademy.environment.timeseries.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
  * InfluxDB의 센서 또는 서버 데이터를 하루 단위로 평균 계산하여
- * MySQL의 `average_data` 테이블에 저장하기 위한 엔티티 클래스입니다.
+ * MySQL 의 `average_data` 테이블에 저장하기 위한 엔티티 클래스입니다.
  * <p>
  * 이 클래스는 주로 자정 기준 배치 작업에서 생성되며,
  * 회사 도메인, 측정 항목, 필드 기준으로 평균값을 계산하고 저장합니다.
