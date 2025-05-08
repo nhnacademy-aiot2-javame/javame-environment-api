@@ -23,7 +23,7 @@ public class TimeSeriesDataDto {
     /**
      * String field
      * → InfluxDB의 location 값(예: cpu, mem, 입구 등).
-     * 여러 필드를 가진 _measurement에서 어떤 location 에서 받은 값인지 구분할 때 필요합니다.
+     * 여러 필드를 가진 _measurement 에서 어떤 location 에서 받은 값인지 구분할 때 필요합니다.
      */
     private String location;
 

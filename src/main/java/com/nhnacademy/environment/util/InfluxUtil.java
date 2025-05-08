@@ -5,7 +5,9 @@ import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -17,10 +19,10 @@ import java.util.stream.Collectors;
 public class InfluxUtil {
 
     /**
-     * 주어진 tag key에 해당하는 값을 안전하게 추출합니다.
+     * 주어진 tag key 에 해당하는 값을 안전하게 추출합니다.
      *
-     * <p>InfluxDB의 FluxRecord에서 특정 key에 해당하는 값을 조회할 때,
-     * 값이 존재하지 않거나 null일 수 있기 때문에 이 메서드를 통해 null-safe하게
+     * <p>InfluxDB의 FluxRecord 에서 특정 key 에 해당하는 값을 조회할 때,
+     * 값이 존재하지 않거나 null 일 수 있기 때문에 이 메서드를 통해 null-safe 하게
      * String 값으로 변환하여 사용합니다.
      *
      * @param record Flux 쿼리 결과의 단일 레코드
