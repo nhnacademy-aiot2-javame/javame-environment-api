@@ -49,6 +49,7 @@ public class TimeSeriesDataController {
         return timeSeriesDataService.getTimeSeriesData(origin, allParams, range);
     }
 
+
     /**
      * origin 목록 조회. (ex: sensor_data, server_data)
      * @param companyDomain 회사 도메인

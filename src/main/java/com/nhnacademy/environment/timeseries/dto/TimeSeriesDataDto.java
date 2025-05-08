@@ -30,7 +30,7 @@ public class TimeSeriesDataDto {
     /**
      * Double value
      * → 필드 값(예: 0.0, 1.0 등).
-     * InfluxDB에서 측정한 값입니다.
+     * InfluxDB 에서 측정한 값입니다.
      */
     private double value;
 
