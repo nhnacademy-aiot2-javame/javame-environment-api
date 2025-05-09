@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication
-@EnableFeignClients(basePackages = "com.nhnacademy.environment.member.client")
 public class JavameEnvironmentApiApplication {
 
     public static void main(String[] args) {
