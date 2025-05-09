@@ -46,10 +46,6 @@ jobs:
             docker build -t ygw1026/javame-environment-api:$IMAGE_TAG .
             docker push ygw1026/javame-environment-api:$IMAGE_TAG
             echo "ENVIRONMENT_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-     
-        //Docker-Hub에 레포지를 파야함(이미지를 등록할 레포) 
-        // -t 태그쓰겠다는 옵션 github.sha -> 깃허브 커밋의 해시값 ( 커밋별 이미지 업데이트 확인 가능)
-        // echo "TRANS_IMAGE_TAG" 자신의 레포 앞글자 따와서 변경 (EX- AI_IMAGE_TAG(버전관리))
 
       # Deploy the application using Docker-Compose
       - name: Deploy to Remote Server via SSH
