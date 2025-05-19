@@ -108,24 +108,46 @@ public class TimeSeriesDataService {
         return resultMap;
     }
 
+
     /**
-     * measurement 컬럼 기준으로 중복 제거된 값을 조회합니다.
+     * 측정 항목(_measurement) 기준으로 중복 제거된 값을 조회합니다.
+     * <p>
+     * 중복 제거란, 동일한 측정 항목이 여러 시점에 기록되어 있어도 한 번만 반환된다는 의미입니다.
+     * origin, location, companyDomain 등의 조건을 기반으로 필터링한 후,
+     * 해당 조건을 만족하는 시계열 데이터에서 고유한 _measurement 이름만 추출합니다.
      *
-     * @param filters origin, companyDomain 등의 필터
-     * @return 측정값 목록
+     * @param filters origin, companyDomain, location 등 InfluxDB tag 필터
+     * @return 중복 제거된 _measurement 목록 (측정 항목 리스트)
      */
     public List<String> getMeasurementList(Map<String, String> filters) {
-        StringBuilder flux = new StringBuilder(
-                String.format("from(bucket: \"%s\") |> range(start: -24h)", bucket)
-        );
+        String origin = filters.get("origin");
+        String companyDomain = filters.get("companyDomain");
+        String location = filters.get("location");
 
-        filters.forEach((key, value) ->
-                flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value))
-        );
+        StringBuilder flux = new StringBuilder();
+        flux.append("from(bucket: \"").append(bucket).append("\")")
+                .append(" |> range(start: -1h)")
+                .append(" |> filter(fn: (r) => r.origin == \"").append(origin).append("\"")
+                .append(" and r.companyDomain == \"").append(companyDomain).append("\"");
 
-        flux.append(" |> keep(columns: [\"_measurement\"]) |> distinct(column: \"_measurement\")");
+        if (location != null) {
+            flux.append(" and r.location == \"").append(location).append("\"");
+        }
 
-        return InfluxUtil.extractDistinctValues(queryApi, flux.toString(), influxOrg, "_measurement");
+        flux.append(")")
+                .append(" |> keep(columns: [\"_measurement\"])")
+                .append(" |> distinct(column: \"_measurement\")");
+
+        log.info("[Flux Measurement Query] : {}", flux.toString());
+
+        List<FluxTable> tables = queryApi.query(flux.toString(), influxOrg);
+        List<String> result = new ArrayList<>();
+        for (FluxTable table : tables) {
+            for (FluxRecord record : table.getRecords()) {
+                result.add((String) record.getValue());
+            }
+        }
+        return result;
     }
 
     /**

@@ -80,26 +80,25 @@ public class TimeSeriesDataController {
     }
 
     /**
-     * 측정값(measurement) 목록 조회.
-     * origin과 location 등의 필터에 따라 유동적으로 measurement 목록을 반환합니다.
+     * 측정값(_measurement) 목록 조회.
+     * origin, location, companyDomain 필터에 따라 InfluxDB에서 중복 제거된 측정 항목 목록을 반환합니다.
      *
      * @param companyDomain 회사 도메인
-     * @param origin        데이터 출처
-     * @param location      선택적 위치 필터
-     * @return 측정값 리스트
+     * @param origin        데이터 출처 (예: sensor_data, server_data)
+     * @param location      선택적 위치 필터 (예: cpu, memory 등)
+     * @return 중복 제거된 _measurement 리스트 (예: usage_idle, battery 등)
      */
     @GetMapping("/measurements")
     public List<String> getMeasurements(
             @PathVariable String companyDomain,
             @RequestParam String origin,
-            @RequestParam(required = false) String location
+            @RequestParam String location
     ) {
         Map<String, String> filters = new HashMap<>();
         filters.put("origin", origin);
         filters.put("companyDomain", companyDomain);
-        if (location != null) {
-            filters.put("location", location);
-        }
+        filters.put("location", location);
+
         return timeSeriesDataService.getMeasurementList(filters);
     }
 
