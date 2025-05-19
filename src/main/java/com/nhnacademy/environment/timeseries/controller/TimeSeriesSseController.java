@@ -1,6 +1,7 @@
 package com.nhnacademy.environment.timeseries.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.environment.config.annotation.HasRole;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,7 @@ public class TimeSeriesSseController {
      * @return SseEmitter 스트림 응답
      */
     @GetMapping(value = "/time-series-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public SseEmitter streamTimeSeriesData(
             @PathVariable String companyDomain,
             @RequestParam String origin,
