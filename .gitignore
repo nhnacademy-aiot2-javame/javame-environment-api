@@ -34,3 +34,6 @@ build/
 
 *.log
 logs/
+
+### application-local.properties 설정 무시 ###
+application-local.properties
