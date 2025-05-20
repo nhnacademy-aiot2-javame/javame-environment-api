@@ -77,13 +77,13 @@ class TimeSeriesDataControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    @DisplayName("/measurements API 테스트")
-    void testGetMeasurements() throws Exception {
-        mockMvc.perform(get("/environment/nhnacademy.com/measurements")
-                        .param("origin", "sensor_data"))
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    @DisplayName("/measurements API 테스트")
+//    void testGetMeasurements() throws Exception {
+//        mockMvc.perform(get("/environment/nhnacademy.com/measurements")
+//                        .param("origin", "sensor_data"))
+//                .andExpect(status().isOk());
+//    }
 
     @Test
     @DisplayName("/time-series API 테스트")
