@@ -37,7 +37,7 @@ public class TimeSeriesDataController {
      * @return 측정값별 시계열 데이터 Map
      */
     @GetMapping("/time-series")
-    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
+    //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public Map<String, List<TimeSeriesDataDto>> getTimeSeriesData(
             @PathVariable String companyDomain,
             @RequestParam String origin,
