@@ -1,5 +1,6 @@
 package com.nhnacademy.environment.timeseries.controller;
 
+import com.nhnacademy.environment.config.annotation.HasRole;
 import com.nhnacademy.environment.timeseries.dto.ChartDataDto;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
@@ -36,6 +37,7 @@ public class TimeSeriesDataController {
      * @return 측정값별 시계열 데이터 Map
      */
     @GetMapping("/time-series")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public Map<String, List<TimeSeriesDataDto>> getTimeSeriesData(
             @PathVariable String companyDomain,
             @RequestParam String origin,
@@ -56,6 +58,7 @@ public class TimeSeriesDataController {
      * @return origin 목록
      */
     @GetMapping("/origins")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getOrigins(
             @PathVariable String companyDomain
     ) {
@@ -71,6 +74,7 @@ public class TimeSeriesDataController {
      * @return 해당 태그의 고유 값 리스트
      */
     @GetMapping("/dropdown/{tag}")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getTagDropdown(
             @PathVariable String companyDomain,
             @PathVariable String tag,
@@ -89,6 +93,7 @@ public class TimeSeriesDataController {
      * @return 중복 제거된 _measurement 리스트 (예: usage_idle, battery 등)
      */
     @GetMapping("/measurements")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getMeasurements(
             @PathVariable String companyDomain,
             @RequestParam String origin,
@@ -112,6 +117,7 @@ public class TimeSeriesDataController {
      * @return 차트에 사용할 시계열 데이터 DTO
      */
     @GetMapping("/chart/type/{sensor}")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public ChartDataDto getChartDataForSensor(
             @PathVariable String companyDomain,
             @PathVariable String sensor,
@@ -133,6 +139,7 @@ public class TimeSeriesDataController {
      * @return 파이 차트에 사용할 데이터 DTO
      */
     @GetMapping("/chart/pie")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public ChartDataDto getPieChartData(
             @PathVariable String companyDomain,
             @RequestParam String origin
