@@ -15,6 +15,31 @@
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true" />
             </Policies>
+            <DefaultRolloverStrategy max="336">
+                <Delete basePath="logs/environment" maxDepth="1">
+                    <IfFileName glob="*.log.gz" />
+                    <IfLastModified age="14d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- TraceId 전용 로그 파일 -->
+        <RollingFile name="TraceLogFile"
+                     fileName="logs/trace/trace.log"
+                     filePattern="logs/trace/trace-%d{yyyy-MM-dd-HH}.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%X{traceId}] [%t] %-5level %logger{36} - %msg%n" />
+            <Filters>
+                <MarkerFilter marker="TRACE_ID_LOG" onMatch="ACCEPT" onMismatch="DENY" />
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="336">
+                <Delete basePath="logs/trace" maxDepth="1">
+                    <IfFileName glob="*.log.gz" />
+                    <IfLastModified age="14d" />
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
     </Appenders>
 
@@ -23,9 +48,10 @@
         <Logger name="com.nhnacademy.environment" level="debug" additivity="false">
             <AppenderRef ref="Console" />
             <AppenderRef ref="EnvironmentRollingFile" />
+            <AppenderRef ref="TraceLogFile" />
         </Logger>
 
-        <!-- 루트 로거: 모든 로그 수준 info 이상 콘솔 + 파일 출력 -->
+        <!-- 루트 로거 -->
         <Root level="info">
             <AppenderRef ref="Console" />
             <AppenderRef ref="EnvironmentRollingFile" />
