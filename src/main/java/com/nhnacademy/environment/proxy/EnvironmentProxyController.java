@@ -1,5 +1,6 @@
 package com.nhnacademy.environment.proxy;
 
+import com.nhnacademy.environment.config.annotation.HasRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ public class EnvironmentProxyController {
      * @return origin 목록 JSON
      */
     @GetMapping("/{companyDomain}/origins")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public ResponseEntity<String> proxyGetOrigins(@PathVariable String companyDomain) {
         String targetUrl = INTERNAL_API_BASE + "/" + companyDomain + "/origins";
         log.debug("[Proxy] Fetching origins from: {}", targetUrl);

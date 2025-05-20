@@ -1,5 +1,6 @@
 package com.nhnacademy.environment.timeseries.controller;
 
+import com.nhnacademy.environment.config.annotation.HasRole;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesAverageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +40,7 @@ public class TimeSeriesAverageController {
      * @param rangeMinutes   조회 범위 (기본: 60분)
      * @return 1시간 평균값 리스트와 전체 평균값을 포함한 Map
      */
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     @GetMapping("/1h")
     public Map<String, Object> get1HourAverageWithTotalAverage(
             @PathVariable String companyDomain,

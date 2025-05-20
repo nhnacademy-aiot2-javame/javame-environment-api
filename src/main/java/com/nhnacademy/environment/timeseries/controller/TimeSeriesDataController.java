@@ -1,5 +1,6 @@
 package com.nhnacademy.environment.timeseries.controller;
 
+import com.nhnacademy.environment.config.annotation.HasRole;
 import com.nhnacademy.environment.timeseries.dto.ChartDataDto;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
@@ -36,6 +37,7 @@ public class TimeSeriesDataController {
      * @return 측정값별 시계열 데이터 Map
      */
     @GetMapping("/time-series")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public Map<String, List<TimeSeriesDataDto>> getTimeSeriesData(
             @PathVariable String companyDomain,
             @RequestParam String origin,
@@ -56,6 +58,7 @@ public class TimeSeriesDataController {
      * @return origin 목록
      */
     @GetMapping("/origins")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getOrigins(
             @PathVariable String companyDomain
     ) {
@@ -71,6 +74,7 @@ public class TimeSeriesDataController {
      * @return 해당 태그의 고유 값 리스트
      */
     @GetMapping("/dropdown/{tag}")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getTagDropdown(
             @PathVariable String companyDomain,
             @PathVariable String tag,
@@ -80,26 +84,26 @@ public class TimeSeriesDataController {
     }
 
     /**
-     * 측정값(measurement) 목록 조회.
-     * origin과 location 등의 필터에 따라 유동적으로 measurement 목록을 반환합니다.
+     * 측정값(_measurement) 목록 조회.
+     * origin, location, companyDomain 필터에 따라 InfluxDB에서 중복 제거된 측정 항목 목록을 반환합니다.
      *
      * @param companyDomain 회사 도메인
-     * @param origin        데이터 출처
-     * @param location      선택적 위치 필터
-     * @return 측정값 리스트
+     * @param origin        데이터 출처 (예: sensor_data, server_data)
+     * @param location      선택적 위치 필터 (예: cpu, memory 등)
+     * @return 중복 제거된 _measurement 리스트 (예: usage_idle, battery 등)
      */
     @GetMapping("/measurements")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getMeasurements(
             @PathVariable String companyDomain,
             @RequestParam String origin,
-            @RequestParam(required = false) String location
+            @RequestParam String location
     ) {
         Map<String, String> filters = new HashMap<>();
         filters.put("origin", origin);
         filters.put("companyDomain", companyDomain);
-        if (location != null) {
-            filters.put("location", location);
-        }
+        filters.put("location", location);
+
         return timeSeriesDataService.getMeasurementList(filters);
     }
 
@@ -113,6 +117,7 @@ public class TimeSeriesDataController {
      * @return 차트에 사용할 시계열 데이터 DTO
      */
     @GetMapping("/chart/type/{sensor}")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public ChartDataDto getChartDataForSensor(
             @PathVariable String companyDomain,
             @PathVariable String sensor,
@@ -134,6 +139,7 @@ public class TimeSeriesDataController {
      * @return 파이 차트에 사용할 데이터 DTO
      */
     @GetMapping("/chart/pie")
+    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public ChartDataDto getPieChartData(
             @PathVariable String companyDomain,
             @RequestParam String origin
