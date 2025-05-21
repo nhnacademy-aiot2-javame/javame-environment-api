@@ -116,13 +116,13 @@ public class TimeSeriesDataService {
      * origin, location, companyDomain 등의 조건을 기반으로 필터링한 후,
      * 해당 조건을 만족하는 시계열 데이터에서 고유한 _measurement 이름만 추출합니다.
      *
-     * @param filters origin, companyDomain, location 등 InfluxDB tag 필터
+     * @param filters gatewayId, companyDomain, location 등 InfluxDB tag 필터
      * @return 중복 제거된 _measurement 목록 (측정 항목 리스트)
      */
     public List<String> getMeasurementList(Map<String, String> filters) {
         String origin = filters.get("origin");
         String companyDomain = filters.get("companyDomain");
-        String location = filters.get("location");
+        String gatewayId = filters.get("gatewayId");
 
         StringBuilder flux = new StringBuilder();
         flux.append("from(bucket: \"").append(bucket).append("\")")
@@ -130,15 +130,15 @@ public class TimeSeriesDataService {
                 .append(" |> filter(fn: (r) => r.origin == \"").append(origin).append("\"")
                 .append(" and r.companyDomain == \"").append(companyDomain).append("\"");
 
-        if (location != null) {
-            flux.append(" and r.location == \"").append(location).append("\"");
+        if (gatewayId != null) {
+            flux.append(" and r.gatewayId == \"").append(gatewayId).append("\"");
         }
 
         flux.append(")")
                 .append(" |> keep(columns: [\"_measurement\"])")
                 .append(" |> distinct(column: \"_measurement\")");
 
-        log.info("[Flux Measurement Query] : {}", flux.toString());
+        log.info("[Flux Measurement Query] : {}", flux);
 
         List<FluxTable> tables = queryApi.query(flux.toString(), influxOrg);
         List<String> result = new ArrayList<>();
