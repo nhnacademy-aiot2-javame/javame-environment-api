@@ -472,3 +472,74 @@ com.netflix.discovery.shared.transport.TransportException: Cannot execute reques
 2025-05-19 13:06:11 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Started JavameEnvironmentApiApplication in 4.145 seconds (process running for 4.8)
 2025-05-19 13:06:11 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.100:ENVIRONMENT-API:10273 - registration status: 204
 2025-05-19 13:11:11 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-05-21 20:58:32 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-21 20:58:32 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.5 with PID 146002 (/home/nhnacademy/IdeaProjects/javame/javame-environment-api/target/classes started by nhnacademy in /home/nhnacademy/IdeaProjects/javame/javame-environment-api)
+2025-05-21 20:58:32 [main] DEBUG com.nhnacademy.environment.JavameEnvironmentApiApplication - Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-05-21 20:58:32 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - The following 1 profile is active: "local"
+2025-05-21 20:58:32 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-21 20:58:32 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 122 ms. Found 1 JPA repository interface.
+2025-05-21 20:58:32 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=b88f8c8f-f561-3d71-a62f-583039917c12
+2025-05-21 20:58:33 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 10273 (http)
+2025-05-21 20:58:33 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10273"]
+2025-05-21 20:58:33 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-21 20:58:33 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-05-21 20:58:33 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-21 20:58:33 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1136 ms
+2025-05-21 20:58:33 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.FilterConfig.traceIdFilter()
+2025-05-21 20:58:33 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.FilterConfig.traceIdFilter() => 1ms
+2025-05-21 20:58:33 [main] DEBUG com.nhnacademy.environment.config.TraceIdFilter - Filter 'traceIdFilter' configured for use
+2025-05-21 20:58:33 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-21 20:58:33 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@38f63756
+2025-05-21 20:58:33 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-21 20:58:33 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-21 20:58:33 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.11.Final
+2025-05-21 20:58:33 [main] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-21 20:58:34 [main] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-21 20:58:34 [main] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.41
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-21 20:58:34 [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-21 20:58:34 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient()
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - [InfluxDB 연결 정보]
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ URL    : https://influxdb.javame.live
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ Token  : g-W7W0j9AE4coriQfnhHGMDnDhTZGok8bgY1NnZ6Z0EnTOsFY3SWAqDTC5fYlQ9mYnbK_doR074-a4Dgck2AOQ==
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ Org    : javame
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ Bucket : data
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient() => 112ms
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.queryApi()
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.queryApi() => 8ms
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket()
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket() => 1ms
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization()
+2025-05-21 20:58:34 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization() => 0ms
+2025-05-21 20:58:35 [main] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-21 20:58:36 [main] INFO  org.springframework.cloud.netflix.eureka.config.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2025-05-21 20:58:36 [main] WARN  org.springframework.cloud.loadbalancer.config.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2025-05-21 20:58:36 [main] INFO  org.springframework.cloud.netflix.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - Disable delta property : false
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - Application is null : false
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - Application version is -1: true
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - The response status is 200
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1747828716640 with initial instances count: 2
+2025-05-21 20:58:36 [main] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry - Registering application ENVIRONMENT-API with eureka with status UP
+2025-05-21 20:58:36 [main] INFO  com.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1747828716652, current=UP, previous=STARTING]
+2025-05-21 20:58:36 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-10273"]
+2025-05-21 20:58:36 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.100:ENVIRONMENT-API:10273: registering service...
+2025-05-21 20:58:36 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 10273 (http) with context path '/'
+2025-05-21 20:58:36 [main] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaAutoServiceRegistration - Updating port to 10273
+2025-05-21 20:58:36 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Started JavameEnvironmentApiApplication in 4.835 seconds (process running for 5.517)
+2025-05-21 20:58:36 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.100:ENVIRONMENT-API:10273 - registration status: 204

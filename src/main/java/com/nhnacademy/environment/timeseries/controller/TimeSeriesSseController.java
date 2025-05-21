@@ -45,7 +45,7 @@ public class TimeSeriesSseController {
      * @return SseEmitter 스트림 응답
      */
     @GetMapping(value = "/time-series-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
+    //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public SseEmitter streamTimeSeriesData(
             @PathVariable String companyDomain,
             @RequestParam String origin,
