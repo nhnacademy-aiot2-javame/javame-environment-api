@@ -268,4 +268,78 @@ public class TimeSeriesDataService {
         }
         return new ChartDataDto(labels, values, "Measurement 분포");
     }
+
+    /**
+     * 주어진 필터 조건에 맞는 가장 최근의 시계열 데이터 하나를 조회합니다.
+     * InfluxDB에서 시간 역순으로 정렬 후 첫 번째 데이터를 가져옵니다.
+     *
+     * @param filters 필터 조건 (origin, location, _measurement, _field 등 포함 가능)
+     * @return 가장 최근의 TimeSeriesDataDto, 없으면 null
+     */
+    public TimeSeriesDataDto getLatestTimeSeriesData(Map<String, String> filters) {
+        StringBuilder flux = new StringBuilder(
+                // 적절한 조회 범위 설정 (예: 최근 7일, 너무 짧으면 데이터가 없을 수 있음)
+                String.format("from(bucket: \"%s\") |> range(start: -7d)", bucket)
+        );
+
+        // 필수 필터 (_measurement, origin, location 등) 적용
+        // 예시: filters 맵에 있는 모든 키-값을 필터로 적용
+        filters.forEach((key, value) -> {
+            if (value != null && !value.isBlank()) {
+                // _measurement, _field는 InfluxDB의 시스템 컬럼이므로 r._measurement, r._field로 접근
+                // 나머지 태그들은 r["tagName"] 형태로 접근
+                if (key.equals("_measurement") || key.equals("_field")) {
+                    flux.append(String.format(" |> filter(fn: (r) => r.%s == \"%s\")", key, value));
+                } else {
+                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value));
+                }
+            }
+        });
+
+        // 최신 데이터를 가져오기 위해 시간 역순 정렬 후 1개만 선택
+        flux.append(" |> sort(columns: [\"_time\"], desc: true)");
+        flux.append(" |> limit(n:1)");
+        // 필요한 컬럼만 유지 (선택 사항, 성능에 영향 줄 수 있음)
+        // flux.append(" |> keep(columns: [\"_time\", \"_value\", \"_measurement\", \"location\", \"origin\", ...])");
+
+
+        log.debug("[LatestData] Flux query = {}", flux.toString());
+
+        List<TimeSeriesDataDto> results = new ArrayList<>();
+        try {
+            List<FluxTable> tables = queryApi.query(flux.toString(), influxOrg);
+            for (FluxTable table : tables) {
+                for (FluxRecord record : table.getRecords()) {
+                    Instant time = record.getTime();
+                    // _value의 실제 타입에 따라 캐스팅 필요
+                    Object rawValue = record.getValue();
+                    double value = 0.0;
+                    if (rawValue instanceof Number) {
+                        value = ((Number) rawValue).doubleValue();
+                    } else if (rawValue != null) {
+                        // 다른 타입일 경우 처리 (예: String.valueOf(rawValue) 후 Double.parseDouble)
+                        log.warn("Unexpected value type for _value: " + rawValue.getClass().getName());
+                    }
+
+                    String measurement = InfluxUtil.getTagValue(record, "_measurement"); // getValueByKey 사용 가능
+                    String location = InfluxUtil.getTagValue(record, "location");
+                    String origin = InfluxUtil.getTagValue(record, "origin");
+
+                    // 모든 필터 태그 값을 가져오려면 filters.keySet()을 순회하며 InfluxUtil.getTagValue 사용
+                    Map<String, String> recordTags = new HashMap<>();
+                    recordTags.put("origin", origin);
+                    recordTags.put("location", location);
+                    // 필요한 다른 태그들도 추가
+
+                    results.add(new TimeSeriesDataDto(time, location, value, measurement, recordTags));
+                }
+            }
+        } catch (Exception e) {
+            log.error("LatestData query 실패", e);
+            // 실패 시 null 또는 빈 Optional 반환 등 처리
+            return null;
+        }
+
+        return results.isEmpty() ? null : results.get(0);
+    }
 }
