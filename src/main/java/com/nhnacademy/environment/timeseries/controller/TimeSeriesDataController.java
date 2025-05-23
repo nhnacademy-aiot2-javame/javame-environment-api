@@ -70,7 +70,7 @@ public class TimeSeriesDataController {
      *
      * @param companyDomain 회사 도메인
      * @param tag           조회할 태그 명 (예: location)
-     * @param origin        데이터 출처
+     * @param filters        데이터 출처
      * @return 해당 태그의 고유 값 리스트
      */
     @GetMapping("/dropdown/{tag}")
@@ -78,9 +78,10 @@ public class TimeSeriesDataController {
     public List<String> getTagDropdown(
             @PathVariable String companyDomain,
             @PathVariable String tag,
-            @RequestParam String origin
+            @RequestParam Map<String, String> filters
     ) {
-        return timeSeriesDataService.getTagValues(tag, Map.of("origin", origin, "companyDomain", companyDomain));
+        filters.put("companyDomain", companyDomain);
+        return timeSeriesDataService.getTagValues(tag, filters);
     }
 
     /**
@@ -88,22 +89,16 @@ public class TimeSeriesDataController {
      * origin, location, companyDomain 필터에 따라 InfluxDB에서 중복 제거된 측정 항목 목록을 반환합니다.
      *
      * @param companyDomain 회사 도메인
-     * @param origin        데이터 출처 (예: sensor_data, server_data)
-     * @param gatewayId      선택적 위치 필터 (예: cpu, memory 등)
+     * @param filters        companyDomain 을 제외한 influxdb 태그
      * @return 중복 제거된 _measurement 리스트 (예: usage_idle, battery 등)
      */
     @GetMapping("/measurements")
     //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getMeasurements(
             @PathVariable String companyDomain,
-            @RequestParam String origin,
-            @RequestParam String gatewayId
+            @RequestParam Map<String, String> filters
     ) {
-        Map<String, String> filters = new HashMap<>();
-        filters.put("origin", origin);
         filters.put("companyDomain", companyDomain);
-        filters.put("gatewayId", gatewayId);
-
         return timeSeriesDataService.getMeasurementList(filters);
     }
 
