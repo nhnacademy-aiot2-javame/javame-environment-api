@@ -69,7 +69,9 @@ public class TimeSeriesDataService {
         flux.append(String.format(" |> filter(fn: (r) => r[\"origin\"] == \"%s\")", origin));
 
         allParams.forEach((key, value) -> {
-            if (!key.equals("origin") && value != null && !value.isBlank()) {
+            if (!key.equals("origin") &&
+                    !key.equals("measurement") && // influxdb 에서 measurement 없어질 때 까지 임시로 쿼리에서 제거
+                    value != null && !value.isBlank()) {
                 flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value));
             }
         });
