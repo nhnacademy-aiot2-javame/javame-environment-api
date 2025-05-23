@@ -89,7 +89,7 @@ public class TimeSeriesDataController {
      *
      * @param companyDomain 회사 도메인
      * @param origin        데이터 출처 (예: sensor_data, server_data)
-     * @param location      선택적 위치 필터 (예: cpu, memory 등)
+     * @param gatewayId      선택적 위치 필터 (예: cpu, memory 등)
      * @return 중복 제거된 _measurement 리스트 (예: usage_idle, battery 등)
      */
     @GetMapping("/measurements")
@@ -97,12 +97,12 @@ public class TimeSeriesDataController {
     public List<String> getMeasurements(
             @PathVariable String companyDomain,
             @RequestParam String origin,
-            @RequestParam String location
+            @RequestParam String gatewayId
     ) {
         Map<String, String> filters = new HashMap<>();
         filters.put("origin", origin);
         filters.put("companyDomain", companyDomain);
-        filters.put("location", location);
+        filters.put("gatewayId", gatewayId);
 
         return timeSeriesDataService.getMeasurementList(filters);
     }
