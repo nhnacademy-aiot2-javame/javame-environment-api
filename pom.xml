@@ -20,8 +20,8 @@
 
     <properties>
         <java.version>21</java.version>
-        <!-- Gemini API 추가를 위한 최신 버전 BOM 추가-->
-        <google.cloud.bom.version>26.40.0</google.cloud.bom.version>
+        <!-- Google AI (Generative AI) Java SDK 버전 -->
+        <spring-ai.version>1.0.0</spring-ai.version>
     </properties>
 
     <dependencies>
@@ -140,32 +140,6 @@
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-feign</artifactId>
         </dependency>
-
-        <!-- AI 모델 추가 -->
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-vertexai</artifactId>
-        </dependency>
-
-        <!-- 인증 및 기타 유틸리티를 위해 -->
-        <!-- Vertex AI Client Library for Java -->
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-vertexai</artifactId>
-        </dependency>
-
-        <!-- Google Auth Library - Credentials (이것이 핵심 인증 라이브러리) -->
-        <dependency>
-            <groupId>com.google.auth</groupId>
-            <artifactId>google-auth-library-credentials</artifactId>
-        </dependency>
-
-        <!-- Google Auth Library - OAuth2 for HTTP (OAuth2 흐름 및 HTTP 전송 관련) -->
-        <dependency>
-            <groupId>com.google.auth</groupId>
-            <artifactId>google-auth-library-oauth2-http</artifactId>
-        </dependency>
-
     </dependencies>
 
     <dependencyManagement>
@@ -177,11 +151,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- 구글 클라우드 추가 -->
+
             <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>libraries-bom</artifactId>
-                <version>${google.cloud.bom.version}</version>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
