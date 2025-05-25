@@ -20,6 +20,8 @@
 
     <properties>
         <java.version>21</java.version>
+        <!-- Gemini API 추가를 위한 최신 버전 BOM 추가-->
+        <google.cloud.bom.version>26.40.0</google.cloud.bom.version>
     </properties>
 
     <dependencies>
@@ -139,6 +141,31 @@
             <artifactId>resilience4j-feign</artifactId>
         </dependency>
 
+        <!-- AI 모델 추가 -->
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-vertexai</artifactId>
+        </dependency>
+
+        <!-- 인증 및 기타 유틸리티를 위해 -->
+        <!-- Vertex AI Client Library for Java -->
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-vertexai</artifactId>
+        </dependency>
+
+        <!-- Google Auth Library - Credentials (이것이 핵심 인증 라이브러리) -->
+        <dependency>
+            <groupId>com.google.auth</groupId>
+            <artifactId>google-auth-library-credentials</artifactId>
+        </dependency>
+
+        <!-- Google Auth Library - OAuth2 for HTTP (OAuth2 흐름 및 HTTP 전송 관련) -->
+        <dependency>
+            <groupId>com.google.auth</groupId>
+            <artifactId>google-auth-library-oauth2-http</artifactId>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
@@ -147,6 +174,14 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>2024.0.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- 구글 클라우드 추가 -->
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>${google.cloud.bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
