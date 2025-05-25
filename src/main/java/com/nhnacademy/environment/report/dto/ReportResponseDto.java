@@ -1,5 +1,6 @@
-package com.nhnacademy.environment.timeseries.dto;
+package com.nhnacademy.environment.report.dto;
 
+import com.nhnacademy.environment.timeseries.dto.ChartDataDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.nhnacademy.environment.timeseries.dto;
+package com.nhnacademy.environment.report.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
