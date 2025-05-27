@@ -1,22 +1,14 @@
 package com.nhnacademy.environment.report.service;
 
-import com.google.genai.types.FunctionDeclaration;
-import com.google.genai.types.Schema;
-import com.google.genai.types.Type;
 import com.nhnacademy.environment.timeseries.dto.ChartDataDto;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,253 +19,350 @@ public class AiReportDataService {
 
     private final TimeSeriesDataService timeSeriesDataService;
 
-    private List<String> possibleBuildingValues = Collections.emptyList();
-    private List<String> possibleOriginValues = Collections.emptyList();
-    private List<String> possibleLocationValues = Collections.emptyList();
-    private List<String> possiblePlaceValues = Collections.emptyList();
-    private List<String> possibleGatewayIdValues = Collections.emptyList();
-    private List<String> possibleMeasurementValues = Collections.emptyList();
-
-    private static final String DEFAULT_TIMEZONE = "Asia/Seoul";
     private static final DateTimeFormatter DEFAULT_CHART_X_AXIS_FORMATTER = DateTimeFormatter.ofPattern("MM-dd HH:mm");
 
-    @PostConstruct
-    public void initializeTagValuesForFunctionDeclaration() {
-        // (이전과 동일)
-        log.info("AiReportDataService 초기화: InfluxDB 태그 값 목록 조회 시작...");
+    // ★★★ Map.of() 대신 HashMap 사용 ★★★
+    private static final Map<String, String> KEYWORD_TO_GATEWAY;
+    static {
+        Map<String, String> map = new HashMap<>();
+        map.put("cpu", "cpu");
+        map.put("메모리", "mem");
+        map.put("memory", "mem");
+        map.put("온도", "sensors");
+        map.put("temperature", "sensors");
+        map.put("전력", "modbus");
+        map.put("power", "modbus");
+        map.put("디스크", "disk");
+        map.put("disk", "disk");
+        map.put("네트워크", "net");
+        map.put("network", "net");
+        // 서비스별 JVM 키워드
+        map.put("인증", "javame-auth");
+        map.put("auth", "javame-auth");
+        map.put("환경", "javame-environment-api");
+        map.put("environment", "javame-environment-api");
+        map.put("프론트", "javame-frontend");
+        map.put("frontend", "javame-frontend");
+        map.put("게이트웨이", "javame-gateway");
+        map.put("gateway", "javame-gateway");
+        map.put("회원", "javame-member");
+        map.put("member", "javame-member");
+        KEYWORD_TO_GATEWAY = Collections.unmodifiableMap(map);
+    }
+
+    // ★★★ gatewayId -> measurement 목록도 HashMap 사용 ★★★
+    private static final Map<String, List<String>> GATEWAY_TO_MEASUREMENTS;
+    static {
+        Map<String, List<String>> map = new HashMap<>();
+        map.put("cpu", Arrays.asList("usage_idle", "usage_iowait", "usage_system", "usage_user"));
+        map.put("mem", Arrays.asList("available_percent", "used_percent"));
+        map.put("sensors", Arrays.asList("temp_input"));
+        map.put("modbus", Arrays.asList("current_amps", "power_watts", "temperature_celsius", "power_factor_avg_percent"));
+        map.put("disk", Arrays.asList("used_percent"));
+        map.put("diskio", Arrays.asList("io_time", "read_bytes", "write_bytes"));
+        map.put("net", Arrays.asList("bytes_recv", "bytes_sent"));
+        map.put("swap", Arrays.asList("used_percent"));
+        map.put("system", Arrays.asList("load1"));
+        // JVM 서비스별 메트릭
+        map.put("javame-auth", Arrays.asList("cpu_utilization_percent", "gc_g1_young_generation_count",
+                "memory_old_gen_used_bytes", "memory_total_heap_used_bytes",
+                "process_open_file_descriptors_count", "thread_active_count"));
+        map.put("javame-environment-api", Arrays.asList("cpu_utilization_percent", "gc_g1_young_generation_count",
+                "memory_old_gen_used_bytes", "memory_total_heap_used_bytes",
+                "process_open_file_descriptors_count", "thread_active_count"));
+        map.put("javame-frontend", Arrays.asList("cpu_utilization_percent", "disk_io_bytes_direction_read", "disk_io_bytes_direction_write",
+                "gc_g1_young_generation_count", "memory_old_gen_used_bytes", "memory_total_heap_used_bytes",
+                "process_open_file_descriptors_count", "thread_active_count"));
+        map.put("javame-gateway", Arrays.asList("cpu_utilization_percent", "gc_g1_young_generation_count",
+                "memory_old_gen_used_bytes", "memory_total_heap_used_bytes",
+                "process_open_file_descriptors_count", "thread_active_count"));
+        map.put("javame-member", Arrays.asList("cpu_utilization_percent", "gc_g1_young_generation_count",
+                "memory_old_gen_used_bytes", "memory_total_heap_used_bytes",
+                "process_open_file_descriptors_count", "thread_active_count"));
+        GATEWAY_TO_MEASUREMENTS = Collections.unmodifiableMap(map);
+    }
+
+    // ★★★ measurement 키워드 매핑도 HashMap 사용 ★★★
+    private static final Map<String, String> MEASUREMENT_KEYWORDS;
+    static {
+        Map<String, String> map = new HashMap<>();
+        map.put("사용률", "usage_idle");
+        map.put("usage", "usage_idle");
+        map.put("idle", "usage_idle");
+        map.put("온도", "temp_input");
+        map.put("temperature", "temp_input");
+        map.put("전력", "power_watts");
+        map.put("power", "power_watts");
+        map.put("메모리", "available_percent");
+        map.put("memory", "available_percent");
+        // JVM 키워드 매핑
+        map.put("힙메모리", "memory_total_heap_used_bytes");
+        map.put("heap", "memory_total_heap_used_bytes");
+        map.put("올드젠", "memory_old_gen_used_bytes");
+        map.put("oldgen", "memory_old_gen_used_bytes");
+        map.put("가비지컬렉터", "gc_g1_young_generation_count");
+        map.put("gc", "gc_g1_young_generation_count");
+        map.put("스레드", "thread_active_count");
+        map.put("thread", "thread_active_count");
+        map.put("파일핸들러", "process_open_file_descriptors_count");
+        map.put("file", "process_open_file_descriptors_count");
+        map.put("디스크", "used_percent");
+        map.put("네트워크", "bytes_recv");
+        MEASUREMENT_KEYWORDS = Collections.unmodifiableMap(map);
+    }
+
+    // ★★★ gatewayId -> location 매핑도 HashMap 사용 ★★★
+    private static final Map<String, String> GATEWAY_TO_LOCATION;
+    static {
+        Map<String, String> map = new HashMap<>();
+        map.put("cpu", "server_resource_data");
+        map.put("mem", "server_resource_data");
+        map.put("disk", "server_resource_data");
+        map.put("diskio", "server_resource_data");
+        map.put("net", "server_resource_data");
+        map.put("sensors", "server_resource_data");
+        map.put("swap", "server_resource_data");
+        map.put("system", "server_resource_data");
+        map.put("modbus", "power_meter");
+        // JVM 서비스들은 service_resource_data location
+        map.put("javame-auth", "service_resource_data");
+        map.put("javame-environment-api", "service_resource_data");
+        map.put("javame-frontend", "service_resource_data");
+        map.put("javame-gateway", "service_resource_data");
+        map.put("javame-member", "service_resource_data");
+        GATEWAY_TO_LOCATION = Collections.unmodifiableMap(map);
+    }
+
+    // 나머지 메소드들은 동일하게 유지...
+    public Map<String, Object> prepareSimpleReport(String userPrompt) {
+        log.info("단순 리포트 데이터 준비 - 사용자 프롬프트: '{}'", userPrompt);
+
         try {
-            this.possibleBuildingValues = safeGetDistinctTagValues("building");
-            this.possibleOriginValues = safeGetDistinctTagValues("origin");
-            this.possibleLocationValues = safeGetDistinctTagValues("location");
-            this.possiblePlaceValues = safeGetDistinctTagValues("place");
-            this.possibleGatewayIdValues = safeGetDistinctTagValues("gatewayId");
-            this.possibleMeasurementValues = timeSeriesDataService.getDistinctMeasurementValues();
-
-            log.info("InfluxDB 태그 값 목록 조회 완료. (샘플 크기) Buildings: {}, Origins: {}, Locations: {}, Places: {}, GatewayIds: {}, Measurements: {}",
-                    this.possibleBuildingValues.size(), this.possibleOriginValues.size(),
-                    this.possibleLocationValues.size(), this.possiblePlaceValues.size(),
-                    this.possibleGatewayIdValues.size(), this.possibleMeasurementValues.size());
-        } catch (Exception e) {
-            log.error("AiReportDataService 초기화 중 InfluxDB 태그 값 조회 실패. FunctionDeclaration 설명이 제한될 수 있습니다.", e);
-        }
-    }
-
-    private List<String> safeGetDistinctTagValues(String tagName) {
-        // (이전과 동일)
-        try {
-            List<String> values = timeSeriesDataService.getDistinctTagValues(tagName);
-            return values != null ? values : Collections.emptyList();
-        } catch (Exception e) {
-            log.warn(" 태그 '{}'의 고유 값 목록 조회 중 오류 발생. 빈 목록을 반환합니다.", tagName, e);
-            return Collections.emptyList();
-        }
-    }
-    // --- FunctionDeclaration 정의 메소드 (Schema.Builder().properties(Map) 사용) ---
-    private FunctionDeclaration getInfluxDbTimeSeriesDataFunctionDeclaration() {
-        // 각 파라미터의 Schema 정의
-        Schema startDateSchema = Schema.builder().type(new Type(Type.Known.STRING))
-                .description("조회 시작일 (YYYY-MM-DD 형식). '오늘', '어제', '이번 주 월요일' 등 상대적 표현은 실제 날짜로 변환해주세요. 예: '2025-05-20'")
-                .build();
-        Schema endDateSchema = Schema.builder().type(new Type(Type.Known.STRING))
-                .description("조회 종료일 (YYYY-MM-DD 형식). startDateStr과 같거나 이후여야 합니다. 예: '2025-05-27'")
-                .build();
-        Schema measurementSchema = Schema.builder().type(new Type(Type.Known.STRING))
-                .description("조회할 핵심 측정 항목의 정확한 값 (예: 'temperature_celsius', 'usage_idle'). 사용자가 '온도', 'CPU 사용률' 등을 언급하면 해당하는 시스템의 measurement 값으로 변환해주세요. 가능한 값 예시: " + formatPossibleValuesForDescription(this.possibleMeasurementValues, 7) + ". 이 외에도 사용자가 명시한 값을 사용할 수 있습니다.")
-                .build();
-        Schema buildingSchema = Schema.builder().type(new Type(Type.Known.STRING))
-                .description("데이터가 속한 건물 이름 (선택 사항). 가능한 값 예시: " + formatPossibleValuesForDescription(this.possibleBuildingValues, 3))
-                .build();
-        Schema originSchema = Schema.builder().type(new Type(Type.Known.STRING))
-                .description("데이터의 출처 또는 시스템 그룹 (선택 사항). 가능한 값 예시: " + formatPossibleValuesForDescription(this.possibleOriginValues, 5))
-                .build();
-        Schema locationSchema = Schema.builder().type(new Type(Type.Known.STRING))
-                .description("데이터의 세부 위치 또는 센서 그룹 (선택 사항). 가능한 값 예시: " + formatPossibleValuesForDescription(this.possibleLocationValues, 5))
-                .build();
-        Schema deviceIdSchema = Schema.builder().type(new Type(Type.Known.STRING))
-                .description("조회할 특정 장치의 고유 ID (선택 사항). (예: '192.168.71.74')")
-                .build();
-        Schema placeSchema = Schema.builder().type(new Type(Type.Known.STRING))
-                .description("센서나 장치가 설치된 구체적인 장소 이름 (선택 사항). 가능한 값 예시: " + formatPossibleValuesForDescription(this.possiblePlaceValues, 3))
-                .build();
-        Schema gatewayIdSchema = Schema.builder().type(new Type(Type.Known.STRING))
-                .description("데이터를 수집한 게이트웨이의 ID (선택 사항). 가능한 값 예시: " + formatPossibleValuesForDescription(this.possibleGatewayIdValues, 5))
-                .build();
-        Schema aggregationIntervalSchema = Schema.builder().type(new Type(Type.Known.STRING))
-                .description("차트 데이터 집계 간격 (선택 사항, 예: '10m', '1h', '1d'). 사용자가 '시간별', '일별' 등을 언급하면 적절히 변환하거나, 없으면 기간에 따라 자동 결정됩니다.")
-                .build();
-        Schema includeRawDataSampleSchema = Schema.builder().type(new Type(Type.Known.BOOLEAN))
-                .description("결과에 원시 데이터 샘플을 포함할지 여부 (선택 사항, 기본값 true).")
-                .build();
-        Schema includeChartDataSchema = Schema.builder().type(new Type(Type.Known.BOOLEAN))
-                .description("결과에 차트용 집계 데이터를 포함할지 여부 (선택 사항, 기본값 true).")
-                .build();
-
-        // 파라미터 이름과 Schema 객체를 매핑하는 Map 생성 (순서 유지를 위해 LinkedHashMap 사용 가능)
-        Map<String, Schema> propertiesMap = new LinkedHashMap<>(); // 또는 HashMap
-        propertiesMap.put("startDateStr", startDateSchema);
-        propertiesMap.put("endDateStr", endDateSchema);
-        propertiesMap.put("measurement", measurementSchema);
-        propertiesMap.put("building", buildingSchema);
-        propertiesMap.put("origin", originSchema);
-        propertiesMap.put("location", locationSchema);
-        propertiesMap.put("deviceId", deviceIdSchema);
-        propertiesMap.put("place", placeSchema);
-        propertiesMap.put("gatewayId", gatewayIdSchema);
-        propertiesMap.put("aggregationInterval", aggregationIntervalSchema);
-        propertiesMap.put("includeRawDataSample", includeRawDataSampleSchema);
-        propertiesMap.put("includeChartData", includeChartDataSchema);
-
-        // 필수 파라미터 이름 목록 생성
-        List<String> requiredParams = List.of("startDateStr", "endDateStr", "measurement");
-
-        Schema parametersSchema = Schema.builder()
-                .type(new Type(Type.Known.OBJECT))
-                .properties(propertiesMap)
-                .required(requiredParams) // ★★★ required(List<String>) 메소드 사용 ★★★
-                .build();
-
-        return FunctionDeclaration.builder()
-                .name("getInfluxDbTimeSeriesData")
-                .description("사용자의 자연어 요청에 따라 InfluxDB에서 시계열 데이터를 조회하여, 건물, 출처, 위치, 장치, 측정 항목 등의 상세 필터링을 지원합니다. 분석 리포트 생성에 필요한 데이터를 준비합니다.")
-                .parameters(parametersSchema)
-                .build();
-    }
-
-    // formatPossibleValuesForDescription 메소드 (이전과 동일)
-    private String formatPossibleValuesForDescription(List<String> values, int limit) {
-        if (values == null || values.isEmpty()) {
-            return "(사용 가능한 값 정보 없음)";
-        }
-        List<String> limitedValues = values.stream()
-                .filter(s -> s != null && !s.isBlank())
-                .limit(limit)
-                .map(s -> "'" + s + "'")
-                .collect(Collectors.toList());
-        if (limitedValues.isEmpty()) return "(예시 값 없음)";
-
-        String examples = String.join(", ", limitedValues);
-        if (values.size() > limit) {
-            examples += ", 등 (총 " + values.size() + "개)";
-        }
-        return examples;
-    }
-
-    // prepareDataForAiReport 메소드 (이전과 거의 동일, Schema 변경과 직접 관련 없음)
-    public Map<String, Object> prepareDataForAiReport(Map<String, Object> functionCallParams) {
-        // (이전 답변의 prepareDataForAiReport 메소드 내용 전체 복사)
-        log.info("AI 리포트용 데이터 준비 요청 - Function Call 파라미터: {}", functionCallParams);
-        Map<String, Object> result = new HashMap<>();
-
-        // 1. 파라미터 파싱, 유효성 검사, 기본값 설정
-        String startDateStr = (String) functionCallParams.get("startDateStr");
-        String endDateStr = (String) functionCallParams.get("endDateStr");
-        String measurement = (String) functionCallParams.get("measurement");
-        String building = (String) functionCallParams.get("building");
-        String origin = (String) functionCallParams.get("origin");
-        String location = (String) functionCallParams.get("location");
-        String deviceId = (String) functionCallParams.get("deviceId");
-        String place = (String) functionCallParams.get("place");
-        String gatewayId = (String) functionCallParams.get("gatewayId");
-
-        LocalDateTime actualStartDateTime;
-        LocalDateTime actualEndDateTime;
-        try {
-            actualStartDateTime = (startDateStr != null && !startDateStr.isBlank())
-                    ? LocalDate.parse(startDateStr).atStartOfDay()
-                    : LocalDate.now().minusWeeks(1).atStartOfDay();
-            actualEndDateTime = (endDateStr != null && !endDateStr.isBlank())
-                    ? LocalDate.parse(endDateStr).atTime(LocalTime.MAX)
-                    : LocalDate.now().atTime(LocalTime.MAX);
-        } catch (DateTimeParseException e) {
-            log.error("날짜 형식 오류 - startDateStr='{}', endDateStr='{}'", startDateStr, endDateStr, e);
-            result.put("error", "날짜 형식이 올바르지 않습니다 (YYYY-MM-DD 형식으로 요청해주세요).");
-            return result;
-        }
-
-        if (measurement == null || measurement.isBlank()) {
-            log.warn("AI Function Call: measurement 파라미터가 누락되었습니다.");
-            result.put("error", "분석할 측정 항목(measurement)이 지정되지 않았습니다.");
-            return result;
-        }
-        String actualMeasurement = measurement;
-        String actualOrigin = (origin != null && !origin.isBlank()) ? origin : getDefaultOriginForAi(actualMeasurement);
-
-        Map<String, String> tagFiltersForQuery = new HashMap<>();
-        if (building != null && !building.isBlank()) tagFiltersForQuery.put("building", building);
-        if (location != null && !location.isBlank()) tagFiltersForQuery.put("location", location);
-        if (deviceId != null && !deviceId.isBlank()) tagFiltersForQuery.put("deviceId", deviceId);
-        if (place != null && !place.isBlank()) tagFiltersForQuery.put("place", place);
-        if (gatewayId != null && !gatewayId.isBlank()) tagFiltersForQuery.put("gatewayId", gatewayId);
-
-        boolean includeRawDataSample = functionCallParams.get("includeRawDataSample") instanceof Boolean ? (Boolean) functionCallParams.get("includeRawDataSample") : true;
-        boolean includeChartData = functionCallParams.get("includeChartData") instanceof Boolean ? (Boolean) functionCallParams.get("includeChartData") : true;
-        String aggregationInterval = (String) functionCallParams.getOrDefault("aggregationInterval",
-                determineDynamicAggregationInterval(actualStartDateTime.toLocalDate(), actualEndDateTime.toLocalDate()));
-
-        result.put("actualStartDate", actualStartDateTime.toLocalDate());
-        result.put("actualEndDate", actualEndDateTime.toLocalDate());
-        result.put("actualMeasurement", actualMeasurement);
-        if (actualOrigin != null) result.put("actualOrigin", actualOrigin);
-        else result.put("actualOrigin", "모든 Origin (또는 기본값)");
-        result.put("appliedFilters", new HashMap<>(tagFiltersForQuery));
-        result.put("actualAggregationInterval", aggregationInterval);
-
-        log.info("TimeSeriesDataService 호출 준비 - Origin: {}, Measurement: {}, TagFilters: {}, Period: {} ~ {}",
-                actualOrigin, actualMeasurement, tagFiltersForQuery, actualStartDateTime, actualEndDateTime);
-
-        if (includeRawDataSample) {
-            List<TimeSeriesDataDto> rawData = timeSeriesDataService.getRawTimeSeriesData(
-                    actualOrigin, actualMeasurement, tagFiltersForQuery, actualStartDateTime, actualEndDateTime);
-            result.put("rawDataSample", rawData != null ? rawData.stream().limit(10).collect(Collectors.toList()) : Collections.emptyList());
-            result.put("totalRawDataCount", rawData != null ? rawData.size() : 0);
-        }
-
-        if (includeChartData) {
-            Map<String, String> chartTagFilters = new HashMap<>(tagFiltersForQuery);
-            if (actualOrigin != null && !actualOrigin.isBlank()) {
-                chartTagFilters.put("origin", actualOrigin);
+            // 1. 프롬프트에서 gatewayId 추출
+            String gatewayId = extractGatewayFromPrompt(userPrompt);
+            if (gatewayId == null) {
+                return createErrorResult("요청하신 내용에서 시스템 유형을 찾을 수 없습니다. (CPU, 메모리, 온도, 전력, 인증서비스, 환경API, 프론트엔드, 게이트웨이, 회원서비스)");
             }
-            ChartDataDto chart = timeSeriesDataService.getAggregatedChartDataForPeriod(
-                    actualMeasurement, "value", chartTagFilters, actualStartDateTime, actualEndDateTime,
-                    aggregationInterval, DEFAULT_CHART_X_AXIS_FORMATTER);
-            result.put("charts", chart != null && chart.getLabels() != null && !chart.getLabels().isEmpty() ? List.of(chart) : Collections.emptyList());
-        }
 
-        boolean noRawData = !result.containsKey("rawDataSample") || ((List<?>)result.get("rawDataSample")).isEmpty();
-        boolean noChartData = !result.containsKey("charts") || ((List<?>)result.get("charts")).isEmpty();
-        if (noRawData && noChartData) {
-            result.put("dataRetrievalMessage", "요청하신 조건으로 조회된 데이터가 없습니다. 기간, 측정항목, 필터 등을 확인해주세요.");
-        } else {
-            result.put("dataRetrievalMessage", "데이터 조회가 완료되었습니다.");
-        }
+            // 2. gatewayId에 해당하는 location 결정
+            String location = GATEWAY_TO_LOCATION.get(gatewayId);
+            if (location == null) {
+                return createErrorResult("시스템 유형 '" + gatewayId + "'에 대한 위치 정보를 찾을 수 없습니다.");
+            }
 
-        log.info("AI 리포트용 데이터 준비 완료. 결과 키: {}", result.keySet());
-        return result;
+            // 3. 프롬프트에서 measurement 추출
+            String measurement = extractMeasurementFromPrompt(userPrompt, gatewayId);
+            if (measurement == null) {
+                // 기본값: 해당 gateway의 첫 번째 measurement
+                measurement = GATEWAY_TO_MEASUREMENTS.get(gatewayId).get(0);
+                log.info("measurement를 특정할 수 없어 기본값 사용: {}", measurement);
+            }
+
+            // 4. 기본 조회 기간: 최근 24시간
+            LocalDateTime endTime = LocalDateTime.now();
+            LocalDateTime startTime = endTime.minusHours(24);
+
+            // 5. TimeSeriesDataService 호출 (location 필터 추가)
+            Map<String, String> filters = new HashMap<>();
+            filters.put("gatewayId", gatewayId);
+            filters.put("location", location);
+
+            List<TimeSeriesDataDto> rawData = timeSeriesDataService.getRawTimeSeriesData(
+                    "server_data", // origin은 모두 server_data로 통일
+                    measurement,
+                    filters,
+                    startTime,
+                    endTime
+            );
+
+            // 6. 차트 데이터도 조회
+            String aggregationInterval = isServiceMetric(gatewayId) ? "30m" : "1h";
+
+            ChartDataDto chartData = timeSeriesDataService.getAggregatedChartDataForPeriod(
+                    measurement,
+                    "value",
+                    filters,
+                    startTime,
+                    endTime,
+                    aggregationInterval,
+                    DEFAULT_CHART_X_AXIS_FORMATTER
+            );
+
+            // 7. 결과 구성
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("gatewayId", gatewayId);
+            result.put("location", location);
+            result.put("measurement", measurement);
+            result.put("startTime", startTime);
+            result.put("endTime", endTime);
+            result.put("totalDataCount", rawData.size());
+            result.put("rawDataSample", rawData.stream().limit(5).collect(Collectors.toList()));
+            result.put("chartData", chartData);
+
+            // AI에게 전달할 요약 정보
+            if (!rawData.isEmpty()) {
+                double avgValue = rawData.stream()
+                        .mapToDouble(TimeSeriesDataDto::getValue)
+                        .average()
+                        .orElse(0.0);
+                double maxValue = rawData.stream()
+                        .mapToDouble(TimeSeriesDataDto::getValue)
+                        .max()
+                        .orElse(0.0);
+                double minValue = rawData.stream()
+                        .mapToDouble(TimeSeriesDataDto::getValue)
+                        .min()
+                        .orElse(0.0);
+
+                String unit = getUnitForMeasurement(measurement);
+                String description = getDescriptionForMeasurement(measurement);
+                String serviceInfo = isServiceMetric(gatewayId) ? " (" + getServiceName(gatewayId) + ")" : "";
+
+                result.put("summary", String.format(
+                        "최근 24시간 %s%s 데이터 %d건 조회됨. %s\n평균: %.2f%s, 최대: %.2f%s, 최소: %.2f%s",
+                        measurement, serviceInfo, rawData.size(), description,
+                        avgValue, unit, maxValue, unit, minValue, unit
+                ));
+            } else {
+                result.put("summary", "조회된 데이터가 없습니다.");
+            }
+
+            log.info("단순 리포트 데이터 준비 완료 - gatewayId: {}, location: {}, measurement: {}, 데이터 건수: {}",
+                    gatewayId, location, measurement, rawData.size());
+            return result;
+
+        } catch (Exception e) {
+            log.error("단순 리포트 데이터 준비 중 오류 발생", e);
+            return createErrorResult("데이터 조회 중 오류가 발생했습니다: " + e.getMessage());
+        }
     }
 
-    // getDefaultOriginForAi, determineDynamicAggregationInterval 메소드 (이전과 동일)
-    private String getDefaultOriginForAi(String measurement) {
-        if (this.possibleOriginValues != null && !this.possibleOriginValues.isEmpty()) {
-            if (measurement != null) {
-                if (measurement.toLowerCase().contains("cpu") && this.possibleOriginValues.contains("server_data")) {
-                    return "server_data";
-                } else if ((measurement.toLowerCase().contains("temperature") || measurement.toLowerCase().contains("humidity")) && this.possibleOriginValues.contains("server_data")) {
-                    return "server_data";
+    // 나머지 헬퍼 메소드들은 이전과 동일...
+    private String extractGatewayFromPrompt(String prompt) {
+        String lowerPrompt = prompt.toLowerCase();
+
+        for (Map.Entry<String, String> entry : KEYWORD_TO_GATEWAY.entrySet()) {
+            if (lowerPrompt.contains(entry.getKey())) {
+                log.debug("프롬프트에서 키워드 '{}' 발견 -> gatewayId: {}", entry.getKey(), entry.getValue());
+                return entry.getValue();
+            }
+        }
+
+        log.warn("프롬프트에서 gatewayId를 추출할 수 없음: {}", prompt);
+        return null;
+    }
+
+    private String extractMeasurementFromPrompt(String prompt, String gatewayId) {
+        String lowerPrompt = prompt.toLowerCase();
+
+        // 1. 키워드 기반 매핑 시도
+        for (Map.Entry<String, String> entry : MEASUREMENT_KEYWORDS.entrySet()) {
+            if (lowerPrompt.contains(entry.getKey())) {
+                String candidateMeasurement = entry.getValue();
+                if (GATEWAY_TO_MEASUREMENTS.get(gatewayId).contains(candidateMeasurement)) {
+                    log.debug("프롬프트에서 measurement 키워드 '{}' 발견 -> measurement: {}",
+                            entry.getKey(), candidateMeasurement);
+                    return candidateMeasurement;
                 }
             }
-            return this.possibleOriginValues.get(0);
         }
-        return "default_system_origin";
+
+        // 2. gatewayId별 특별 규칙
+        if ("cpu".equals(gatewayId)) {
+            if (lowerPrompt.contains("idle") || lowerPrompt.contains("유휴")) {
+                return "usage_idle";
+            } else if (lowerPrompt.contains("system") || lowerPrompt.contains("시스템")) {
+                return "usage_system";
+            } else if (lowerPrompt.contains("user") || lowerPrompt.contains("사용자")) {
+                return "usage_user";
+            }
+            return "usage_idle";
+        } else if ("mem".equals(gatewayId)) {
+            if (lowerPrompt.contains("available") || lowerPrompt.contains("사용가능")) {
+                return "available_percent";
+            } else if (lowerPrompt.contains("used") || lowerPrompt.contains("사용중")) {
+                return "used_percent";
+            }
+            return "available_percent";
+        } else if (isServiceMetric(gatewayId)) {
+            if (lowerPrompt.contains("heap") || lowerPrompt.contains("힙")) {
+                return "memory_total_heap_used_bytes";
+            } else if (lowerPrompt.contains("oldgen") || lowerPrompt.contains("올드젠")) {
+                return "memory_old_gen_used_bytes";
+            } else if (lowerPrompt.contains("gc") || lowerPrompt.contains("가비지")) {
+                return "gc_g1_young_generation_count";
+            } else if (lowerPrompt.contains("thread") || lowerPrompt.contains("스레드")) {
+                return "thread_active_count";
+            } else if (lowerPrompt.contains("file") || lowerPrompt.contains("파일")) {
+                return "process_open_file_descriptors_count";
+            } else if (lowerPrompt.contains("cpu") || lowerPrompt.contains("씨피유")) {
+                return "cpu_utilization_percent";
+            }
+            return "cpu_utilization_percent";
+        }
+
+        return null;
     }
 
-    private String determineDynamicAggregationInterval(LocalDate startDate, LocalDate endDate) {
-        if (startDate == null || endDate == null) return "1h";
-        long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
-        if (daysBetween < 0) daysBetween = 0;
-        if (daysBetween <= 1) return "10m";
-        if (daysBetween <= 7) return "1h";
-        if (daysBetween <= 31) return "6h";
-        if (daysBetween <= 90) return "1d";
-        return "1w";
+    private boolean isServiceMetric(String gatewayId) {
+        return gatewayId.startsWith("javame-");
+    }
+
+    private String getServiceName(String gatewayId) {
+        switch (gatewayId) {
+            case "javame-auth": return "인증 서비스";
+            case "javame-environment-api": return "환경 API";
+            case "javame-frontend": return "프론트엔드";
+            case "javame-gateway": return "게이트웨이";
+            case "javame-member": return "회원 서비스";
+            default: return gatewayId;
+        }
+    }
+
+    private String getUnitForMeasurement(String measurement) {
+        if (measurement.contains("bytes")) {
+            return " bytes";
+        } else if (measurement.contains("percent")) {
+            return "%";
+        } else if (measurement.contains("count")) {
+            return " 개";
+        } else if (measurement.contains("usage_")) {
+            return "%";
+        } else if (measurement.contains("temp")) {
+            return "°C";
+        } else if (measurement.contains("power")) {
+            return " watts";
+        } else if (measurement.contains("current")) {
+            return " amps";
+        } else if (measurement.contains("utilization")) {
+            return "%";
+        }
+        return "";
+    }
+
+    private String getDescriptionForMeasurement(String measurement) {
+        switch (measurement) {
+            case "cpu_utilization_percent": return "서비스 CPU 사용률";
+            case "memory_total_heap_used_bytes": return "JVM 힙 메모리 사용량";
+            case "memory_old_gen_used_bytes": return "JVM 올드젠 메모리 사용량";
+            case "gc_g1_young_generation_count": return "G1 Young Generation GC 실행 횟수";
+            case "thread_active_count": return "활성 스레드 수";
+            case "process_open_file_descriptors_count": return "열린 파일 디스크립터 수";
+            case "usage_idle": return "CPU 유휴 사용률";
+            case "temp_input": return "온도 센서 값";
+            case "power_watts": return "전력 소비량";
+            case "available_percent": return "메모리 가용률";
+            case "used_percent": return "메모리 사용률";
+            default: return "시스템 메트릭";
+        }
+    }
+
+    private Map<String, Object> createErrorResult(String errorMessage) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", false);
+        result.put("error", errorMessage);
+        result.put("summary", errorMessage);
+        return result;
     }
 }
