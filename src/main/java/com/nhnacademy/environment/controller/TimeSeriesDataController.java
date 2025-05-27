@@ -1,4 +1,4 @@
-package com.nhnacademy.environment.timeseries.controller;
+package com.nhnacademy.environment.controller;
 
 import com.nhnacademy.environment.config.annotation.HasRole;
 import com.nhnacademy.environment.timeseries.dto.ChartDataDto;

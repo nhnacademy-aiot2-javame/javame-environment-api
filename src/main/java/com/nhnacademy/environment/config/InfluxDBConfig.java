@@ -49,11 +49,7 @@ public class InfluxDBConfig {
      */
     @Bean
     public InfluxDBClient influxDBClient() {
-        log.info("[InfluxDB 연결 정보]");
-        log.info("▶ URL    : {}", url);
-        log.info("▶ Token  : {}", token);
-        log.info("▶ Org    : {}", orgValue);
-        log.info("▶ Bucket : {}", bucket);
+        log.info("[InfluxDB 연결 성공]");
         return InfluxDBClientFactory.create(url, token.toCharArray());
     }
 

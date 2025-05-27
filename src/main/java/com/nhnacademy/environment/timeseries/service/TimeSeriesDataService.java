@@ -73,6 +73,7 @@ public class TimeSeriesDataService {
                     !key.equals("measurement") && // influxdb 에서 measurement 없어질 때 까지 임시로 쿼리에서 제거
                     value != null && !value.isBlank()) {
                 flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value));
+                // fetch 요청이 한글로 오면 디코딩 필요
             }
         });
 

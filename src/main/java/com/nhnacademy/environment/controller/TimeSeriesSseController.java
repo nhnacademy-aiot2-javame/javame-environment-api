@@ -1,4 +1,4 @@
-package com.nhnacademy.environment.timeseries.controller;
+package com.nhnacademy.environment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.environment.config.annotation.HasRole;
@@ -55,7 +55,7 @@ public class TimeSeriesSseController {
         allParams.remove("range");
         allParams.remove("origin");
 
-        SseEmitter emitter = new SseEmitter(0L); // timeout 없음
+        SseEmitter emitter = new SseEmitter(60 * 60 * 1000L); // timeout 1시간
         Executors.newSingleThreadExecutor().execute(() -> {
             try {
                 while (true) {
