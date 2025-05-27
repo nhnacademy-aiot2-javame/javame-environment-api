@@ -15,10 +15,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * InfluxDB 로부터 시계열 데이터를 조회 및 가공하는 서비스입니다.
@@ -507,5 +504,80 @@ public class TimeSeriesDataService {
             log.error("AggregatedChartData query 실패 - measurement: {}, filters: {}", measurement, filters, e);
         }
         return new ChartDataDto(labels, values, chartTitle);
+    }
+
+    /**
+     * 지정된 태그 이름(tagName)에 대한 모든 고유한 태그 값들을 반환합니다.
+     * 예: tagName이 "location"이면, 모든 고유한 location 값들을 반환합니다.
+     *
+     * @param tagName 조회할 태그의 이름 (예: "building", "origin", "location")
+     * @return 해당 태그의 고유 값 목록. 오류 발생 또는 값 없음 시 빈 리스트 반환.
+     */
+    public List<String> getDistinctTagValues(String tagName) {
+        if (tagName == null || tagName.isBlank()) {
+            log.warn("getDistinctTagValues 호출 시 tagName이 null이거나 비어있습니다.");
+            return Collections.emptyList();
+        }
+        // Flux 쿼리: 최근 1년 데이터에서 특정 태그의 고유 값을 최대 100개까지 가져옵니다.
+        // range는 상황에 맞게 조절 가능합니다. 너무 길면 성능에 영향을 줄 수 있습니다.
+        String fluxQuery = String.format(
+                "from(bucket: \"%s\") |> range(start: -365d) |> keep(columns: [\"%s\"]) |> distinct(column: \"%s\") |> group() |> sort() |> limit(n: 100)",
+                bucket, tagName, tagName
+        );
+        log.debug("Executing Flux for distinct tag values of [{}]: {}", tagName, fluxQuery);
+
+        List<String> values = new ArrayList<>();
+        // QueryApi는 생성자에서 주입받은 queryApi 필드 사용
+        try {
+            List<FluxTable> tables = queryApi.query(fluxQuery, influxOrg);
+            for (FluxTable table : tables) {
+                for (FluxRecord record : table.getRecords()) {
+                    // distinct의 결과는 _value 컬럼에 담겨 반환됩니다.
+                    if (record.getValue() != null) {
+                        values.add(String.valueOf(record.getValue()));
+                    }
+                }
+            }
+            log.info("Found {} distinct values for tag '{}'", values.size(), tagName);
+        } catch (Exception e) {
+            log.error("Failed to get distinct tag values for '{}': {}", tagName, e.getMessage(), e);
+            // 오류 발생 시 빈 리스트를 반환하여 AiReportDataService의 초기화가 중단되지 않도록 합니다.
+            return Collections.emptyList();
+        }
+        return values;
+    }
+
+    /**
+     * InfluxDB 버킷에 있는 모든 고유한 측정 항목(_measurement) 이름들을 반환합니다.
+     *
+     * @return 모든 고유한 _measurement 이름 목록. 오류 발생 또는 값 없음 시 빈 리스트 반환.
+     */
+    public List<String> getDistinctMeasurementValues() {
+        // Flux 쿼리: schema.measurements 함수를 사용하여 버킷의 모든 measurement 이름을 가져옵니다. 최대 100개.
+        String fluxQuery = String.format(
+                "import \"influxdata/influxdb/schema\" schema.measurements(bucket: \"%s\") |> sort() |> limit(n:100)",
+                bucket
+        );
+        log.debug("Executing Flux for distinct measurement values: {}", fluxQuery);
+
+        List<String> measurements = new ArrayList<>();
+        // QueryApi는 생성자에서 주입받은 queryApi 필드 사용
+        try {
+            List<FluxTable> tables = queryApi.query(fluxQuery, influxOrg);
+            for (FluxTable table : tables) {
+                for (FluxRecord record : table.getRecords()) {
+                    // schema.measurements의 결과는 _value 컬럼에 measurement 이름을 담아 반환합니다.
+                    if (record.getValueByKey("_value") != null) { // FluxRecord.getValue() 또는 getValueByKey("_value")
+                        measurements.add(String.valueOf(record.getValueByKey("_value")));
+                    }
+                }
+            }
+            log.info("Found {} distinct measurement values", measurements.size());
+        } catch (Exception e) {
+            log.error("Failed to get distinct measurement values: {}", e.getMessage(), e);
+            // 오류 발생 시 빈 리스트를 반환
+            return Collections.emptyList();
+        }
+        return measurements;
     }
 }

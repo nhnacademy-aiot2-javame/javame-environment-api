@@ -12,22 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 public class ReportRequestDto {
 
-    private String reportType;
-
-    private LocalDate startDate;
-
-    private LocalDate endDate;
-
-    private List<String> targetOrigins;
-
-    private List<String> targetLocations;
-
-    private List<String> deviceIds;
-
-    private List<String> gatewayIds;
-
-    private List<String> measurements;
-
+    // 사용자의 프롬프트
     private String userPrompt;
+
+    // 리포트의 성격 및 형태
+    private String reportType;
 
 }
