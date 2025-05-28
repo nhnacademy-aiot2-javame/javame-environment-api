@@ -1,6 +1,8 @@
 package com.nhnacademy.environment.controller;
 
+import com.nhnacademy.environment.config.annotation.CompanyDomainContext;
 import com.nhnacademy.environment.config.annotation.HasRole;
+import com.nhnacademy.environment.config.annotation.NormalizeCompanyDomain;
 import com.nhnacademy.environment.timeseries.dto.ChartDataDto;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
@@ -31,24 +33,23 @@ public class TimeSeriesDataController {
      * 특정 origin 의 시계열 데이터를 필터 기준으로 조회.
      *
      * @param companyDomain 회사 도메인
-     * @param origin        origin(sensor_data, server_data 등)
      * @param range         범위 (기본 180분)
      * @param allParams     measurement, location 등 필터용 파라미터
      * @return 측정값별 시계열 데이터 Map
      */
+    @NormalizeCompanyDomain
     @GetMapping("/time-series")
 //    //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public Map<String, List<TimeSeriesDataDto>> getTimeSeriesData(
             @PathVariable String companyDomain,
-            @RequestParam String origin,
             @RequestParam(defaultValue = "180") int range,
             @RequestParam Map<String, String> allParams
     ) {
         allParams.remove("range");
-        allParams.remove("origin");
+        allParams.put("companyDomain", CompanyDomainContext.get());
 
-        log.info("/time-series 요청 도착 - origin: {}, range: {}, filters: {}", origin, range, allParams);
-        return timeSeriesDataService.getTimeSeriesData(origin, allParams, range);
+        log.info("/time-series 요청 도착 - companyDomain: {}, range: {}, filters: {}", CompanyDomainContext.get(), range, allParams);
+        return timeSeriesDataService.getTimeSeriesData(allParams, range);
     }
 
 
@@ -86,19 +87,20 @@ public class TimeSeriesDataController {
 
     /**
      * 측정값(_measurement) 목록 조회.
-     * origin, location, companyDomain 필터에 따라 InfluxDB에서 중복 제거된 측정 항목 목록을 반환합니다.
+     * origin, location, companyDomain 필터에 따라 InfluxDB 에서 중복 제거된 측정 항목 목록을 반환합니다.
      *
-     * @param companyDomain 회사 도메인
+     * @param companyDomain 회사 도메인 (실제로 사용하진 않지만 IDE 경고를 무시하기 위한 용도로 사용)
      * @param filters        companyDomain 을 제외한 influxdb 태그
      * @return 중복 제거된 _measurement 리스트 (예: usage_idle, battery 등)
      */
+    @NormalizeCompanyDomain
     @GetMapping("/measurements")
     //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getMeasurements(
             @PathVariable String companyDomain,
             @RequestParam Map<String, String> filters
     ) {
-        filters.put("companyDomain", companyDomain);
+        filters.put("companyDomain", CompanyDomainContext.get());
         return timeSeriesDataService.getMeasurementList(filters);
     }
 

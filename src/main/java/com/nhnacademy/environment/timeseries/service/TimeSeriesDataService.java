@@ -54,26 +54,24 @@ public class TimeSeriesDataService {
      * origin 및 다양한 태그 필터를 기준으로 시계열 데이터를 조회하여 Map 형태로 반환합니다.
      * 측정값(measurement) 기준으로 그룹화됩니다.
      *
-     * @param origin 데이터 출처(origin 태그)
      * @param allParams 태그 필터 조건
      * @param rangeMinutes 조회 범위 (분)
      * @return 측정값 기준 그룹화된 시계열 데이터 맵
      */
-    public Map<String, List<TimeSeriesDataDto>> getTimeSeriesData(String origin,
-                                                                  Map<String, String> allParams,
+    public Map<String, List<TimeSeriesDataDto>> getTimeSeriesData(Map<String, String> allParams,
                                                                   int rangeMinutes) {
+        String companyDomain = allParams.get("companyDomain");
+
         StringBuilder flux = new StringBuilder(
                 String.format("from(bucket: \"%s\") |> range(start: -%dm)", bucket, rangeMinutes)
         );
 
-        flux.append(String.format(" |> filter(fn: (r) => r[\"origin\"] == \"%s\")", origin));
+        flux.append(String.format(" |> filter(fn: (r) => r[\"companyDomain\"] == \"%s\")", companyDomain));
 
         allParams.forEach((key, value) -> {
-            if (!key.equals("origin") &&
-                    !key.equals("measurement") && // influxdb 에서 measurement 없어질 때 까지 임시로 쿼리에서 제거
+            if (!key.equals("measurement") &&
                     value != null && !value.isBlank()) {
                 flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value));
-                // fetch 요청이 한글로 오면 디코딩 필요
             }
         });
 
@@ -98,7 +96,6 @@ public class TimeSeriesDataService {
                     for (String tagKey : allParams.keySet()) {
                         tags.put(tagKey, InfluxUtil.getTagValue(record, tagKey));
                     }
-                    tags.put("origin", origin);
 
                     TimeSeriesDataDto dto = new TimeSeriesDataDto(time, location, value, measurement, tags);
                     resultMap.computeIfAbsent(measurement, k -> new ArrayList<>()).add(dto);
@@ -123,19 +120,18 @@ public class TimeSeriesDataService {
      * @return 중복 제거된 _measurement 목록 (측정 항목 리스트)
      */
     public List<String> getMeasurementList(Map<String, String> filters) {
-        String origin = filters.get("origin");
         String companyDomain = filters.get("companyDomain");
-        String gatewayId = filters.get("gatewayId");
 
         StringBuilder flux = new StringBuilder();
         flux.append("from(bucket: \"").append(bucket).append("\")")
                 .append(" |> range(start: -1h)")
-                .append(" |> filter(fn: (r) => r.origin == \"").append(origin).append("\"")
-                .append(" and r.companyDomain == \"").append(companyDomain).append("\"");
+                .append(" |> filter(fn: (r) => r.companyDomain == \"").append(companyDomain).append("\"");
 
-        if (gatewayId != null) {
-            flux.append(" and r.gatewayId == \"").append(gatewayId).append("\"");
-        }
+        filters.forEach((key, value) -> {
+            if (!key.equals("measurement") && value != null && !value.isBlank()) {
+                flux.append(" and r.").append(key).append(" == \"").append(value).append("\"");
+            }
+        });
 
         flux.append(")")
                 .append(" |> keep(columns: [\"_measurement\"])")
@@ -152,6 +148,7 @@ public class TimeSeriesDataService {
         }
         return result;
     }
+
 
     /**
      * 특정 태그 컬럼에 대해 중복 제거된 값을 조회합니다.

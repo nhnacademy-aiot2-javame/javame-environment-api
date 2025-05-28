@@ -1,6 +1,7 @@
 package com.nhnacademy.environment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.environment.config.annotation.CompanyDomainContext;
 import com.nhnacademy.environment.config.annotation.HasRole;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
@@ -53,14 +54,15 @@ public class TimeSeriesSseController {
             @RequestParam Map<String, String> allParams
     ) {
         allParams.remove("range");
-        allParams.remove("origin");
+        allParams.put("companyDomain", CompanyDomainContext.get());
+        allParams.put("origin", origin);
 
         SseEmitter emitter = new SseEmitter(60 * 60 * 1000L); // timeout 1시간
         Executors.newSingleThreadExecutor().execute(() -> {
             try {
                 while (true) {
                     Map<String, List<TimeSeriesDataDto>> data =
-                            timeSeriesDataService.getTimeSeriesData(origin, allParams, range);
+                            timeSeriesDataService.getTimeSeriesData(allParams, range);
 
                     emitter.send(SseEmitter.event()
                             .name("time-series-update")
