@@ -147,4 +147,38 @@ public class TimeSeriesDataController {
 
         return timeSeriesDataService.getPieChartData(filters);
     }
+
+    @GetMapping("/current") // 새로운 엔드포인트 경로
+    // @HasRole(...) // 필요시 권한 설정
+    public TimeSeriesDataDto getCurrentValue(
+            @PathVariable String companyDomain,
+            @RequestParam String origin,
+            @RequestParam String location,
+            @RequestParam("_measurement") String measurement, // JS의 getCurrentSensorValue와 파라미터명 일치
+            @RequestParam(value = "_field", required = false) String field
+    ) {
+        Map<String, String> filters = new HashMap<>();
+        filters.put("origin", origin);
+        filters.put("location", location);
+        filters.put("_measurement", measurement);
+        filters.put("companyDomain", companyDomain); // 서비스에서 필요하면 추가
+
+        if (field != null && !field.isEmpty()) {
+            filters.put("_field", field);
+        }
+
+        log.info("/current 요청 - company: {}, origin: {}, location: {}, measurement: {}, field: {}",
+                companyDomain, origin, location, measurement, field);
+
+        // TimeSeriesDataService에 최신 값 하나만 가져오는 메소드 호출
+        TimeSeriesDataDto latestData = timeSeriesDataService.getLatestTimeSeriesData(filters);
+
+        if (latestData == null) {
+            log.warn("/current 요청에 대한 데이터 없음");
+            // 적절한 응답 처리 (예: ResponseEntity.notFound().build(); 또는 빈 객체 반환)
+            // 여기서는 간단히 null을 반환하거나, 클라이언트에서 처리할 수 있도록 빈 DTO 반환
+            return null; // 또는 new TimeSeriesDataDto(); // 클라이언트에서 null 체크 필요
+        }
+        return latestData;
+    }
 }

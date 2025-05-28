@@ -20,6 +20,10 @@
 
     <properties>
         <java.version>21</java.version>
+        <!-- Gemini API 추가를 위한 최신 버전 BOM 추가-->
+        <google.cloud.bom.version>26.40.0</google.cloud.bom.version>
+        <!-- Google AI (Generative AI) Java SDK 버전 -->
+        <google.genai.version>1.0.0</google.genai.version>
     </properties>
 
     <dependencies>
@@ -139,6 +143,12 @@
             <artifactId>resilience4j-feign</artifactId>
         </dependency>
 
+        <!-- AI 모델 추가 -->
+        <dependency>
+            <groupId>com.google.genai</groupId>
+            <artifactId>google-genai</artifactId>
+            <version>1.0.0</version> <!-- 또는 최신 버전 -->
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -147,6 +157,15 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>2024.0.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- 구글 클라우드 추가 -->
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>${google.cloud.bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -211,6 +230,17 @@
                 <configuration>
                     <!-- test skip 하려면 true 설정 -->
                     <skipTests>false</skipTests>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
         </plugins>
