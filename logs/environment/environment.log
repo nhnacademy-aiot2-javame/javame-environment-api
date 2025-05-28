@@ -1,25 +1,329 @@
-2025-05-28 13:01:51 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
-2025-05-28 13:06:51 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
-2025-05-28 13:11:51 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
-2025-05-28 13:13:01 [http-nio-10273-exec-7] DEBUG com.nhnacademy.environment.config.TraceIdFilter - TraceId [d1e1587c] created for request: /environment/javame/current
-2025-05-28 13:13:01 [http-nio-10273-exec-7] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.timeseries.controller.TimeSeriesDataController.getCurrentValue()
-2025-05-28 13:13:01 [http-nio-10273-exec-7] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesDataController - /current 요청 - company: javame, origin: server_data, location: server_resource_data, measurement: used_percent, field: null
-2025-05-28 13:13:01 [http-nio-10273-exec-7] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getLatestTimeSeriesData()
-2025-05-28 13:13:01 [http-nio-10273-exec-7] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesDataService - [LatestData] Flux query = from(bucket: "data") |> range(start: -7d) |> filter(fn: (r) => r._measurement == "used_percent") |> filter(fn: (r) => r["origin"] == "server_data") |> filter(fn: (r) => r["location"] == "server_resource_data") |> filter(fn: (r) => r["companyDomain"] == "javame") |> sort(columns: ["_time"], desc: true) |> limit(n:1)
-2025-05-28 13:13:02 [http-nio-10273-exec-7] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getLatestTimeSeriesData() => 753ms
-2025-05-28 13:13:02 [http-nio-10273-exec-7] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.timeseries.controller.TimeSeriesDataController.getCurrentValue() => 758ms
-2025-05-28 13:13:02 [http-nio-10273-exec-4] DEBUG com.nhnacademy.environment.config.TraceIdFilter - TraceId [29e7e168] created for request: /environment/javame/current
-2025-05-28 13:13:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.timeseries.controller.TimeSeriesDataController.getCurrentValue()
-2025-05-28 13:13:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesDataController - /current 요청 - company: javame, origin: server_data, location: server_resource_data, measurement: used_percent, field: null
-2025-05-28 13:13:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getLatestTimeSeriesData()
-2025-05-28 13:13:02 [http-nio-10273-exec-4] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesDataService - [LatestData] Flux query = from(bucket: "data") |> range(start: -7d) |> filter(fn: (r) => r._measurement == "used_percent") |> filter(fn: (r) => r["origin"] == "server_data") |> filter(fn: (r) => r["location"] == "server_resource_data") |> filter(fn: (r) => r["companyDomain"] == "javame") |> sort(columns: ["_time"], desc: true) |> limit(n:1)
-2025-05-28 13:13:03 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getLatestTimeSeriesData() => 577ms
-2025-05-28 13:13:03 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.timeseries.controller.TimeSeriesDataController.getCurrentValue() => 578ms
-2025-05-28 13:13:03 [http-nio-10273-exec-9] DEBUG com.nhnacademy.environment.config.TraceIdFilter - TraceId [5531ceda] created for request: /environment/javame/current
-2025-05-28 13:13:03 [http-nio-10273-exec-9] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.timeseries.controller.TimeSeriesDataController.getCurrentValue()
-2025-05-28 13:13:03 [http-nio-10273-exec-9] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesDataController - /current 요청 - company: javame, origin: server_data, location: power_meter, measurement: temperature_celsius, field: null
-2025-05-28 13:13:03 [http-nio-10273-exec-9] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getLatestTimeSeriesData()
-2025-05-28 13:13:03 [http-nio-10273-exec-9] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesDataService - [LatestData] Flux query = from(bucket: "data") |> range(start: -7d) |> filter(fn: (r) => r._measurement == "temperature_celsius") |> filter(fn: (r) => r["origin"] == "server_data") |> filter(fn: (r) => r["location"] == "power_meter") |> filter(fn: (r) => r["companyDomain"] == "javame") |> sort(columns: ["_time"], desc: true) |> limit(n:1)
-2025-05-28 13:13:03 [http-nio-10273-exec-9] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getLatestTimeSeriesData() => 281ms
-2025-05-28 13:13:03 [http-nio-10273-exec-9] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.timeseries.controller.TimeSeriesDataController.getCurrentValue() => 281ms
-2025-05-28 13:16:51 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-05-27 16:00:31 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-05-27 16:01:55 [http-nio-10273-exec-3] DEBUG com.nhnacademy.environment.config.TraceIdFilter - TraceId [23f7a952] created for request: /environment/reports/generate
+2025-05-27 16:01:55 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.controller.ReportController.generateReport()
+2025-05-27 16:01:55 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.ReportService.generateReport()
+2025-05-27 16:01:55 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.report.service.ReportService - AI 리포트 생성 시작 - 사용자 프롬프트: '최근 2시간 자바 올드젠 메모리 변동성 알려줘'
+2025-05-27 16:01:55 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport()
+2025-05-27 16:01:55 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 리포트 데이터 준비 시작 - 사용자 프롬프트: '최근 2시간 자바 올드젠 메모리 변동성 알려줘'
+2025-05-27 16:01:55 [http-nio-10273-exec-3] DEBUG com.nhnacademy.environment.report.service.AiReportDataService - 프롬프트에서 키워드 '메모리' 발견 -> gatewayId: mem
+2025-05-27 16:01:55 [http-nio-10273-exec-3] DEBUG com.nhnacademy.environment.report.service.AiReportDataService - 프롬프트에서 measurement 키워드 '메모리' 발견 -> measurement: available_percent
+2025-05-27 16:01:55 [http-nio-10273-exec-3] DEBUG com.nhnacademy.environment.report.service.AiReportDataService - 프롬프트에서 기간 추출: 2 시간 -> 2025-05-27 ~ 2025-05-27
+2025-05-27 16:01:55 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getRawTimeSeriesData()
+2025-05-27 16:01:55 [http-nio-10273-exec-3] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesDataService - [RawDataForPeriod] Flux query = from(bucket: "data") |> range(start: time(v: "2025-05-27T05:01:55.409403Z"), stop: time(v: "2025-05-27T07:01:55.409403Z")) |> filter(fn: (r) => r["origin"] == "server_data") |> filter(fn: (r) => r["_measurement"] == "available_percent") |> filter(fn: (r) => r["_field"] == "value") |> filter(fn: (r) => r["location"] == "server_resource_data") |> filter(fn: (r) => r["gatewayId"] == "mem") |> keep(columns: ["_time", "_field", "_value", "_measurement", "origin", "location", "gatewayId"]) |> sort(columns: ["_time"])
+2025-05-27 16:01:55 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getRawTimeSeriesData() => 506ms
+2025-05-27 16:01:55 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getAggregatedChartDataForPeriod()
+2025-05-27 16:01:55 [http-nio-10273-exec-3] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesDataService - [AggregatedChartData] Flux query = from(bucket: "data") |> range(start: time(v: "2025-05-27T05:01:55.409403Z"), stop: time(v: "2025-05-27T07:01:55.409403Z")) |> filter(fn: (r) => r["_measurement"] == "available_percent") |> filter(fn: (r) => r["_field"] == "value") |> filter(fn: (r) => r["location"] == "server_resource_data") |> filter(fn: (r) => r["gatewayId"] == "mem") |> aggregateWindow(every: 15m, fn: mean, createEmpty: false) |> sort(columns: ["_time"])
+2025-05-27 16:01:56 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getAggregatedChartDataForPeriod() => 270ms
+2025-05-27 16:01:56 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 구체적 시스템 요청 처리 완료 - gatewayId: mem, measurement: available_percent, 기간: 2025-05-27 ~ 2025-05-27, 데이터 건수: 720
+2025-05-27 16:01:56 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport() => 804ms
+2025-05-27 16:01:56 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.report.service.ReportService - 구체적 시스템 요청 처리 - gatewayId: mem, measurement: available_percent, 데이터 건수: 720
+2025-05-27 16:01:56 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.client.GeminiClient.generateSummary()
+2025-05-27 16:02:03 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.client.GeminiClient.generateSummary() => 7614ms
+2025-05-27 16:02:03 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.report.service.ReportService - 구체적 시스템 분석 AI 요약 생성 완료 (일부): '## 자바 OldGen 메모리 가용률 변동성 분석 리포트 (최근 2시간)
+
+안녕하세요! 시스템 모니터링 데이터 분석 전문가입니다. 요청하신 자바 OldGen 메모리 가용률 변동성 ...'
+2025-05-27 16:02:03 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.ReportService.generateReport() => 8430ms
+2025-05-27 16:02:03 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.controller.ReportController.generateReport() => 8441ms
+2025-05-27 16:05:31 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-05-27 16:10:31 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-05-27 16:15:31 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-05-27 16:16:37 [SpringApplicationShutdownHook] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry - Unregistering application ENVIRONMENT-API with eureka with status DOWN
+2025-05-27 16:16:37 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1748330197646, current=DOWN, previous=UP]
+2025-05-27 16:16:37 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.48:ENVIRONMENT-API:10273: registering service...
+2025-05-27 16:16:37 [SpringApplicationShutdownHook] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-27 16:16:37 [tomcat-shutdown] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-27 16:16:37 [SpringApplicationShutdownHook] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-27 16:16:37 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-27 16:16:38 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.48:ENVIRONMENT-API:10273 - registration status: 204
+2025-05-27 16:16:38 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-27 16:16:38 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Shutting down DiscoveryClient ...
+2025-05-27 16:16:41 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Unregistering ...
+2025-05-27 16:16:41 [DiscoveryClient-%d] WARN  com.netflix.discovery.TimedSupervisorTask - task supervisor shutting down, can't accept the task
+2025-05-27 16:16:41 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.48:ENVIRONMENT-API:10273 - deregister  status: 200
+2025-05-27 16:16:41 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Completed shut down of DiscoveryClient
+2025-05-27 16:16:50 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-27 16:16:50 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.6 with PID 21273 (/Users/seongjangwon/IdeaProjects/javame-environment-api/target/classes started by seongjangwon in /Users/seongjangwon/IdeaProjects/javame-environment-api)
+2025-05-27 16:16:50 [main] DEBUG com.nhnacademy.environment.JavameEnvironmentApiApplication - Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-05-27 16:16:50 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - The following 1 profile is active: "local"
+2025-05-27 16:16:51 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-27 16:16:51 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 174 ms. Found 1 JPA repository interface.
+2025-05-27 16:16:51 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=34a07ff5-8eb4-390c-a77e-18e3963d1c7f
+2025-05-27 16:16:52 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 10273 (http)
+2025-05-27 16:16:52 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10273"]
+2025-05-27 16:16:52 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-27 16:16:52 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-05-27 16:16:52 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-27 16:16:52 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1776 ms
+2025-05-27 16:16:52 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.FilterConfig.traceIdFilter()
+2025-05-27 16:16:52 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.FilterConfig.traceIdFilter() => 1ms
+2025-05-27 16:16:52 [main] DEBUG com.nhnacademy.environment.config.TraceIdFilter - Filter 'traceIdFilter' configured for use
+2025-05-27 16:16:52 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-27 16:16:53 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1eddca25
+2025-05-27 16:16:53 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-27 16:16:53 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-27 16:16:53 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.11.Final
+2025-05-27 16:16:53 [main] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-27 16:16:53 [main] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-27 16:16:53 [main] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.41
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-27 16:16:54 [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-27 16:16:54 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient()
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - [InfluxDB 연결 정보]
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ URL    : https://influxdb.javame.live
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ Token  : g-W7W0j9AE4coriQfnhHGMDnDhTZGok8bgY1NnZ6Z0EnTOsFY3SWAqDTC5fYlQ9mYnbK_doR074-a4Dgck2AOQ==
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ Org    : javame
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ Bucket : data
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient() => 130ms
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.queryApi()
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.queryApi() => 9ms
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket()
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket() => 0ms
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization()
+2025-05-27 16:16:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization() => 1ms
+2025-05-27 16:16:55 [main] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-27 16:16:56 [main] INFO  org.springframework.cloud.netflix.eureka.config.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2025-05-27 16:16:56 [main] WARN  org.springframework.cloud.loadbalancer.config.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2025-05-27 16:16:56 [main] INFO  org.springframework.cloud.netflix.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2025-05-27 16:16:56 [main] INFO  com.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2025-05-27 16:16:56 [main] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-05-27 16:16:56 [main] INFO  com.netflix.discovery.DiscoveryClient - Disable delta property : false
+2025-05-27 16:16:56 [main] INFO  com.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2025-05-27 16:16:56 [main] INFO  com.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2025-05-27 16:16:56 [main] INFO  com.netflix.discovery.DiscoveryClient - Application is null : false
+2025-05-27 16:16:56 [main] INFO  com.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2025-05-27 16:16:56 [main] INFO  com.netflix.discovery.DiscoveryClient - Application version is -1: true
+2025-05-27 16:16:56 [main] INFO  com.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2025-05-27 16:16:57 [main] INFO  com.netflix.discovery.DiscoveryClient - The response status is 200
+2025-05-27 16:16:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2025-05-27 16:16:57 [main] INFO  com.netflix.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2025-05-27 16:16:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1748330217375 with initial instances count: 2
+2025-05-27 16:16:57 [main] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry - Registering application ENVIRONMENT-API with eureka with status UP
+2025-05-27 16:16:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1748330217392, current=UP, previous=STARTING]
+2025-05-27 16:16:57 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.48:ENVIRONMENT-API:10273: registering service...
+2025-05-27 16:16:57 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-10273"]
+2025-05-27 16:16:57 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 10273 (http) with context path '/'
+2025-05-27 16:16:57 [main] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaAutoServiceRegistration - Updating port to 10273
+2025-05-27 16:16:57 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Started JavameEnvironmentApiApplication in 7.334 seconds (process running for 9.453)
+2025-05-27 16:16:57 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.48:ENVIRONMENT-API:10273 - registration status: 204
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 29 ms
+2025-05-27 16:18:35 [http-nio-10273-exec-1] DEBUG com.nhnacademy.environment.config.TraceIdFilter - TraceId [97fe9cd8] created for request: /environment/reports/generate
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.controller.ReportController.generateReport()
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.ReportService.generateReport()
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.report.service.ReportService - AI 리포트 생성 시작 - 사용자 프롬프트: '시스템 모니터링 어떻게 해야 하나요?'
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport()
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 리포트 데이터 준비 시작 - 사용자 프롬프트: '시스템 모니터링 어떻게 해야 하나요?'
+2025-05-27 16:18:35 [http-nio-10273-exec-1] DEBUG com.nhnacademy.environment.report.service.AiReportDataService - 프롬프트에서 구체적인 gatewayId를 추출할 수 없음: 시스템 모니터링 어떻게 해야 하나요?
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 일반 요청으로 판단, AI 가이드 제공: 시스템 모니터링 어떻게 해야 하나요?
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport() => 2ms
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 처리 - AI 시스템 가이드 제공
+2025-05-27 16:18:35 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.client.GeminiClient.generateSummary()
+2025-05-27 16:18:37 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.client.GeminiClient.generateSummary() => 2026ms
+2025-05-27 16:18:37 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 AI 가이드 생성 완료 (일부): '훌륭합니다! 요청하신 내용을 완벽하게 반영하여 친근하고 유용한 답변을 생성했습니다. 마크다운 형식도 잘 지켜졌고, 이모지도 적절하게 사용되어 더욱 친근한 느낌을 줍니다. 요청 의도...'
+2025-05-27 16:18:37 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.ReportService.generateReport() => 2031ms
+2025-05-27 16:18:37 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.controller.ReportController.generateReport() => 2032ms
+2025-05-27 16:19:03 [http-nio-10273-exec-2] DEBUG com.nhnacademy.environment.config.TraceIdFilter - TraceId [4c36fbde] created for request: /environment/reports/generate
+2025-05-27 16:19:03 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.controller.ReportController.generateReport()
+2025-05-27 16:19:03 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.ReportService.generateReport()
+2025-05-27 16:19:03 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.report.service.ReportService - AI 리포트 생성 시작 - 사용자 프롬프트: '최근 2시간 자바 올드젠 메모리 변동성 알려줘'
+2025-05-27 16:19:03 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport()
+2025-05-27 16:19:03 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 리포트 데이터 준비 시작 - 사용자 프롬프트: '최근 2시간 자바 올드젠 메모리 변동성 알려줘'
+2025-05-27 16:19:03 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.report.service.AiReportDataService - JVM 메모리 관련 요청 감지, 서비스 선택 가이드 제공: 최근 2시간 자바 올드젠 메모리 변동성 알려줘
+2025-05-27 16:19:03 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport() => 1ms
+2025-05-27 16:19:03 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 처리 - AI 시스템 가이드 제공
+2025-05-27 16:19:03 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.client.GeminiClient.generateSummary()
+2025-05-27 16:19:09 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.client.GeminiClient.generateSummary() => 5543ms
+2025-05-27 16:19:09 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 AI 가이드 생성 완료 (일부): '## 🔍 JVM 메모리 분석 가이드
+
+JVM 메모리의 변동성을 알고 싶으시군요! 최근 2시간 동안의 Old Gen 메모리 변동성을 알고 싶으신 거 맞죠? 👍 어떤 서비스의 JV...'
+2025-05-27 16:19:09 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.ReportService.generateReport() => 5548ms
+2025-05-27 16:19:09 [http-nio-10273-exec-2] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.controller.ReportController.generateReport() => 5549ms
+2025-05-27 16:19:37 [http-nio-10273-exec-3] DEBUG com.nhnacademy.environment.config.TraceIdFilter - TraceId [fa1bd0c3] created for request: /environment/reports/generate
+2025-05-27 16:19:37 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.controller.ReportController.generateReport()
+2025-05-27 16:19:37 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.ReportService.generateReport()
+2025-05-27 16:19:37 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.report.service.ReportService - AI 리포트 생성 시작 - 사용자 프롬프트: '모든 마이크로서비스 성능 비교 분석해줘'
+2025-05-27 16:19:37 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport()
+2025-05-27 16:19:37 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 리포트 데이터 준비 시작 - 사용자 프롬프트: '모든 마이크로서비스 성능 비교 분석해줘'
+2025-05-27 16:19:37 [http-nio-10273-exec-3] DEBUG com.nhnacademy.environment.report.service.AiReportDataService - 일반적인 요청 패턴 감지: 모든 마이크로서비스 성능 비교 분석해줘
+2025-05-27 16:19:37 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 일반 요청으로 판단, AI 가이드 제공: 모든 마이크로서비스 성능 비교 분석해줘
+2025-05-27 16:19:37 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport() => 1ms
+2025-05-27 16:19:37 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 처리 - AI 시스템 가이드 제공
+2025-05-27 16:19:37 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.client.GeminiClient.generateSummary()
+2025-05-27 16:19:44 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.client.GeminiClient.generateSummary() => 6620ms
+2025-05-27 16:19:44 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 AI 가이드 생성 완료 (일부): '## 🤖 마이크로서비스 성능 비교 분석, 제가 도와드릴게요!
+
+안녕하세요! 요청하신 마이크로서비스 성능 비교 분석을 도와드리겠습니다. 사용자님의 요청은 현재 운영 중인 마이크로서...'
+2025-05-27 16:19:44 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.ReportService.generateReport() => 6632ms
+2025-05-27 16:19:44 [http-nio-10273-exec-3] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.controller.ReportController.generateReport() => 6637ms
+2025-05-27 16:20:02 [http-nio-10273-exec-4] DEBUG com.nhnacademy.environment.config.TraceIdFilter - TraceId [bfb7bcf1] created for request: /environment/reports/generate
+2025-05-27 16:20:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.controller.ReportController.generateReport()
+2025-05-27 16:20:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.ReportService.generateReport()
+2025-05-27 16:20:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.report.service.ReportService - AI 리포트 생성 시작 - 사용자 프롬프트: '최근 2시간 인증 서비스 올드젠 메모리 변동성 알려줘'
+2025-05-27 16:20:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport()
+2025-05-27 16:20:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 리포트 데이터 준비 시작 - 사용자 프롬프트: '최근 2시간 인증 서비스 올드젠 메모리 변동성 알려줘'
+2025-05-27 16:20:02 [http-nio-10273-exec-4] DEBUG com.nhnacademy.environment.report.service.AiReportDataService - JVM 메모리 관련 키워드가 함께 발견됨. 일반 요청으로 처리하여 사용자에게 명확화 요청: 최근 2시간 인증 서비스 올드젠 메모리 변동성 알려줘
+2025-05-27 16:20:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 일반 요청으로 판단, AI 가이드 제공: 최근 2시간 인증 서비스 올드젠 메모리 변동성 알려줘
+2025-05-27 16:20:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport() => 1ms
+2025-05-27 16:20:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 처리 - AI 시스템 가이드 제공
+2025-05-27 16:20:02 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.client.GeminiClient.generateSummary()
+2025-05-27 16:20:09 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.client.GeminiClient.generateSummary() => 6453ms
+2025-05-27 16:20:09 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 AI 가이드 생성 완료 (일부): '## 🤖 AI 시스템 모니터링 가이드 🤖
+
+안녕하세요! 요청하신 내용을 바탕으로, 현재 모니터링 가능한 시스템과 명령어 예시를 안내해 드리겠습니다.
+
+### 🤔 사용자 요청 ...'
+2025-05-27 16:20:09 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.ReportService.generateReport() => 6459ms
+2025-05-27 16:20:09 [http-nio-10273-exec-4] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.controller.ReportController.generateReport() => 6460ms
+2025-05-27 16:20:50 [http-nio-10273-exec-5] DEBUG com.nhnacademy.environment.config.TraceIdFilter - TraceId [9cf6b60c] created for request: /environment/reports/generate
+2025-05-27 16:20:50 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.controller.ReportController.generateReport()
+2025-05-27 16:20:50 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.ReportService.generateReport()
+2025-05-27 16:20:50 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.report.service.ReportService - AI 리포트 생성 시작 - 사용자 프롬프트: '인증 서비스 힙사용량 알려줘'
+2025-05-27 16:20:50 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport()
+2025-05-27 16:20:50 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 리포트 데이터 준비 시작 - 사용자 프롬프트: '인증 서비스 힙사용량 알려줘'
+2025-05-27 16:20:50 [http-nio-10273-exec-5] DEBUG com.nhnacademy.environment.report.service.AiReportDataService - 프롬프트에서 구체적인 gatewayId를 추출할 수 없음: 인증 서비스 힙사용량 알려줘
+2025-05-27 16:20:50 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 일반 요청으로 판단, AI 가이드 제공: 인증 서비스 힙사용량 알려줘
+2025-05-27 16:20:50 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport() => 1ms
+2025-05-27 16:20:50 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 처리 - AI 시스템 가이드 제공
+2025-05-27 16:20:50 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.client.GeminiClient.generateSummary()
+2025-05-27 16:20:55 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.client.GeminiClient.generateSummary() => 5419ms
+2025-05-27 16:20:55 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 AI 가이드 생성 완료 (일부): '## 🤖 AI 시스템 모니터링 가이드
+
+안녕하세요! "인증 서비스 힙 사용량" 요청 주셨네요! 인증 서비스의 힙 메모리 사용량을 확인하고 싶으시군요! 힙 메모리 사용량은 서비스의...'
+2025-05-27 16:20:55 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.ReportService.generateReport() => 5422ms
+2025-05-27 16:20:55 [http-nio-10273-exec-5] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.controller.ReportController.generateReport() => 5424ms
+2025-05-27 16:21:12 [http-nio-10273-exec-6] DEBUG com.nhnacademy.environment.config.TraceIdFilter - TraceId [c41fa161] created for request: /environment/reports/generate
+2025-05-27 16:21:12 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.controller.ReportController.generateReport()
+2025-05-27 16:21:12 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.ReportService.generateReport()
+2025-05-27 16:21:12 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.report.service.ReportService - AI 리포트 생성 시작 - 사용자 프롬프트: '인증 서비스 힙 메모리 알려줘'
+2025-05-27 16:21:12 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport()
+2025-05-27 16:21:12 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 리포트 데이터 준비 시작 - 사용자 프롬프트: '인증 서비스 힙 메모리 알려줘'
+2025-05-27 16:21:12 [http-nio-10273-exec-6] DEBUG com.nhnacademy.environment.report.service.AiReportDataService - JVM 메모리 관련 키워드가 함께 발견됨. 일반 요청으로 처리하여 사용자에게 명확화 요청: 인증 서비스 힙 메모리 알려줘
+2025-05-27 16:21:12 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 일반 요청으로 판단, AI 가이드 제공: 인증 서비스 힙 메모리 알려줘
+2025-05-27 16:21:12 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport() => 1ms
+2025-05-27 16:21:12 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 처리 - AI 시스템 가이드 제공
+2025-05-27 16:21:12 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.client.GeminiClient.generateSummary()
+2025-05-27 16:21:19 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.client.GeminiClient.generateSummary() => 6780ms
+2025-05-27 16:21:19 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.report.service.ReportService - 일반 요청 AI 가이드 생성 완료 (일부): '## 🤖 힙 메모리 모니터링 요청 분석 및 맞춤형 가이드 🤖
+
+안녕하세요! "인증 서비스 힙 메모리 알려줘"라는 요청을 주셨네요!  이 요청은 **특정 서비스(인증 서비스)의 ...'
+2025-05-27 16:21:19 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.ReportService.generateReport() => 6786ms
+2025-05-27 16:21:19 [http-nio-10273-exec-6] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.controller.ReportController.generateReport() => 6787ms
+2025-05-27 16:21:56 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-05-27 16:24:34 [SpringApplicationShutdownHook] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry - Unregistering application ENVIRONMENT-API with eureka with status DOWN
+2025-05-27 16:24:34 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1748330674566, current=DOWN, previous=UP]
+2025-05-27 16:24:34 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.48:ENVIRONMENT-API:10273: registering service...
+2025-05-27 16:24:34 [SpringApplicationShutdownHook] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-27 16:24:34 [tomcat-shutdown] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-27 16:24:34 [SpringApplicationShutdownHook] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-27 16:24:34 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-27 16:24:34 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.48:ENVIRONMENT-API:10273 - registration status: 204
+2025-05-27 16:24:34 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-27 16:24:34 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Shutting down DiscoveryClient ...
+2025-05-27 16:24:37 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Unregistering ...
+2025-05-27 16:24:38 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.48:ENVIRONMENT-API:10273 - deregister  status: 200
+2025-05-27 16:24:38 [SpringApplicationShutdownHook] INFO  com.netflix.discovery.DiscoveryClient - Completed shut down of DiscoveryClient
+2025-05-27 16:24:47 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-27 16:24:47 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.6 with PID 21851 (/Users/seongjangwon/IdeaProjects/javame-environment-api/target/classes started by seongjangwon in /Users/seongjangwon/IdeaProjects/javame-environment-api)
+2025-05-27 16:24:47 [main] DEBUG com.nhnacademy.environment.JavameEnvironmentApiApplication - Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-05-27 16:24:47 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - The following 1 profile is active: "local"
+2025-05-27 16:24:47 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-27 16:24:48 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 179 ms. Found 1 JPA repository interface.
+2025-05-27 16:24:48 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=34a07ff5-8eb4-390c-a77e-18e3963d1c7f
+2025-05-27 16:24:49 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 10273 (http)
+2025-05-27 16:24:49 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10273"]
+2025-05-27 16:24:49 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-27 16:24:49 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-05-27 16:24:49 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-27 16:24:49 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1820 ms
+2025-05-27 16:24:49 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.FilterConfig.traceIdFilter()
+2025-05-27 16:24:49 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.FilterConfig.traceIdFilter() => 2ms
+2025-05-27 16:24:49 [main] DEBUG com.nhnacademy.environment.config.TraceIdFilter - Filter 'traceIdFilter' configured for use
+2025-05-27 16:24:49 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-27 16:24:49 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5ba36c83
+2025-05-27 16:24:49 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-27 16:24:49 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-27 16:24:49 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.11.Final
+2025-05-27 16:24:49 [main] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-27 16:24:50 [main] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-27 16:24:50 [main] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.41
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-27 16:24:53 [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-27 16:24:53 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-27 16:24:53 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient()
+2025-05-27 16:24:53 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - [InfluxDB 연결 정보]
+2025-05-27 16:24:53 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ URL    : https://influxdb.javame.live
+2025-05-27 16:24:53 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ Token  : g-W7W0j9AE4coriQfnhHGMDnDhTZGok8bgY1NnZ6Z0EnTOsFY3SWAqDTC5fYlQ9mYnbK_doR074-a4Dgck2AOQ==
+2025-05-27 16:24:53 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ Org    : javame
+2025-05-27 16:24:53 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - ▶ Bucket : data
+2025-05-27 16:24:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient() => 589ms
+2025-05-27 16:24:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.queryApi()
+2025-05-27 16:24:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.queryApi() => 25ms
+2025-05-27 16:24:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket()
+2025-05-27 16:24:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket() => 1ms
+2025-05-27 16:24:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization()
+2025-05-27 16:24:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization() => 1ms
+2025-05-27 16:24:55 [main] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-27 16:24:56 [main] INFO  org.springframework.cloud.netflix.eureka.config.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2025-05-27 16:24:56 [main] WARN  org.springframework.cloud.loadbalancer.config.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2025-05-27 16:24:57 [main] INFO  org.springframework.cloud.netflix.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Disable delta property : false
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Application is null : false
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Application version is -1: true
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - The response status is 200
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1748330697552 with initial instances count: 2
+2025-05-27 16:24:57 [main] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry - Registering application ENVIRONMENT-API with eureka with status UP
+2025-05-27 16:24:57 [main] INFO  com.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1748330697577, current=UP, previous=STARTING]
+2025-05-27 16:24:57 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-10273"]
+2025-05-27 16:24:57 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.48:ENVIRONMENT-API:10273: registering service...
+2025-05-27 16:24:57 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 10273 (http) with context path '/'
+2025-05-27 16:24:57 [main] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaAutoServiceRegistration - Updating port to 10273
+2025-05-27 16:24:57 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Started JavameEnvironmentApiApplication in 10.639 seconds (process running for 12.583)
+2025-05-27 16:24:57 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_ENVIRONMENT-API/192.168.71.48:ENVIRONMENT-API:10273 - registration status: 204
+2025-05-27 16:25:25 [http-nio-10273-exec-1] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-27 16:25:25 [http-nio-10273-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-27 16:25:25 [http-nio-10273-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 7 ms
+2025-05-27 16:25:25 [http-nio-10273-exec-1] DEBUG com.nhnacademy.environment.config.TraceIdFilter - TraceId [7136e1e1] created for request: /environment/reports/generate
+2025-05-27 16:25:25 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.controller.ReportController.generateReport()
+2025-05-27 16:25:25 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.ReportService.generateReport()
+2025-05-27 16:25:25 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.report.service.ReportService - AI 리포트 생성 시작 - 사용자 프롬프트: '인증 서비스 힙 메모리 알려줘'
+2025-05-27 16:25:25 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport()
+2025-05-27 16:25:25 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 리포트 데이터 준비 시작 - 사용자 프롬프트: '인증 서비스 힙 메모리 알려줘'
+2025-05-27 16:25:25 [http-nio-10273-exec-1] DEBUG com.nhnacademy.environment.report.service.AiReportDataService - 프롬프트에서 measurement 키워드 '힙' 발견 -> measurement: memory_total_heap_used_bytes
+2025-05-27 16:25:25 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getRawTimeSeriesData()
+2025-05-27 16:25:25 [http-nio-10273-exec-1] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesDataService - [RawDataForPeriod] Flux query = from(bucket: "data") |> range(start: time(v: "2025-05-26T07:25:25.526815Z"), stop: time(v: "2025-05-27T07:25:25.526815Z")) |> filter(fn: (r) => r["origin"] == "server_data") |> filter(fn: (r) => r["_measurement"] == "memory_total_heap_used_bytes") |> filter(fn: (r) => r["_field"] == "value") |> filter(fn: (r) => r["location"] == "service_resource_data") |> filter(fn: (r) => r["gatewayId"] == "javame-auth") |> keep(columns: ["_time", "_field", "_value", "_measurement", "origin", "location", "gatewayId"]) |> sort(columns: ["_time"])
+2025-05-27 16:25:26 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getRawTimeSeriesData() => 1067ms
+2025-05-27 16:25:26 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getAggregatedChartDataForPeriod()
+2025-05-27 16:25:26 [http-nio-10273-exec-1] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesDataService - [AggregatedChartData] Flux query = from(bucket: "data") |> range(start: time(v: "2025-05-26T07:25:25.526815Z"), stop: time(v: "2025-05-27T07:25:25.526815Z")) |> filter(fn: (r) => r["_measurement"] == "memory_total_heap_used_bytes") |> filter(fn: (r) => r["_field"] == "value") |> filter(fn: (r) => r["location"] == "service_resource_data") |> filter(fn: (r) => r["gatewayId"] == "javame-auth") |> aggregateWindow(every: 30m, fn: mean, createEmpty: false) |> sort(columns: ["_time"])
+2025-05-27 16:25:26 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.timeseries.service.TimeSeriesDataService.getAggregatedChartDataForPeriod() => 334ms
+2025-05-27 16:25:26 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.report.service.AiReportDataService - 구체적 시스템 요청 처리 완료 - gatewayId: javame-auth, measurement: memory_total_heap_used_bytes, 기간: 2025-05-26 ~ 2025-05-27, 데이터 건수: 367
+2025-05-27 16:25:26 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.AiReportDataService.prepareSimpleReport() => 1411ms
+2025-05-27 16:25:26 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.report.service.ReportService - 구체적 시스템 요청 처리 - gatewayId: javame-auth, measurement: memory_total_heap_used_bytes, 데이터 건수: 367
+2025-05-27 16:25:26 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.report.client.GeminiClient.generateSummary()
+2025-05-27 16:25:38 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.client.GeminiClient.generateSummary() => 11223ms
+2025-05-27 16:25:38 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.report.service.ReportService - 구체적 시스템 분석 AI 요약 생성 완료 (일부): '## javame-auth 인증 서비스 힙 메모리 사용량 분석 리포트 (2025-05-26 ~ 2025-05-27)
+
+안녕하세요! javame-auth 인증 서비스의 최근 24시간...'
+2025-05-27 16:25:38 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.service.ReportService.generateReport() => 12640ms
+2025-05-27 16:25:38 [http-nio-10273-exec-1] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.report.controller.ReportController.generateReport() => 12641ms
