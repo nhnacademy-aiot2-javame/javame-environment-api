@@ -58,7 +58,7 @@ public class TimeSeriesDataController {
      * @return origin 목록
      */
     @GetMapping("/origins")
-    //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
+//    //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getOrigins(
             @PathVariable String companyDomain
     ) {
@@ -70,7 +70,7 @@ public class TimeSeriesDataController {
      *
      * @param companyDomain 회사 도메인
      * @param tag           조회할 태그 명 (예: location)
-     * @param filters        데이터 출처
+     * @param origin        데이터 출처
      * @return 해당 태그의 고유 값 리스트
      */
     @GetMapping("/dropdown/{tag}")
@@ -78,10 +78,9 @@ public class TimeSeriesDataController {
     public List<String> getTagDropdown(
             @PathVariable String companyDomain,
             @PathVariable String tag,
-            @RequestParam Map<String, String> filters
+            @RequestParam String origin
     ) {
-        filters.put("companyDomain", companyDomain);
-        return timeSeriesDataService.getTagValues(tag, filters);
+        return timeSeriesDataService.getTagValues(tag, Map.of("origin", origin, "companyDomain", companyDomain));
     }
 
     /**
@@ -89,16 +88,22 @@ public class TimeSeriesDataController {
      * origin, location, companyDomain 필터에 따라 InfluxDB에서 중복 제거된 측정 항목 목록을 반환합니다.
      *
      * @param companyDomain 회사 도메인
-     * @param filters        companyDomain 을 제외한 influxdb 태그
+     * @param origin        데이터 출처 (예: sensor_data, server_data)
+     * @param location      선택적 위치 필터 (예: cpu, memory 등)
      * @return 중복 제거된 _measurement 리스트 (예: usage_idle, battery 등)
      */
     @GetMapping("/measurements")
     //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getMeasurements(
             @PathVariable String companyDomain,
-            @RequestParam Map<String, String> filters
+            @RequestParam String origin,
+            @RequestParam String location
     ) {
+        Map<String, String> filters = new HashMap<>();
+        filters.put("origin", origin);
         filters.put("companyDomain", companyDomain);
+        filters.put("location", location);
+
         return timeSeriesDataService.getMeasurementList(filters);
     }
 
@@ -144,5 +149,39 @@ public class TimeSeriesDataController {
         filters.put("companyDomain", companyDomain);
 
         return timeSeriesDataService.getPieChartData(filters);
+    }
+
+    @GetMapping("/current") // 새로운 엔드포인트 경로
+    // @HasRole(...) // 필요시 권한 설정
+    public TimeSeriesDataDto getCurrentValue(
+            @PathVariable String companyDomain,
+            @RequestParam String origin,
+            @RequestParam String location,
+            @RequestParam("_measurement") String measurement, // JS의 getCurrentSensorValue와 파라미터명 일치
+            @RequestParam(value = "_field", required = false) String field
+    ) {
+        Map<String, String> filters = new HashMap<>();
+        filters.put("origin", origin);
+        filters.put("location", location);
+        filters.put("_measurement", measurement);
+        filters.put("companyDomain", companyDomain); // 서비스에서 필요하면 추가
+
+        if (field != null && !field.isEmpty()) {
+            filters.put("_field", field);
+        }
+
+        log.info("/current 요청 - company: {}, origin: {}, location: {}, measurement: {}, field: {}",
+                companyDomain, origin, location, measurement, field);
+
+        // TimeSeriesDataService에 최신 값 하나만 가져오는 메소드 호출
+        TimeSeriesDataDto latestData = timeSeriesDataService.getLatestTimeSeriesData(filters);
+
+        if (latestData == null) {
+            log.warn("/current 요청에 대한 데이터 없음");
+            // 적절한 응답 처리 (예: ResponseEntity.notFound().build(); 또는 빈 객체 반환)
+            // 여기서는 간단히 null을 반환하거나, 클라이언트에서 처리할 수 있도록 빈 DTO 반환
+            return null; // 또는 new TimeSeriesDataDto(); // 클라이언트에서 null 체크 필요
+        }
+        return latestData;
     }
 }
