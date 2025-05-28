@@ -1,7 +1,7 @@
 package com.nhnacademy.environment.timeseries.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.environment.timeseries.controller.TimeSeriesSseController;
+import com.nhnacademy.environment.controller.TimeSeriesSseController;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
 import org.junit.jupiter.api.BeforeEach;

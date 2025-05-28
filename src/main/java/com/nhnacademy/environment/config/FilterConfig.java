@@ -15,4 +15,13 @@ public class FilterConfig {
         registrationBean.addUrlPatterns("/*");
         return registrationBean;
     }
+
+    @Bean
+    public FilterRegistrationBean<com.nhnacademy.environment.config.filter.CompanyDomainContextCleanupFilter> companyDomainContextCleanupFilter() {
+        FilterRegistrationBean<com.nhnacademy.environment.config.filter.CompanyDomainContextCleanupFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new com.nhnacademy.environment.config.filter.CompanyDomainContextCleanupFilter());
+        registrationBean.setOrder(2); // TraceIdFilter 다음에 실행되도록 순서 지정
+        registrationBean.addUrlPatterns("/*");
+        return registrationBean;
+    }
 }

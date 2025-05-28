@@ -1,6 +1,6 @@
 package com.nhnacademy.environment.timeseries.controller;
 
-import com.nhnacademy.environment.timeseries.controller.TimeSeriesDataController;
+import com.nhnacademy.environment.controller.TimeSeriesDataController;
 import com.nhnacademy.environment.timeseries.dto.ChartDataDto;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

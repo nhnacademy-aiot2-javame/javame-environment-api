@@ -1,6 +1,6 @@
 package com.nhnacademy.environment.timeseries.controller;
 
-import com.nhnacademy.environment.timeseries.controller.TimeSeriesAverageController;
+import com.nhnacademy.environment.controller.TimeSeriesAverageController;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesAverageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

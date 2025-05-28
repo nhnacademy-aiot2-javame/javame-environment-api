@@ -1,4 +1,4 @@
-package com.nhnacademy.environment.timeseries.domain;
+package com.nhnacademy.environment.tree.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +19,7 @@ import java.util.List;
 public class TreeNode {
 
     /**
-     * 노드 이름 (예: building, location, origin, deviceId 등).
+     * 프론트에 보여주는 노드 이름 (예: usage_idle 등).
      */
     private String label;
 
@@ -29,13 +29,20 @@ public class TreeNode {
     private String tag;
 
     /**
-     * 하위 노드 목록.
+     * fetch 요청시 실제 쿼리에서 사용한 영문 원본.
+     */
+    private String value;
+
+    /**
+     * 상위 태그에 대한 자식 노드.
+     * 최하위 노드는 자식이 없습니다.
      */
     private List<TreeNode> children = new ArrayList<>();
 
-    public TreeNode(String label, String tag) {
+    public TreeNode(String label, String tag, String value) {
         this.label = label;
         this.tag = tag;
+        this.value = value;
     }
 
     public void addChild(TreeNode child) {
