@@ -2,6 +2,7 @@ package com.nhnacademy.environment.tree.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.environment.config.annotation.CompanyDomainContext;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
 import com.nhnacademy.environment.tree.domain.TreeNode;
 import com.nhnacademy.environment.tree.dto.TreeNodeDto;
@@ -40,7 +41,7 @@ public class BuildTreeService {
 
     public TreeNode buildTree(String companyDomain) {
         TreeNode root = new TreeNode("루트", "root", "root");
-        Map<String, String> baseFilters = Map.of("companyDomain", companyDomain);
+        Map<String, String> baseFilters = Map.of("companyDomain", CompanyDomainContext.get());
 
         List<String> tagLevels = List.of("building", "origin", "location", "deviceId", "place", "gatewayId", "measurement");
 

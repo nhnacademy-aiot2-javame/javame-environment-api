@@ -58,12 +58,13 @@ public class TimeSeriesDataController {
      * @param companyDomain 회사 도메인
      * @return origin 목록
      */
+    @NormalizeCompanyDomain
     @GetMapping("/origins")
     //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getOrigins(
             @PathVariable String companyDomain
     ) {
-        return timeSeriesDataService.getOriginList(companyDomain);
+        return timeSeriesDataService.getOriginList(CompanyDomainContext.get());
     }
 
     /**
@@ -74,6 +75,7 @@ public class TimeSeriesDataController {
      * @param filters        데이터 출처
      * @return 해당 태그의 고유 값 리스트
      */
+    @NormalizeCompanyDomain
     @GetMapping("/dropdown/{tag}")
     //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getTagDropdown(
@@ -81,7 +83,7 @@ public class TimeSeriesDataController {
             @PathVariable String tag,
             @RequestParam Map<String, String> filters
     ) {
-        filters.put("companyDomain", companyDomain);
+        filters.put("companyDomain", CompanyDomainContext.get());
         return timeSeriesDataService.getTagValues(tag, filters);
     }
 
@@ -113,6 +115,7 @@ public class TimeSeriesDataController {
      * @param origin        데이터 출처
      * @return 차트에 사용할 시계열 데이터 DTO
      */
+    @NormalizeCompanyDomain
     @GetMapping("/chart/type/{sensor}")
     //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public ChartDataDto getChartDataForSensor(
@@ -122,7 +125,7 @@ public class TimeSeriesDataController {
     ) {
         Map<String, String> filters = new HashMap<>();
         filters.put("origin", origin);
-        filters.put("companyDomain", companyDomain);
+        filters.put("companyDomain", CompanyDomainContext.get());
 
         return timeSeriesDataService.getChartData(sensor, "value", filters, 60);
     }
@@ -135,6 +138,7 @@ public class TimeSeriesDataController {
      * @param origin        데이터 출처
      * @return 파이 차트에 사용할 데이터 DTO
      */
+    @NormalizeCompanyDomain
     @GetMapping("/chart/pie")
     //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public ChartDataDto getPieChartData(
@@ -143,11 +147,12 @@ public class TimeSeriesDataController {
     ) {
         Map<String, String> filters = new HashMap<>();
         filters.put("origin", origin);
-        filters.put("companyDomain", companyDomain);
+        filters.put("companyDomain", CompanyDomainContext.get());
 
         return timeSeriesDataService.getPieChartData(filters);
     }
 
+    @NormalizeCompanyDomain
     @GetMapping("/current") // 새로운 엔드포인트 경로
     // @HasRole(...) // 필요시 권한 설정
     public TimeSeriesDataDto getCurrentValue(
@@ -161,7 +166,7 @@ public class TimeSeriesDataController {
         filters.put("origin", origin);
         filters.put("location", location);
         filters.put("_measurement", measurement);
-        filters.put("companyDomain", companyDomain); // 서비스에서 필요하면 추가
+        filters.put("companyDomain", CompanyDomainContext.get()); // 서비스에서 필요하면 추가
 
         if (field != null && !field.isEmpty()) {
             filters.put("_field", field);

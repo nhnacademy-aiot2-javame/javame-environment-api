@@ -3,6 +3,7 @@ package com.nhnacademy.environment.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.environment.config.annotation.CompanyDomainContext;
 import com.nhnacademy.environment.config.annotation.HasRole;
+import com.nhnacademy.environment.config.annotation.NormalizeCompanyDomain;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,7 @@ public class TimeSeriesSseController {
      * @param allParams      measurement, location 등 필터 조건
      * @return SseEmitter 스트림 응답
      */
+    @NormalizeCompanyDomain
     @GetMapping(value = "/time-series-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public SseEmitter streamTimeSeriesData(

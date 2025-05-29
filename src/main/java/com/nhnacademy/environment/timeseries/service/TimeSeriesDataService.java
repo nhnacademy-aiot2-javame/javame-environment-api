@@ -3,6 +3,7 @@ package com.nhnacademy.environment.timeseries.service;
 import com.influxdb.client.QueryApi;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
+import com.nhnacademy.environment.config.annotation.CompanyDomainContext;
 import com.nhnacademy.environment.timeseries.dto.ChartDataDto;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.util.InfluxUtil;
@@ -65,7 +66,7 @@ public class TimeSeriesDataService {
                 String.format("from(bucket: \"%s\") |> range(start: -%dm)", bucket, rangeMinutes)
         );
 
-        flux.append(String.format(" |> filter(fn: (r) => r[\"companyDomain\"] == \"%s\")", companyDomain));
+        flux.append(String.format(" |> filter(fn: (r) => r[\"companyDomain\"] == \"%s\")", CompanyDomainContext.get()));
 
         allParams.forEach((key, value) -> {
             if (!key.equals("measurement") &&
@@ -300,7 +301,6 @@ public class TimeSeriesDataService {
         flux.append(" |> limit(n:1)");
         // 필요한 컬럼만 유지 (선택 사항, 성능에 영향 줄 수 있음)
         // flux.append(" |> keep(columns: [\"_time\", \"_value\", \"_measurement\", \"location\", \"origin\", ...])");
-
 
         log.debug("[LatestData] Flux query = {}", flux.toString());
 
