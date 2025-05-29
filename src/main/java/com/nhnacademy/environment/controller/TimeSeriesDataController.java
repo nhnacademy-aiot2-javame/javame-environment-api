@@ -1,6 +1,8 @@
-package com.nhnacademy.environment.timeseries.controller;
+package com.nhnacademy.environment.controller;
 
+import com.nhnacademy.environment.config.annotation.CompanyDomainContext;
 import com.nhnacademy.environment.config.annotation.HasRole;
+import com.nhnacademy.environment.config.annotation.NormalizeCompanyDomain;
 import com.nhnacademy.environment.timeseries.dto.ChartDataDto;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
@@ -31,24 +33,23 @@ public class TimeSeriesDataController {
      * 특정 origin 의 시계열 데이터를 필터 기준으로 조회.
      *
      * @param companyDomain 회사 도메인
-     * @param origin        origin(sensor_data, server_data 등)
      * @param range         범위 (기본 180분)
      * @param allParams     measurement, location 등 필터용 파라미터
      * @return 측정값별 시계열 데이터 Map
      */
+    @NormalizeCompanyDomain
     @GetMapping("/time-series")
 //    //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public Map<String, List<TimeSeriesDataDto>> getTimeSeriesData(
             @PathVariable String companyDomain,
-            @RequestParam String origin,
             @RequestParam(defaultValue = "180") int range,
             @RequestParam Map<String, String> allParams
     ) {
         allParams.remove("range");
-        allParams.remove("origin");
+        allParams.put("companyDomain", CompanyDomainContext.get());
 
-        log.info("/time-series 요청 도착 - origin: {}, range: {}, filters: {}", origin, range, allParams);
-        return timeSeriesDataService.getTimeSeriesData(origin, allParams, range);
+        log.info("/time-series 요청 도착 - companyDomain: {}, range: {}, filters: {}", CompanyDomainContext.get(), range, allParams);
+        return timeSeriesDataService.getTimeSeriesData(allParams, range);
     }
 
 
@@ -86,19 +87,20 @@ public class TimeSeriesDataController {
 
     /**
      * 측정값(_measurement) 목록 조회.
-     * origin, location, companyDomain 필터에 따라 InfluxDB에서 중복 제거된 측정 항목 목록을 반환합니다.
+     * origin, location, companyDomain 필터에 따라 InfluxDB 에서 중복 제거된 측정 항목 목록을 반환합니다.
      *
-     * @param companyDomain 회사 도메인
+     * @param companyDomain 회사 도메인 (실제로 사용하진 않지만 IDE 경고를 무시하기 위한 용도로 사용)
      * @param filters        companyDomain 을 제외한 influxdb 태그
      * @return 중복 제거된 _measurement 리스트 (예: usage_idle, battery 등)
      */
+    @NormalizeCompanyDomain
     @GetMapping("/measurements")
     //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public List<String> getMeasurements(
             @PathVariable String companyDomain,
             @RequestParam Map<String, String> filters
     ) {
-        filters.put("companyDomain", companyDomain);
+        filters.put("companyDomain", CompanyDomainContext.get());
         return timeSeriesDataService.getMeasurementList(filters);
     }
 
@@ -144,5 +146,39 @@ public class TimeSeriesDataController {
         filters.put("companyDomain", companyDomain);
 
         return timeSeriesDataService.getPieChartData(filters);
+    }
+
+    @GetMapping("/current") // 새로운 엔드포인트 경로
+    // @HasRole(...) // 필요시 권한 설정
+    public TimeSeriesDataDto getCurrentValue(
+            @PathVariable String companyDomain,
+            @RequestParam String origin,
+            @RequestParam String location,
+            @RequestParam("_measurement") String measurement, // JS의 getCurrentSensorValue와 파라미터명 일치
+            @RequestParam(value = "_field", required = false) String field
+    ) {
+        Map<String, String> filters = new HashMap<>();
+        filters.put("origin", origin);
+        filters.put("location", location);
+        filters.put("_measurement", measurement);
+        filters.put("companyDomain", companyDomain); // 서비스에서 필요하면 추가
+
+        if (field != null && !field.isEmpty()) {
+            filters.put("_field", field);
+        }
+
+        log.info("/current 요청 - company: {}, origin: {}, location: {}, measurement: {}, field: {}",
+                companyDomain, origin, location, measurement, field);
+
+        // TimeSeriesDataService에 최신 값 하나만 가져오는 메소드 호출
+        TimeSeriesDataDto latestData = timeSeriesDataService.getLatestTimeSeriesData(filters);
+
+        if (latestData == null) {
+            log.warn("/current 요청에 대한 데이터 없음");
+            // 적절한 응답 처리 (예: ResponseEntity.notFound().build(); 또는 빈 객체 반환)
+            // 여기서는 간단히 null을 반환하거나, 클라이언트에서 처리할 수 있도록 빈 DTO 반환
+            return null; // 또는 new TimeSeriesDataDto(); // 클라이언트에서 null 체크 필요
+        }
+        return latestData;
     }
 }

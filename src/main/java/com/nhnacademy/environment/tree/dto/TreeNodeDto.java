@@ -1,4 +1,4 @@
-package com.nhnacademy.environment.timeseries.dto;
+package com.nhnacademy.environment.tree.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.util.List;
 public class TreeNodeDto {
 
     /**
-     * 노드 이름 (예: building, location, origin, deviceId 등).
+     * 프론트에 보여주는 노드 이름 (예: usage_idle 등).
      */
     private String label;
 
@@ -22,7 +22,13 @@ public class TreeNodeDto {
     private String tag;
 
     /**
-     * 하위 노드 목록.
+     * fetch 요청시 실제 쿼리에서 사용한 영문 원본.
+     */
+    private String value;
+
+    /**
+     * 상위 태그에 대한 자식 노드.
+     * 최하위 노드는 자식이 없습니다.
      */
     private List<TreeNodeDto> children;
 }
