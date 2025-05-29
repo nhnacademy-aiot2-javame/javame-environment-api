@@ -1,7 +1,6 @@
 package com.nhnacademy.environment.controller;
 
 import com.nhnacademy.environment.config.annotation.CompanyDomainContext;
-import com.nhnacademy.environment.config.annotation.HasRole;
 import com.nhnacademy.environment.config.annotation.NormalizeCompanyDomain;
 import com.nhnacademy.environment.timeseries.dto.ChartDataDto;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;

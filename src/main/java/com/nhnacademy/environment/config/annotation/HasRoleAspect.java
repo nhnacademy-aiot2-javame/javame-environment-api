@@ -20,6 +20,9 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class HasRoleAspect {
 
+    /**
+     * d.
+     */
     private final HttpServletRequest request;
 
     @Before("@annotation(hasRole)")
