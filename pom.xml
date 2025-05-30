@@ -130,7 +130,7 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
+            <version>0.12.6</version>
         </dependency>
 
         <!-- Resilience4j Feign fallback 지원 -->
@@ -148,6 +148,26 @@
             <groupId>com.google.genai</groupId>
             <artifactId>google-genai</artifactId>
             <version>1.0.0</version> <!-- 또는 최신 버전 -->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-integration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-websocket</artifactId>
         </dependency>
     </dependencies>
 

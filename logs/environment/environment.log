@@ -1,8 +1,40 @@
-2025-05-29 13:03:47 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=5m27s641ms).
-2025-05-29 13:20:05 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=15m48s175ms).
-2025-05-29 13:21:53 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
-2025-05-29 13:26:53 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
-2025-05-29 13:31:53 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
-2025-05-29 13:36:53 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
-2025-05-29 13:41:53 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
-2025-05-29 13:46:53 [AsyncResolver-bootstrap-executor-%d] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-05-29 14:04:39 [main] INFO  org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.nhnacademy.environment.JavameEnvironmentApiApplication for test class com.nhnacademy.environment.timeseries.controller.TimeSeriesAverageControllerTest
+2025-05-29 14:04:41 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-29 14:04:41 [main] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesAverageControllerTest - Starting TimeSeriesAverageControllerTest using Java 21.0.6 with PID 1642 (started by seongjangwon in /Users/seongjangwon/IdeaProjects/javame-environment-api)
+2025-05-29 14:04:41 [main] DEBUG com.nhnacademy.environment.timeseries.controller.TimeSeriesAverageControllerTest - Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-05-29 14:04:41 [main] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesAverageControllerTest - The following 1 profile is active: "local"
+2025-05-29 14:04:43 [main] INFO  org.springframework.boot.test.mock.web.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2025-05-29 14:04:43 [main] INFO  org.springframework.test.web.servlet.TestDispatcherServlet - Initializing Servlet ''
+2025-05-29 14:04:43 [main] INFO  org.springframework.test.web.servlet.TestDispatcherServlet - Completed initialization in 2 ms
+2025-05-29 14:04:43 [main] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesAverageControllerTest - Started TimeSeriesAverageControllerTest in 2.291 seconds (process running for 5.013)
+2025-05-29 14:04:43 [main] INFO  org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.nhnacademy.environment.JavameEnvironmentApiApplication for test class com.nhnacademy.environment.timeseries.controller.TimeSeriesSseControllerTest
+2025-05-29 14:04:43 [main] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesSseControllerTest - Starting TimeSeriesSseControllerTest using Java 21.0.6 with PID 1642 (started by seongjangwon in /Users/seongjangwon/IdeaProjects/javame-environment-api)
+2025-05-29 14:04:43 [main] DEBUG com.nhnacademy.environment.timeseries.controller.TimeSeriesSseControllerTest - Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-05-29 14:04:43 [main] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesSseControllerTest - The following 1 profile is active: "local"
+2025-05-29 14:04:43 [main] INFO  org.springframework.boot.test.mock.web.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2025-05-29 14:04:43 [main] INFO  org.springframework.test.web.servlet.TestDispatcherServlet - Initializing Servlet ''
+2025-05-29 14:04:43 [main] INFO  org.springframework.test.web.servlet.TestDispatcherServlet - Completed initialization in 1 ms
+2025-05-29 14:04:43 [main] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesSseControllerTest - Started TimeSeriesSseControllerTest in 0.267 seconds (process running for 5.601)
+2025-05-29 14:04:43 [main] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesSseController - SSE 연결 요청 도착: origin=sensor_data, filters={location=lab}
+2025-05-29 14:04:43 [main] INFO  org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.nhnacademy.environment.JavameEnvironmentApiApplication for test class com.nhnacademy.environment.timeseries.controller.TimeSeriesDataControllerTest
+2025-05-29 14:04:43 [main] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesDataControllerTest - Starting TimeSeriesDataControllerTest using Java 21.0.6 with PID 1642 (started by seongjangwon in /Users/seongjangwon/IdeaProjects/javame-environment-api)
+2025-05-29 14:04:43 [main] DEBUG com.nhnacademy.environment.timeseries.controller.TimeSeriesDataControllerTest - Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-05-29 14:04:43 [main] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesDataControllerTest - The following 1 profile is active: "local"
+2025-05-29 14:04:44 [main] INFO  org.springframework.boot.test.mock.web.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2025-05-29 14:04:44 [main] INFO  org.springframework.test.web.servlet.TestDispatcherServlet - Initializing Servlet ''
+2025-05-29 14:04:44 [main] INFO  org.springframework.test.web.servlet.TestDispatcherServlet - Completed initialization in 0 ms
+2025-05-29 14:04:44 [main] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesDataControllerTest - Started TimeSeriesDataControllerTest in 0.233 seconds (process running for 5.897)
+2025-05-29 14:04:44 [main] INFO  com.nhnacademy.environment.timeseries.controller.TimeSeriesDataController - /time-series 요청 도착 - origin: sensor_data, range: 180, filters: {}
+2025-05-29 14:04:44 [main] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesAverageService - Flux 쿼리: from(bucket: "data") |> range(start: -60m) |> filter(fn: (r) => r["origin"] == "origin") |> filter(fn: (r) => r["_measurement"] == "temperature") |> filter(fn: (r) => r["_field"] == "value") |> mean()
+2025-05-29 14:04:44 [main] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesAverageService - 1시간 평균 Flux: from(bucket: "data") |> range(start: -60m) |> filter(fn: (r) => r["origin"] == "origin") |> filter(fn: (r) => r["_measurement"] == "cpu") |> filter(fn: (r) => r["_field"] == "value") |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)
+2025-05-29 14:04:44 [main] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesAverageService - Flux 쿼리: from(bucket: "data") |> range(start: -60m) |> filter(fn: (r) => r["origin"] == "origin") |> filter(fn: (r) => r["_measurement"] == "temperature") |> filter(fn: (r) => r["_field"] == "value") |> mean()
+2025-05-29 14:04:44 [main] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesAverageService - 하루 고정 Flux: from(bucket: "data") |> range(start: time(v: "2025-05-29T04:04:44.587164Z"), stop: time(v: "2025-05-29T05:04:44.587187Z")) |> filter(fn: (r) => r["origin"] == "origin") |> filter(fn: (r) => r["_measurement"] == "cpu") |> filter(fn: (r) => r["_field"] == "value") |> mean()
+2025-05-29 14:04:44 [main] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesDataService - [TimeSeries] Flux query = from(bucket: "test-bucket") |> range(start: -60m) |> filter(fn: (r) => r["origin"] == "server_data") |> filter(fn: (r) => r["device_id"] == "abc123") |> keep(columns: ["_time", "_field", "_value", "_measurement", "location", "device_id"]) |> sort(columns: ["_time"])
+2025-05-29 14:04:44 [main] INFO  com.nhnacademy.environment.timeseries.service.TimeSeriesAverageBatchService - 하루 평균 저장 배치 시작
+2025-05-29 14:04:44 [main] WARN  com.nhnacademy.environment.timeseries.service.TimeSeriesAverageBatchService - [운영] 평균 없음 - domain=nhnacademy, origin=sensor_data, measurement=temperature, filters={origin=sensor_data, companyDomain=nhnacademy}
+2025-05-29 14:04:44 [main] INFO  com.nhnacademy.environment.timeseries.service.TimeSeriesAverageBatchService - [운영] 전체 도메인 평균 저장 배치 완료
+2025-05-29 14:04:44 [main] INFO  com.nhnacademy.environment.timeseries.service.TimeSeriesAverageBatchService - 하루 평균 저장 배치 시작
+2025-05-29 14:04:44 [main] DEBUG com.nhnacademy.environment.timeseries.service.TimeSeriesAverageBatchService - 쿼리 범위: 2025-05-28T00:00 ~ 2025-05-29T00:00
+2025-05-29 14:04:44 [main] INFO  com.nhnacademy.environment.timeseries.service.TimeSeriesAverageBatchService - [운영] 저장 완료: com.nhnacademy.environment.timeseries.domain.AverageData@2ca50b7a
+2025-05-29 14:04:44 [main] INFO  com.nhnacademy.environment.timeseries.service.TimeSeriesAverageBatchService - [운영] 전체 도메인 평균 저장 배치 완료
+2025-05-29 14:04:44 [main] ERROR com.nhnacademy.environment.util.InfluxUtil - extractDistinctValues 실패: 쿼리 실패

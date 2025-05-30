@@ -1,4 +1,4 @@
-package com.nhnacademy.environment.config.filter;
+package com.nhnacademy.environment.filter;
 
 import com.nhnacademy.environment.config.annotation.CompanyDomainContext;
 import jakarta.servlet.FilterChain;
