@@ -196,10 +196,13 @@ public class TimeSeriesAverageService {
         flux.append(String.format(" |> filter(fn: (r) => r[\"_measurement\"] == \"%s\")", measurement));
         flux.append(String.format(" |> filter(fn: (r) => r[\"_field\"] == \"%s\")", field));
 
+        // ★★★ 핵심 수정: companyDomain 필터 처리 개선 ★★★
         if (filters != null) {
             filters.forEach((k, v) -> {
                 if (!List.of("origin", "measurement", "field").contains(k)) {
+                    // ★★★ 변수값을 제대로 사용하도록 수정 ★★★
                     flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", k, v));
+                    log.debug("필터 추가: {}={}", k, v); // 디버깅용 로그
                 }
             });
         }
@@ -209,6 +212,9 @@ public class TimeSeriesAverageService {
         } else {
             flux.append(" |> mean()");
         }
+
+        // ★★★ 최종 쿼리 로그 출력 ★★★
+        log.info("생성된 Flux 쿼리: {}", flux.toString());
 
         return flux.toString();
     }

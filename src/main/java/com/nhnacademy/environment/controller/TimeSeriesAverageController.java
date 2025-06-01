@@ -3,6 +3,7 @@ package com.nhnacademy.environment.controller;
 import com.nhnacademy.environment.config.annotation.HasRole;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesAverageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/environment/{companyDomain}")
 @RequiredArgsConstructor
+@Slf4j
 public class TimeSeriesAverageController {
 
     /**
@@ -49,6 +51,10 @@ public class TimeSeriesAverageController {
             @RequestParam(required = false) Map<String, String> allParams,
             @RequestParam(defaultValue = "60") int rangeMinutes
     ) {
+        // ★★★ 로깅 추가 ★★★
+        log.info("평균 데이터 요청 - companyDomain: {}, measurement: {}, rangeMinutes: {}",
+                companyDomain, measurement, rangeMinutes);
+
         // 요청 필터 중 origin, measurement, field 등은 제거
         Map<String, String> filters = new HashMap<>(Optional.ofNullable(allParams).orElseGet(HashMap::new));
         filters.remove("origin");
@@ -56,12 +62,18 @@ public class TimeSeriesAverageController {
         filters.remove("field");
         filters.remove("rangeMinutes");
 
-        // 회사 도메인은 PathVariable 기준으로 강제 지정
+        // ★★★ 회사 도메인은 PathVariable 기준으로 강제 지정 ★★★
         filters.put("companyDomain", companyDomain);
+
+        // ★★★ 필터 내용 로깅 ★★★
+        log.info("사용될 필터: {}", filters);
 
         // 1시간 단위 평균 리스트 및 전체 평균 계산
         List<Double> hourly = timeSeriesAverageService.get1HourAverageSensorValues(origin, measurement, filters, rangeMinutes);
         Double total = timeSeriesAverageService.getAverageSensorValue(origin, measurement, filters, rangeMinutes);
+
+        // ★★★ 결과 로깅 ★★★
+        log.info("평균 데이터 결과 - hourly: {}건, total: {}", hourly.size(), total);
 
         // 결과 구성
         Map<String, Object> result = new HashMap<>();
