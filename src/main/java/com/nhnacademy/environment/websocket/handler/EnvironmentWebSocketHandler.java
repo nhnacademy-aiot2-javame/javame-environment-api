@@ -133,6 +133,8 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
                         companyDomain, measurement, gatewayId
                 );
 
+                log.info("전송 직전 데이터: {}", data);
+
                 log.info("조회된 데이터 건수: {} - sessionId: {}", data.size(), sessionId);
 
                 // WebSocket 메시지 생성

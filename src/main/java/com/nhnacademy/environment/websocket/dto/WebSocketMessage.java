@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.Map;
 
 /**
- * WebSocket 메시지 전송을 위한 DTO 클래스
+ * WebSocket 메시지 전송을 위한 DTO 클래스.
  */
 @Data
 @Builder
