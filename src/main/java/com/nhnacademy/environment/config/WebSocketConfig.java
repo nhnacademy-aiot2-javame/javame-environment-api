@@ -37,7 +37,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         log.info("WebSocket 핸들러 등록 시작");
 
-        registry.addHandler(environmentWebSocketHandler, "/wss/environment")
+        registry.addHandler(environmentWebSocketHandler, "/ws/environment")
                 .addInterceptors(authHandshakeInterceptor)
                 .setAllowedOrigins("*");
 
