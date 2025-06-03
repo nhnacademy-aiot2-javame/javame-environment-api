@@ -55,8 +55,7 @@ public class TimeSeriesDataService {
      *
      * @param allParams 태그 필터 조건
      * @param rangeMinutes 조회 범위 (분)
-     * @return 측정값 기준 그룹화된 시계열 데이터 맵
-     */
+     * @return 측정값 기준 그룹화된 시계열 데이터 맵     */
     public Map<String, List<TimeSeriesDataDto>> getTimeSeriesData(Map<String, String> allParams,
                                                                   int rangeMinutes) {
         String companyDomain = allParams.get("companyDomain");
@@ -475,7 +474,7 @@ public class TimeSeriesDataService {
             });
         }
 
-        // ★★★ aggregateWindow 사용하여 집계 ★★★
+        // aggregateWindow 사용하여 집계
         flux.append(String.format(" |> aggregateWindow(every: %s, fn: mean, createEmpty: false)", aggregationInterval));
         // fn: mean 외에 max, min, sum, count 등 필요에 따라 변경 가능
 
