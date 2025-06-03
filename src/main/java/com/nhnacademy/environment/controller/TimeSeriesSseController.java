@@ -1,6 +1,7 @@
-package com.nhnacademy.environment.timeseries.controller;
+package com.nhnacademy.environment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.environment.config.annotation.CompanyDomainContext;
 import com.nhnacademy.environment.config.annotation.HasRole;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
@@ -45,7 +46,7 @@ public class TimeSeriesSseController {
      * @return SseEmitter 스트림 응답
      */
     @GetMapping(value = "/time-series-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
+    //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public SseEmitter streamTimeSeriesData(
             @PathVariable String companyDomain,
             @RequestParam String origin,
@@ -53,14 +54,15 @@ public class TimeSeriesSseController {
             @RequestParam Map<String, String> allParams
     ) {
         allParams.remove("range");
-        allParams.remove("origin");
+        allParams.put("companyDomain", CompanyDomainContext.get());
+        allParams.put("origin", origin);
 
-        SseEmitter emitter = new SseEmitter(0L); // timeout 없음
+        SseEmitter emitter = new SseEmitter(60 * 60 * 1000L); // timeout 1시간
         Executors.newSingleThreadExecutor().execute(() -> {
             try {
                 while (true) {
                     Map<String, List<TimeSeriesDataDto>> data =
-                            timeSeriesDataService.getTimeSeriesData(origin, allParams, range);
+                            timeSeriesDataService.getTimeSeriesData(allParams, range);
 
                     emitter.send(SseEmitter.event()
                             .name("time-series-update")

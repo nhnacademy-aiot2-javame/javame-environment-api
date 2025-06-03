@@ -50,7 +50,7 @@ public class TimeSeriesAverageBatchService {
      */
     @Scheduled(cron = "0 10 0 * * *")
     public void saveDailyAverage() {
-        log.info("하루 평균 저장 배치 시작");
+        log.info("하루 평균 저장 시작");
 
         LocalDate targetDate = LocalDate.now().minusDays(1);
         LocalDateTime start = targetDate.atStartOfDay();
@@ -113,7 +113,7 @@ public class TimeSeriesAverageBatchService {
             }
         }
 
-        log.info("{} 전체 도메인 평균 저장 배치 완료", logPrefix);
+        log.info("{} 전체 도메인 평균 저장 완료", logPrefix);
     }
 }
 

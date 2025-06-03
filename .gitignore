@@ -33,7 +33,7 @@ build/
 .vscode/
 
 *.log
-logs/
+logs/**
 
 ### application-local.properties 설정 무시 ###
 application-local.properties
