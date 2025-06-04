@@ -574,72 +574,72 @@ public class TimeSeriesDataService {
     }
 
 
-    /**
-     * WebSocket용 실시간 데이터 조회 (오버로드 메소드)
-     * 추가 필터 조건을 받는 버전
-     */
-    public List<TimeSeriesDataDto> getRealtimeData(String companyDomain,
-                                                   String measurement,
-                                                   String gatewayId,
-                                                   Map<String, String> additionalFilters) {
-
-        StringBuilder flux = new StringBuilder(
-                String.format("from(bucket: \"%s\")", bucket)
-        );
-
-        flux.append(" |> range(start: -5m)")
-                .append(String.format(" |> filter(fn: (r) => r[\"companyDomain\"] == \"%s\")", companyDomain))
-                .append(String.format(" |> filter(fn: (r) => r[\"_measurement\"] == \"%s\")", measurement))
-                .append(String.format(" |> filter(fn: (r) => r[\"gatewayId\"] == \"%s\")", gatewayId))
-                .append(" |> filter(fn: (r) => r[\"_field\"] == \"value\")");
-
-        // 추가 필터 적용
-        if (additionalFilters != null) {
-            additionalFilters.forEach((key, value) -> {
-                if (value != null && !value.isBlank()) {
-                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value));
-                }
-            });
-        }
-
-        flux.append(" |> keep(columns: [\"_time\", \"_field\", \"_value\", \"_measurement\", \"origin\", \"location\", \"gatewayId\", \"companyDomain\"])")
-                .append(" |> sort(columns: [\"_time\"])");
-
-        log.debug("[RealtimeDataWithFilters] Flux query = {}", flux.toString());
-
-        List<TimeSeriesDataDto> resultList = new ArrayList<>();
-
-        try {
-            List<FluxTable> tables = queryApi.query(flux.toString(), influxOrg);
-            for (FluxTable table : tables) {
-                for (FluxRecord record : table.getRecords()) {
-                    Instant time = record.getTime();
-                    double value = ((Number) record.getValue()).doubleValue();
-                    String recordMeasurement = (String) record.getValueByKey("_measurement");
-                    String location = InfluxUtil.getTagValue(record, "location");
-                    String origin = InfluxUtil.getTagValue(record, "origin");
-
-                    Map<String, String> tags = new HashMap<>();
-                    tags.put("origin", origin);
-                    tags.put("location", location);
-                    tags.put("gatewayId", InfluxUtil.getTagValue(record, "gatewayId"));
-                    tags.put("companyDomain", InfluxUtil.getTagValue(record, "companyDomain"));
-
-                    // 추가 필터의 태그들도 포함
-                    if (additionalFilters != null) {
-                        additionalFilters.keySet().forEach(tagKey ->
-                                tags.put(tagKey, InfluxUtil.getTagValue(record, tagKey))
-                        );
-                    }
-
-                    resultList.add(new TimeSeriesDataDto(time, location, value, recordMeasurement, tags));
-                }
-            }
-
-        } catch (Exception e) {
-            log.error("실시간 데이터 조회 실패 (필터 포함)", e);
-        }
-
-        return resultList;
-    }
+//    /**
+//     * WebSocket용 실시간 데이터 조회 (오버로드 메소드)
+//     * 추가 필터 조건을 받는 버전
+//     */
+//    public List<TimeSeriesDataDto> getRealtimeData(String companyDomain,
+//                                                   String measurement,
+//                                                   String gatewayId,
+//                                                   Map<String, String> additionalFilters) {
+//
+//        StringBuilder flux = new StringBuilder(
+//                String.format("from(bucket: \"%s\")", bucket)
+//        );
+//
+//        flux.append(" |> range(start: -5m)")
+//                .append(String.format(" |> filter(fn: (r) => r[\"companyDomain\"] == \"%s\")", companyDomain))
+//                .append(String.format(" |> filter(fn: (r) => r[\"_measurement\"] == \"%s\")", measurement))
+//                .append(String.format(" |> filter(fn: (r) => r[\"gatewayId\"] == \"%s\")", gatewayId))
+//                .append(" |> filter(fn: (r) => r[\"_field\"] == \"value\")");
+//
+//        // 추가 필터 적용
+//        if (additionalFilters != null) {
+//            additionalFilters.forEach((key, value) -> {
+//                if (value != null && !value.isBlank()) {
+//                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", key, value));
+//                }
+//            });
+//        }
+//
+//        flux.append(" |> keep(columns: [\"_time\", \"_field\", \"_value\", \"_measurement\", \"origin\", \"location\", \"gatewayId\", \"companyDomain\"])")
+//                .append(" |> sort(columns: [\"_time\"])");
+//
+//        log.debug("[RealtimeDataWithFilters] Flux query = {}", flux.toString());
+//
+//        List<TimeSeriesDataDto> resultList = new ArrayList<>();
+//
+//        try {
+//            List<FluxTable> tables = queryApi.query(flux.toString(), influxOrg);
+//            for (FluxTable table : tables) {
+//                for (FluxRecord record : table.getRecords()) {
+//                    Instant time = record.getTime();
+//                    double value = ((Number) record.getValue()).doubleValue();
+//                    String recordMeasurement = (String) record.getValueByKey("_measurement");
+//                    String location = InfluxUtil.getTagValue(record, "location");
+//                    String origin = InfluxUtil.getTagValue(record, "origin");
+//
+//                    Map<String, String> tags = new HashMap<>();
+//                    tags.put("origin", origin);
+//                    tags.put("location", location);
+//                    tags.put("gatewayId", InfluxUtil.getTagValue(record, "gatewayId"));
+//                    tags.put("companyDomain", InfluxUtil.getTagValue(record, "companyDomain"));
+//
+//                    // 추가 필터의 태그들도 포함
+//                    if (additionalFilters != null) {
+//                        additionalFilters.keySet().forEach(tagKey ->
+//                                tags.put(tagKey, InfluxUtil.getTagValue(record, tagKey))
+//                        );
+//                    }
+//
+//                    resultList.add(new TimeSeriesDataDto(time, location, value, recordMeasurement, tags));
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            log.error("실시간 데이터 조회 실패 (필터 포함)", e);
+//        }
+//
+//        return resultList;
+//    }
 }
