@@ -108,13 +108,17 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
     }
 
     /**
-     * 실시간 데이터 구독 처리
+     * 실시간 데이터 구독 처리.
+     * @param session 세션
+     * @param request 응답
+     * @param companyDomain 회사 도메인
      */
     private void handleSubscribe(WebSocketSession session, Map<String, Object> request, String companyDomain) {
         String sessionId = session.getId();
         String measurement = (String) request.get("measurement");
         String gatewayId = (String) request.get("gatewayId");
-        Integer intervalSeconds = (Integer) request.getOrDefault("interval", 5);
+        Integer intervalSeconds = (Integer) request.getOrDefault("interval", 10); // 기본 10초
+        Integer rangeMinutes = (Integer) request.getOrDefault("rangeMinutes", 3); // 기본 3분
 
         // 기존 스케줄 취소
         cancelExistingSchedule(sessionId);
@@ -128,21 +132,18 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
                     return;
                 }
 
-                // InfluxDB에서 실시간 데이터 조회
+                // 핵심: rangeMinutes를 그대로 서비스로 넘김!
                 List<TimeSeriesDataDto> data = timeSeriesDataService.getRealtimeData(
-                        companyDomain, measurement, gatewayId
+                        companyDomain, measurement, gatewayId, rangeMinutes
                 );
 
                 log.info("전송 직전 데이터: {}", data);
-
                 log.info("조회된 데이터 건수: {} - sessionId: {}", data.size(), sessionId);
 
-                // WebSocket 메시지 생성
                 WebSocketMessage realtimeMsg = WebSocketMessage.realtimeData(
                         companyDomain, measurement, gatewayId, data
                 );
 
-                // ★★★ 토픽 브로드캐스트 대신 직접 세션에 전송 ★★★
                 String jsonMessage = JsonUtils.toJson(realtimeMsg);
 
                 if (session.isOpen()) {
@@ -163,6 +164,7 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
         WebSocketMessage subscribeMsg = WebSocketMessage.subscribeSuccess(measurement, gatewayId, intervalSeconds);
         sendMessage(session, subscribeMsg);
 
+        log.info("WebSocket subscribe: measurement={}, gatewayId={}, rangeMinutes={}", measurement, gatewayId, rangeMinutes);
         log.info("실시간 구독 설정 완료 (직접 전송 방식) - sessionId: {}", sessionId);
     }
 

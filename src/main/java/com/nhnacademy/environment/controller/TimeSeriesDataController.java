@@ -113,6 +113,7 @@ public class TimeSeriesDataController {
      * @param companyDomain 회사 도메인
      * @param sensor        측정 항목 이름 (예: temperature)
      * @param origin        데이터 출처
+     * @param rangeMinutes  데이터 조회 시간 (기본 5분)
      * @return 차트에 사용할 시계열 데이터 DTO
      */
     @NormalizeCompanyDomain
@@ -121,14 +122,15 @@ public class TimeSeriesDataController {
     public ChartDataDto getChartDataForSensor(
             @PathVariable String companyDomain,
             @PathVariable String sensor,
-            @RequestParam String origin
+            @RequestParam String origin,
+            @RequestParam(defaultValue = "5") int rangeMinutes
     ) {
         Map<String, String> filters = new HashMap<>();
         filters.put("origin", origin);
         filters.put("companyDomain", CompanyDomainContext.get());
 
-        log.debug("chart called: companyDomain={}, origin={}", companyDomain, origin);
-        return timeSeriesDataService.getChartData(sensor, "value", filters, 60);
+        log.debug("chart called: companyDomain={}, origin={}, rangeMinutes={}", companyDomain, origin, rangeMinutes);
+        return timeSeriesDataService.getChartData(sensor, "value", filters, rangeMinutes);
     }
 
     /**
