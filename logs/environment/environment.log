@@ -1,24 +1,24 @@
-2025-06-06 16:53:20 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
-2025-06-06 16:53:20 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.6 with PID 1099718 (/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes started by nhnacademy in /home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api)
-2025-06-06 16:53:20 [main] DEBUG com.nhnacademy.environment.JavameEnvironmentApiApplication - Running with Spring Boot v3.4.4, Spring v6.2.5
-2025-06-06 16:53:20 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - No active profile set, falling back to 1 default profile: "default"
-2025-06-06 16:53:21 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-06-06 16:53:21 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 172 ms. Found 2 JPA repository interfaces.
-2025-06-06 16:53:21 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
-2025-06-06 16:53:21 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
-2025-06-06 16:53:21 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=b900dd14-0328-3f03-a5e9-bc5c48a7f239
-2025-06-06 16:53:22 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 10273 (http)
-2025-06-06 16:53:22 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10273"]
-2025-06-06 16:53:22 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
-2025-06-06 16:53:22 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
-2025-06-06 16:53:22 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-06-06 16:53:22 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1682 ms
-2025-06-06 16:53:22 [main] WARN  org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Failed to initialize dependency 'dataSourceScriptDatabaseInitializer' of LoadTimeWeaverAware bean 'entityManagerFactory': Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Unsatisfied dependency expressed through method 'dataSourceScriptDatabaseInitializer' parameter 0: Error creating bean with name 'dataSource' defined in class path resource [org/springframework/boot/autoconfigure/jdbc/DataSourceConfiguration$Hikari.class]: Failed to instantiate [com.zaxxer.hikari.HikariDataSource]: Factory method 'dataSource' threw exception with message: Failed to determine suitable jdbc url
-2025-06-06 16:53:22 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
-2025-06-06 16:53:22 [main] INFO  org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger - 
+2025-06-06 18:36:46 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-06-06 18:36:46 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.6 with PID 1115417 (/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes started by nhnacademy in /home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api)
+2025-06-06 18:36:46 [main] DEBUG com.nhnacademy.environment.JavameEnvironmentApiApplication - Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-06-06 18:36:46 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - The following 1 profile is active: "GOOGLE_API_KEY=AIzaSyBNTTUtZNGhPc_Rp5tONFgdNCMYU1Vg_7w"
+2025-06-06 18:36:46 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-06 18:36:46 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 152 ms. Found 2 JPA repository interfaces.
+2025-06-06 18:36:47 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2025-06-06 18:36:47 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2025-06-06 18:36:47 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=b900dd14-0328-3f03-a5e9-bc5c48a7f239
+2025-06-06 18:36:47 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 10273 (http)
+2025-06-06 18:36:47 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10273"]
+2025-06-06 18:36:47 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-06 18:36:47 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-06-06 18:36:47 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-06-06 18:36:47 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1516 ms
+2025-06-06 18:36:47 [main] WARN  org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Failed to initialize dependency 'dataSourceScriptDatabaseInitializer' of LoadTimeWeaverAware bean 'entityManagerFactory': Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Unsatisfied dependency expressed through method 'dataSourceScriptDatabaseInitializer' parameter 0: Error creating bean with name 'dataSource' defined in class path resource [org/springframework/boot/autoconfigure/jdbc/DataSourceConfiguration$Hikari.class]: Failed to instantiate [com.zaxxer.hikari.HikariDataSource]: Factory method 'dataSource' threw exception with message: Failed to determine suitable jdbc url
+2025-06-06 18:36:47 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
+2025-06-06 18:36:47 [main] INFO  org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger - 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-06-06 16:53:22 [main] ERROR org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter - 
+2025-06-06 18:36:47 [main] ERROR org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter - 
 
 ***************************
 APPLICATION FAILED TO START
@@ -35,338 +35,83 @@ Action:
 
 Consider the following:
 	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
-	If you have database settings to be loaded from a particular profile you may need to activate it (no profiles are currently active).
+	If you have database settings to be loaded from a particular profile you may need to activate it (the profiles GOOGLE_API_KEY=AIzaSyBNTTUtZNGhPc_Rp5tONFgdNCMYU1Vg_7w are currently active).
 
-2025-06-06 16:55:59 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
-2025-06-06 16:55:59 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.6 with PID 1100121 (/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes started by nhnacademy in /home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api)
-2025-06-06 16:55:59 [main] DEBUG com.nhnacademy.environment.JavameEnvironmentApiApplication - Running with Spring Boot v3.4.4, Spring v6.2.5
-2025-06-06 16:55:59 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - The following 1 profile is active: "prod"
-2025-06-06 16:56:00 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-06-06 16:56:00 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 122 ms. Found 2 JPA repository interfaces.
-2025-06-06 16:56:00 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
-2025-06-06 16:56:00 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
-2025-06-06 16:56:00 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=b900dd14-0328-3f03-a5e9-bc5c48a7f239
-2025-06-06 16:56:00 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 10273 (http)
-2025-06-06 16:56:00 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10273"]
-2025-06-06 16:56:00 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
-2025-06-06 16:56:00 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
-2025-06-06 16:56:00 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-06-06 16:56:00 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1254 ms
-2025-06-06 16:56:01 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2025-06-06 16:56:01 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3465edf9
-2025-06-06 16:56:01 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2025-06-06 16:56:01 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-06-06 16:56:01 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.11.Final
-2025-06-06 16:56:01 [main] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
-2025-06-06 16:56:01 [main] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-06-06 16:56:01 [main] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 8.0.41
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2025-06-06 16:56:02 [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-06-06 16:56:02 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.WebClientConfig.loadBalancedWebClientBuilder()
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.WebClientConfig.loadBalancedWebClientBuilder() => 2ms
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.websocket.interceptor.AuthHandshakeInterceptor - AuthHandshakeInterceptor 초기화 완료 - memberApiUrl: http://MEMBER-API, memberMeUri: /members/me
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient()
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - [InfluxDB 연결 성공]
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient() => 128ms
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.queryApi()
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.queryApi() => 6ms
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket()
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket() => 0ms
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization()
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization() => 0ms
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.TaskSchedulerConfig.webSocketTaskScheduler()
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TaskSchedulerConfig - WebSocket TaskScheduler 초기화 완료 - 풀 크기: 10
-2025-06-06 16:56:02 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.TaskSchedulerConfig.webSocketTaskScheduler() => 2ms
-2025-06-06 16:56:02 [main] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
-2025-06-06 16:56:03 [main] WARN  org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'geminiClient' defined in file [/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes/com/nhnacademy/environment/report/client/GeminiClient.class]: Failed to instantiate [com.nhnacademy.environment.report.client.GeminiClient]: Constructor threw exception
-2025-06-06 16:56:03 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2025-06-06 16:56:03 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2025-06-06 16:56:03 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2025-06-06 16:56:03 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
-2025-06-06 16:56:03 [main] INFO  org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger - 
+2025-06-06 18:37:26 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-06-06 18:37:26 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.6 with PID 1115913 (/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes started by nhnacademy in /home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api)
+2025-06-06 18:37:26 [main] DEBUG com.nhnacademy.environment.JavameEnvironmentApiApplication - Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-06-06 18:37:26 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - The following 1 profile is active: "GOOGLE_API_KEY=AIzaSyBNTTUtZNGhPc_Rp5tONFgdNCMYU1Vg_7w"
+2025-06-06 18:37:26 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-06 18:37:27 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 126 ms. Found 2 JPA repository interfaces.
+2025-06-06 18:37:27 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2025-06-06 18:37:27 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2025-06-06 18:37:27 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=b900dd14-0328-3f03-a5e9-bc5c48a7f239
+2025-06-06 18:37:27 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 10273 (http)
+2025-06-06 18:37:27 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10273"]
+2025-06-06 18:37:27 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-06 18:37:27 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-06-06 18:37:27 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-06-06 18:37:27 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1269 ms
+2025-06-06 18:37:27 [main] WARN  org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Failed to initialize dependency 'dataSourceScriptDatabaseInitializer' of LoadTimeWeaverAware bean 'entityManagerFactory': Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Unsatisfied dependency expressed through method 'dataSourceScriptDatabaseInitializer' parameter 0: Error creating bean with name 'dataSource' defined in class path resource [org/springframework/boot/autoconfigure/jdbc/DataSourceConfiguration$Hikari.class]: Failed to instantiate [com.zaxxer.hikari.HikariDataSource]: Factory method 'dataSource' threw exception with message: Failed to determine suitable jdbc url
+2025-06-06 18:37:27 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
+2025-06-06 18:37:27 [main] INFO  org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger - 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-06-06 16:56:03 [main] ERROR org.springframework.boot.SpringApplication - Application run failed
-org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'geminiClient' defined in file [/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes/com/nhnacademy/environment/report/client/GeminiClient.class]: Failed to instantiate [com.nhnacademy.environment.report.client.GeminiClient]: Constructor threw exception
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1343) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1228) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:347) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1155) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1121) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1056) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987) ~[spring-context-6.2.5.jar:6.2.5]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.5.jar:6.2.5]
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) [spring-boot-3.4.4.jar:3.4.4]
-	at com.nhnacademy.environment.JavameEnvironmentApiApplication.main(JavameEnvironmentApiApplication.java:13) [classes/:?]
-Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.nhnacademy.environment.report.client.GeminiClient]: Constructor threw exception
-	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:222) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:122) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1337) ~[spring-beans-6.2.5.jar:6.2.5]
-	... 19 more
-Caused by: java.lang.IllegalArgumentException: API key must either be provided or set in the environment variable GOOGLE_API_KEY.
-	at com.google.genai.ApiClient.<init>(ApiClient.java:56) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.HttpApiClient.<init>(HttpApiClient.java:42) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:273) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:171) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.nhnacademy.environment.report.client.GeminiClient.<init>(GeminiClient.java:13) ~[classes/:?]
-	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[?:?]
-	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:196) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:122) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1337) ~[spring-beans-6.2.5.jar:6.2.5]
-	... 19 more
-Caused by: java.lang.NullPointerException
-	at java.base/java.util.Objects.requireNonNull(Objects.java:233) ~[?:?]
-	at java.base/java.util.Optional.of(Optional.java:113) ~[?:?]
-	at com.google.genai.ApiClient.<init>(ApiClient.java:54) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.HttpApiClient.<init>(HttpApiClient.java:42) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:273) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:171) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.nhnacademy.environment.report.client.GeminiClient.<init>(GeminiClient.java:13) ~[classes/:?]
-	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[?:?]
-	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:196) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:122) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1337) ~[spring-beans-6.2.5.jar:6.2.5]
-	... 19 more
-2025-06-06 16:58:11 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
-2025-06-06 16:58:11 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.6 with PID 1100308 (/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes started by nhnacademy in /home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api)
-2025-06-06 16:58:11 [main] DEBUG com.nhnacademy.environment.JavameEnvironmentApiApplication - Running with Spring Boot v3.4.4, Spring v6.2.5
-2025-06-06 16:58:11 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - The following 1 profile is active: "prod"
-2025-06-06 16:58:12 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-06-06 16:58:12 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 125 ms. Found 2 JPA repository interfaces.
-2025-06-06 16:58:12 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
-2025-06-06 16:58:12 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
-2025-06-06 16:58:12 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=b900dd14-0328-3f03-a5e9-bc5c48a7f239
-2025-06-06 16:58:13 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 10273 (http)
-2025-06-06 16:58:13 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10273"]
-2025-06-06 16:58:13 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
-2025-06-06 16:58:13 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
-2025-06-06 16:58:13 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-06-06 16:58:13 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1344 ms
-2025-06-06 16:58:13 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2025-06-06 16:58:13 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@24a7725d
-2025-06-06 16:58:13 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2025-06-06 16:58:13 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-06-06 16:58:13 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.11.Final
-2025-06-06 16:58:13 [main] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
-2025-06-06 16:58:13 [main] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-06-06 16:58:14 [main] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 8.0.41
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2025-06-06 16:58:14 [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-06-06 16:58:14 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.WebClientConfig.loadBalancedWebClientBuilder()
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.WebClientConfig.loadBalancedWebClientBuilder() => 2ms
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.websocket.interceptor.AuthHandshakeInterceptor - AuthHandshakeInterceptor 초기화 완료 - memberApiUrl: http://MEMBER-API, memberMeUri: /members/me
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient()
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - [InfluxDB 연결 성공]
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient() => 105ms
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.queryApi()
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.queryApi() => 6ms
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket()
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket() => 0ms
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization()
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization() => 0ms
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.TaskSchedulerConfig.webSocketTaskScheduler()
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TaskSchedulerConfig - WebSocket TaskScheduler 초기화 완료 - 풀 크기: 10
-2025-06-06 16:58:14 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.TaskSchedulerConfig.webSocketTaskScheduler() => 1ms
-2025-06-06 16:58:15 [main] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
-2025-06-06 16:58:15 [main] WARN  org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'geminiClient' defined in file [/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes/com/nhnacademy/environment/report/client/GeminiClient.class]: Failed to instantiate [com.nhnacademy.environment.report.client.GeminiClient]: Constructor threw exception
-2025-06-06 16:58:15 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2025-06-06 16:58:15 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2025-06-06 16:58:15 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2025-06-06 16:58:15 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
-2025-06-06 16:58:15 [main] INFO  org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger - 
+2025-06-06 18:37:27 [main] ERROR org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine suitable jdbc url
+
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (the profiles GOOGLE_API_KEY=AIzaSyBNTTUtZNGhPc_Rp5tONFgdNCMYU1Vg_7w are currently active).
+
+2025-06-06 18:38:02 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-06-06 18:38:02 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.6 with PID 1116227 (/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes started by nhnacademy in /home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api)
+2025-06-06 18:38:02 [main] DEBUG com.nhnacademy.environment.JavameEnvironmentApiApplication - Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-06-06 18:38:02 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - The following 1 profile is active: "GOOGLE_API_KEY=AIzaSyBNTTUtZNGhPc_Rp5tONFgdNCMYU1Vg_7w"
+2025-06-06 18:38:03 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-06 18:38:03 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 122 ms. Found 2 JPA repository interfaces.
+2025-06-06 18:38:03 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2025-06-06 18:38:03 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2025-06-06 18:38:03 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=b900dd14-0328-3f03-a5e9-bc5c48a7f239
+2025-06-06 18:38:03 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 10273 (http)
+2025-06-06 18:38:03 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10273"]
+2025-06-06 18:38:03 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-06 18:38:03 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-06-06 18:38:03 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-06-06 18:38:03 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1421 ms
+2025-06-06 18:38:04 [main] WARN  org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Failed to initialize dependency 'dataSourceScriptDatabaseInitializer' of LoadTimeWeaverAware bean 'entityManagerFactory': Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Unsatisfied dependency expressed through method 'dataSourceScriptDatabaseInitializer' parameter 0: Error creating bean with name 'dataSource' defined in class path resource [org/springframework/boot/autoconfigure/jdbc/DataSourceConfiguration$Hikari.class]: Failed to instantiate [com.zaxxer.hikari.HikariDataSource]: Factory method 'dataSource' threw exception with message: Failed to determine suitable jdbc url
+2025-06-06 18:38:04 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
+2025-06-06 18:38:04 [main] INFO  org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger - 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-06-06 16:58:15 [main] ERROR org.springframework.boot.SpringApplication - Application run failed
-org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'geminiClient' defined in file [/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes/com/nhnacademy/environment/report/client/GeminiClient.class]: Failed to instantiate [com.nhnacademy.environment.report.client.GeminiClient]: Constructor threw exception
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1343) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1228) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:347) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1155) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1121) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1056) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987) ~[spring-context-6.2.5.jar:6.2.5]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.5.jar:6.2.5]
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) [spring-boot-3.4.4.jar:3.4.4]
-	at com.nhnacademy.environment.JavameEnvironmentApiApplication.main(JavameEnvironmentApiApplication.java:13) [classes/:?]
-Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.nhnacademy.environment.report.client.GeminiClient]: Constructor threw exception
-	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:222) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:122) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1337) ~[spring-beans-6.2.5.jar:6.2.5]
-	... 19 more
-Caused by: java.lang.IllegalArgumentException: API key must either be provided or set in the environment variable GOOGLE_API_KEY.
-	at com.google.genai.ApiClient.<init>(ApiClient.java:56) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.HttpApiClient.<init>(HttpApiClient.java:42) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:273) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:171) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.nhnacademy.environment.report.client.GeminiClient.<init>(GeminiClient.java:13) ~[classes/:?]
-	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[?:?]
-	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:196) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:122) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1337) ~[spring-beans-6.2.5.jar:6.2.5]
-	... 19 more
-Caused by: java.lang.NullPointerException
-	at java.base/java.util.Objects.requireNonNull(Objects.java:233) ~[?:?]
-	at java.base/java.util.Optional.of(Optional.java:113) ~[?:?]
-	at com.google.genai.ApiClient.<init>(ApiClient.java:54) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.HttpApiClient.<init>(HttpApiClient.java:42) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:273) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:171) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.nhnacademy.environment.report.client.GeminiClient.<init>(GeminiClient.java:13) ~[classes/:?]
-	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[?:?]
-	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:196) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:122) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1337) ~[spring-beans-6.2.5.jar:6.2.5]
-	... 19 more
-2025-06-06 16:58:51 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
-2025-06-06 16:58:51 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - Starting JavameEnvironmentApiApplication using Java 21.0.6 with PID 1100435 (/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes started by nhnacademy in /home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api)
-2025-06-06 16:58:51 [main] DEBUG com.nhnacademy.environment.JavameEnvironmentApiApplication - Running with Spring Boot v3.4.4, Spring v6.2.5
-2025-06-06 16:58:51 [main] INFO  com.nhnacademy.environment.JavameEnvironmentApiApplication - The following 1 profile is active: "prod"
-2025-06-06 16:58:52 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-06-06 16:58:52 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 114 ms. Found 2 JPA repository interfaces.
-2025-06-06 16:58:52 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
-2025-06-06 16:58:52 [main] INFO  org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
-2025-06-06 16:58:52 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=b900dd14-0328-3f03-a5e9-bc5c48a7f239
-2025-06-06 16:58:52 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 10273 (http)
-2025-06-06 16:58:52 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10273"]
-2025-06-06 16:58:52 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
-2025-06-06 16:58:52 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
-2025-06-06 16:58:52 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-06-06 16:58:52 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1284 ms
-2025-06-06 16:58:53 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2025-06-06 16:58:53 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@77e5c765
-2025-06-06 16:58:53 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2025-06-06 16:58:53 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-06-06 16:58:53 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.11.Final
-2025-06-06 16:58:53 [main] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
-2025-06-06 16:58:53 [main] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-06-06 16:58:53 [main] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 8.0.41
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2025-06-06 16:58:54 [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-06-06 16:58:54 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.WebClientConfig.loadBalancedWebClientBuilder()
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.WebClientConfig.loadBalancedWebClientBuilder() => 2ms
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.websocket.interceptor.AuthHandshakeInterceptor - AuthHandshakeInterceptor 초기화 완료 - memberApiUrl: http://MEMBER-API, memberMeUri: /members/me
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient()
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.InfluxDBConfig - [InfluxDB 연결 성공]
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxDBClient() => 89ms
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.queryApi()
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.queryApi() => 6ms
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket()
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxBucket() => 1ms
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization()
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.InfluxDBConfig.influxOrganization() => 0ms
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [ENTER] com.nhnacademy.environment.config.TaskSchedulerConfig.webSocketTaskScheduler()
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TaskSchedulerConfig - WebSocket TaskScheduler 초기화 완료 - 풀 크기: 10
-2025-06-06 16:58:54 [main] INFO  com.nhnacademy.environment.config.TraceAspect - [EXIT] com.nhnacademy.environment.config.TaskSchedulerConfig.webSocketTaskScheduler() => 2ms
-2025-06-06 16:58:54 [main] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
-2025-06-06 16:58:55 [main] WARN  org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'geminiClient' defined in file [/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes/com/nhnacademy/environment/report/client/GeminiClient.class]: Failed to instantiate [com.nhnacademy.environment.report.client.GeminiClient]: Constructor threw exception
-2025-06-06 16:58:55 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2025-06-06 16:58:55 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2025-06-06 16:58:55 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2025-06-06 16:58:55 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
-2025-06-06 16:58:55 [main] INFO  org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger - 
+2025-06-06 18:38:04 [main] ERROR org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter - 
 
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-06-06 16:58:55 [main] ERROR org.springframework.boot.SpringApplication - Application run failed
-org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'geminiClient' defined in file [/home/nhnacademy/Desktop/프로젝트 준비/javame-environment-api/target/classes/com/nhnacademy/environment/report/client/GeminiClient.class]: Failed to instantiate [com.nhnacademy.environment.report.client.GeminiClient]: Constructor threw exception
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1343) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1228) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:347) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1155) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1121) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1056) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987) ~[spring-context-6.2.5.jar:6.2.5]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.5.jar:6.2.5]
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) [spring-boot-3.4.4.jar:3.4.4]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) [spring-boot-3.4.4.jar:3.4.4]
-	at com.nhnacademy.environment.JavameEnvironmentApiApplication.main(JavameEnvironmentApiApplication.java:13) [classes/:?]
-Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.nhnacademy.environment.report.client.GeminiClient]: Constructor threw exception
-	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:222) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:122) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1337) ~[spring-beans-6.2.5.jar:6.2.5]
-	... 19 more
-Caused by: java.lang.IllegalArgumentException: API key must either be provided or set in the environment variable GOOGLE_API_KEY.
-	at com.google.genai.ApiClient.<init>(ApiClient.java:56) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.HttpApiClient.<init>(HttpApiClient.java:42) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:273) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:171) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.nhnacademy.environment.report.client.GeminiClient.<init>(GeminiClient.java:13) ~[classes/:?]
-	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[?:?]
-	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:196) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:122) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1337) ~[spring-beans-6.2.5.jar:6.2.5]
-	... 19 more
-Caused by: java.lang.NullPointerException
-	at java.base/java.util.Objects.requireNonNull(Objects.java:233) ~[?:?]
-	at java.base/java.util.Optional.of(Optional.java:113) ~[?:?]
-	at com.google.genai.ApiClient.<init>(ApiClient.java:54) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.HttpApiClient.<init>(HttpApiClient.java:42) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:273) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.google.genai.Client.<init>(Client.java:171) ~[google-genai-1.0.0.jar:1.0.0]
-	at com.nhnacademy.environment.report.client.GeminiClient.<init>(GeminiClient.java:13) ~[classes/:?]
-	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[?:?]
-	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[?:?]
-	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:196) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:122) ~[spring-beans-6.2.5.jar:6.2.5]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1337) ~[spring-beans-6.2.5.jar:6.2.5]
-	... 19 more
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine suitable jdbc url
+
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (the profiles GOOGLE_API_KEY=AIzaSyBNTTUtZNGhPc_Rp5tONFgdNCMYU1Vg_7w are currently active).
+
