@@ -17,7 +17,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,11 +44,30 @@ public class ResourcePredictionService {
         LocalDateTime startTime = now.minusHours(hoursBack);
         LocalDateTime endTime = now.plusHours(hoursForward);
 
+        // ★★★ 디버깅 로그 추가 ★★★
+        log.info("===== CPU 예측 데이터 조회 시작 =====");
+        log.info("요청 파라미터: companyDomain={}, deviceId={}", companyDomain, deviceId);
+        log.info("시간 범위: {} ~ {} (현재: {})", startTime, endTime, now);
+
         // 1. InfluxDB에서 과거~현재 데이터 조회
         List<TimeSeriesDataPoint> historicalData = getHistoricalCpuData(companyDomain, deviceId, startTime, now);
+        log.info("InfluxDB 조회 결과: {} 건", historicalData.size());
+        if (!historicalData.isEmpty()) {
+            log.info("첫 번째 데이터: timestamp={}, value={}",
+                    historicalData.get(0).getTimestamp(), historicalData.get(0).getValue());
+        }
 
         // 2. MySQL에서 예측 데이터 조회
         List<TimeSeriesDataPoint> predictedData = getPredictedData(companyDomain, deviceId, "cpu", now, endTime);
+        log.info("MySQL 예측 데이터 조회 결과: {} 건", predictedData.size());
+        if (!predictedData.isEmpty()) {
+            log.info("첫 번째 예측: timestamp={}, value={}, confidence={}",
+                    predictedData.get(0).getTimestamp(),
+                    predictedData.get(0).getValue(),
+                    predictedData.get(0).getConfidenceScore());
+        }
+
+        log.info("===== CPU 예측 데이터 조회 완료 =====");
 
         // 3. 데이터 병합
         return ResourcePredictionDto.builder()
@@ -100,6 +121,7 @@ public class ResourcePredictionService {
      */
     private List<TimeSeriesDataPoint> getHistoricalCpuData(String companyDomain, String deviceId,
                                                            LocalDateTime startTime, LocalDateTime endTime) {
+        // ★★★ Flux 쿼리 로그 추가 ★★★
         String fluxQuery = String.format("""
             from(bucket: "%s")
             |> range(start: %s, stop: %s)
@@ -113,15 +135,19 @@ public class ResourcePredictionService {
             """, influxBucket, startTime.atZone(ZoneId.systemDefault()).toInstant(),
                 endTime.atZone(ZoneId.systemDefault()).toInstant(), companyDomain, deviceId);
 
+        log.debug("InfluxDB Flux Query:\n{}", fluxQuery);
+
         try {
             List<FluxTable> tables = queryApi.query(fluxQuery, influxOrg);
+            log.info("InfluxDB 쿼리 결과: {} 개의 테이블", tables.size());
+
             List<TimeSeriesDataPoint> dataPoints = new ArrayList<>();
 
             for (FluxTable table : tables) {
+                log.info("테이블 레코드 수: {}", table.getRecords().size());
                 for (FluxRecord record : table.getRecords()) {
                     Double idleValue = (Double) record.getValue();
                     if (idleValue != null) {
-                        // CPU 사용률 = 100 - idle
                         double usage = 100.0 - idleValue;
                         Instant time = (Instant) record.getTime();
 
@@ -135,10 +161,11 @@ public class ResourcePredictionService {
 
             return dataPoints;
         } catch (Exception e) {
-            log.error("CPU 과거 데이터 조회 실패: {}", e.getMessage());
+            log.error("CPU 과거 데이터 조회 실패: {}", e.getMessage(), e);
             return new ArrayList<>();
         }
     }
+
 
     /**
      * InfluxDB에서 과거 메모리 데이터 조회
@@ -205,8 +232,14 @@ public class ResourcePredictionService {
      */
     private List<TimeSeriesDataPoint> getPredictedData(String companyDomain, String deviceId,
                                                        String resourceType, LocalDateTime startTime, LocalDateTime endTime) {
+        // ★★★ MySQL 쿼리 로그 추가 ★★★
+        log.info("MySQL 예측 데이터 조회: companyDomain={}, deviceId={}, resourceType={}, {} ~ {}",
+                companyDomain, deviceId, resourceType, startTime, endTime);
+
         List<LatestPrediction> predictions = predictionRepository.findPredictions(
                 companyDomain, deviceId, resourceType, startTime, endTime);
+
+        log.info("MySQL 조회 결과: {} 건의 예측 데이터", predictions.size());
 
         return predictions.stream()
                 .map(p -> TimeSeriesDataPoint.builder()
@@ -215,5 +248,71 @@ public class ResourcePredictionService {
                         .confidenceScore(p.getConfidenceScore())
                         .build())
                 .collect(Collectors.toList());
+    }
+    // ResourcePredictionService.java에 디버그 메서드 추가
+
+    public Map<String, Object> getDebugInfo(String companyDomain, String deviceId) {
+        Map<String, Object> debugInfo = new HashMap<>();
+
+        // 1. InfluxDB 데이터 존재 여부 확인
+        String fluxQuery = String.format("""
+        from(bucket: "%s")
+        |> range(start: -24h)
+        |> filter(fn: (r) => r["companyDomain"] == "%s")
+        |> filter(fn: (r) => r["deviceId"] == "%s")
+        |> filter(fn: (r) => r["location"] == "server_resource_data")
+        |> group()
+        |> count()
+        """, influxBucket, companyDomain, deviceId);
+
+        try {
+            List<FluxTable> tables = queryApi.query(fluxQuery, influxOrg);
+            long influxCount = 0;
+            if (!tables.isEmpty() && !tables.get(0).getRecords().isEmpty()) {
+                influxCount = ((Number) tables.get(0).getRecords().get(0).getValue()).longValue();
+            }
+            debugInfo.put("influxDataCount", influxCount);
+        } catch (Exception e) {
+            debugInfo.put("influxError", e.getMessage());
+        }
+
+        // 2. MySQL 예측 데이터 존재 여부 확인
+        List<LatestPrediction> predictions = predictionRepository.findPredictions(
+                companyDomain, deviceId, "cpu",
+                LocalDateTime.now().minusDays(7),
+                LocalDateTime.now().plusDays(7));
+
+        debugInfo.put("mysqlPredictionCount", predictions.size());
+
+        // 3. 사용 가능한 companyDomain과 deviceId 목록
+        String availableQuery = String.format("""
+        from(bucket: "%s")
+        |> range(start: -1h)
+        |> filter(fn: (r) => r["location"] == "server_resource_data")
+        |> group(columns: ["companyDomain", "deviceId"])
+        |> distinct(column: "companyDomain")
+        |> limit(n: 10)
+        """, influxBucket);
+
+        List<Map<String, String>> availableData = new ArrayList<>();
+        try {
+            List<FluxTable> tables = queryApi.query(availableQuery, influxOrg);
+            for (FluxTable table : tables) {
+                for (FluxRecord record : table.getRecords()) {
+                    Map<String, String> item = new HashMap<>();
+                    item.put("companyDomain", String.valueOf(record.getValueByKey("companyDomain")));
+                    item.put("deviceId", String.valueOf(record.getValueByKey("deviceId")));
+                    availableData.add(item);
+                }
+            }
+        } catch (Exception e) {
+            log.error("사용 가능한 데이터 조회 실패", e);
+        }
+
+        debugInfo.put("availableData", availableData);
+        debugInfo.put("requestedCompanyDomain", companyDomain);
+        debugInfo.put("requestedDeviceId", deviceId);
+
+        return debugInfo;
     }
 }

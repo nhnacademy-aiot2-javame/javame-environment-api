@@ -1,6 +1,9 @@
 package com.nhnacademy.environment.prediction.controller;
 
 
+import com.influxdb.query.FluxRecord;
+import com.influxdb.query.FluxTable;
+import com.nhnacademy.environment.prediction.domain.LatestPrediction;
 import com.nhnacademy.environment.prediction.dto.ResourcePredictionDto;
 import com.nhnacademy.environment.prediction.service.ResourcePredictionService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +13,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -53,5 +62,16 @@ public class PredictionController {
         ResourcePredictionDto data = predictionService.getDiskPredictionData(
                 companyDomain, deviceId, hoursBack, hoursForward);
         return ResponseEntity.ok(data);
+    }
+    // PredictionController.java에 추가
+
+    @GetMapping("/debug")
+    public ResponseEntity<Map<String, Object>> debugPredictionData(
+            @RequestParam String companyDomain,
+            @RequestParam String deviceId) {
+
+        Map<String, Object> debugInfo = predictionService.getDebugInfo(companyDomain, deviceId);
+
+        return ResponseEntity.ok(debugInfo);
     }
 }
