@@ -1,6 +1,5 @@
 package com.nhnacademy.environment.prediction.service;
 
-
 import com.influxdb.client.QueryApi;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
@@ -16,10 +15,8 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -41,40 +38,32 @@ public class ResourcePredictionService {
      */
     public ResourcePredictionDto getCpuPredictionData(String companyDomain, String deviceId, int hoursBack, int hoursForward) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startTime = now.minusHours(hoursBack);
-        LocalDateTime endTime = now.plusHours(hoursForward);
 
-        // ★★★ 디버깅 로그 추가 ★★★
+        // 30분 단위로 정렬된 시작 시간 계산
+        LocalDateTime alignedNow = now.truncatedTo(ChronoUnit.HOURS)
+                .plusMinutes((now.getMinute() / 30) * 30);
+
+        LocalDateTime startTime = alignedNow.minusHours(hoursBack);
+
         log.info("===== CPU 예측 데이터 조회 시작 =====");
         log.info("요청 파라미터: companyDomain={}, deviceId={}", companyDomain, deviceId);
-        log.info("시간 범위: {} ~ {} (현재: {})", startTime, endTime, now);
+        log.info("시간 범위: {} ~ 현재({})", startTime, alignedNow);
 
-        // 1. InfluxDB에서 과거~현재 데이터 조회
-        List<TimeSeriesDataPoint> historicalData = getHistoricalCpuData(companyDomain, deviceId, startTime, now);
-        log.info("InfluxDB 조회 결과: {} 건", historicalData.size());
-        if (!historicalData.isEmpty()) {
-            log.info("첫 번째 데이터: timestamp={}, value={}",
-                    historicalData.get(0).getTimestamp(), historicalData.get(0).getValue());
-        }
+        // 1. InfluxDB에서 과거~현재 데이터 조회 (30분 단위 집계)
+        List<TimeSeriesDataPoint> historicalData = getHistoricalCpuData(companyDomain, deviceId, startTime, alignedNow);
 
-        // 2. MySQL에서 예측 데이터 조회
-        List<TimeSeriesDataPoint> predictedData = getPredictedData(companyDomain, deviceId, "cpu", now, endTime);
-        log.info("MySQL 예측 데이터 조회 결과: {} 건", predictedData.size());
-        if (!predictedData.isEmpty()) {
-            log.info("첫 번째 예측: timestamp={}, value={}, confidence={}",
-                    predictedData.get(0).getTimestamp(),
-                    predictedData.get(0).getValue(),
-                    predictedData.get(0).getConfidenceScore());
-        }
+        // 2. MySQL에서 예측 데이터 조회 (있는 그대로)
+        LocalDateTime predictionEndTime = alignedNow.plusHours(hoursForward);
+        List<TimeSeriesDataPoint> predictedData = getPredictedData(companyDomain, deviceId, "cpu", alignedNow, predictionEndTime);
 
-        log.info("===== CPU 예측 데이터 조회 완료 =====");
+        log.info("과거 데이터: {} 건", historicalData.size());
+        log.info("예측 데이터: {} 건", predictedData.size());
 
-        // 3. 데이터 병합
         return ResourcePredictionDto.builder()
                 .resourceType("cpu")
                 .historicalData(historicalData)
                 .predictedData(predictedData)
-                .splitTime(now)
+                .splitTime(alignedNow)
                 .build();
     }
 
@@ -83,17 +72,20 @@ public class ResourcePredictionService {
      */
     public ResourcePredictionDto getMemoryPredictionData(String companyDomain, String deviceId, int hoursBack, int hoursForward) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startTime = now.minusHours(hoursBack);
-        LocalDateTime endTime = now.plusHours(hoursForward);
+        LocalDateTime alignedNow = now.truncatedTo(ChronoUnit.HOURS)
+                .plusMinutes((now.getMinute() / 30) * 30);
 
-        List<TimeSeriesDataPoint> historicalData = getHistoricalMemoryData(companyDomain, deviceId, startTime, now);
-        List<TimeSeriesDataPoint> predictedData = getPredictedData(companyDomain, deviceId, "memory", now, endTime);
+        LocalDateTime startTime = alignedNow.minusHours(hoursBack);
+        LocalDateTime endTime = alignedNow.plusHours(hoursForward);
+
+        List<TimeSeriesDataPoint> historicalData = getHistoricalMemoryData(companyDomain, deviceId, startTime, alignedNow);
+        List<TimeSeriesDataPoint> predictedData = getPredictedData(companyDomain, deviceId, "mem", alignedNow, endTime);
 
         return ResourcePredictionDto.builder()
                 .resourceType("memory")
                 .historicalData(historicalData)
                 .predictedData(predictedData)
-                .splitTime(now)
+                .splitTime(alignedNow)
                 .build();
     }
 
@@ -102,17 +94,20 @@ public class ResourcePredictionService {
      */
     public ResourcePredictionDto getDiskPredictionData(String companyDomain, String deviceId, int hoursBack, int hoursForward) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startTime = now.minusHours(hoursBack);
-        LocalDateTime endTime = now.plusHours(hoursForward);
+        LocalDateTime alignedNow = now.truncatedTo(ChronoUnit.HOURS)
+                .plusMinutes((now.getMinute() / 30) * 30);
 
-        List<TimeSeriesDataPoint> historicalData = getHistoricalDiskData(companyDomain, deviceId, startTime, now);
-        List<TimeSeriesDataPoint> predictedData = getPredictedData(companyDomain, deviceId, "disk", now, endTime);
+        LocalDateTime startTime = alignedNow.minusHours(hoursBack);
+        LocalDateTime endTime = alignedNow.plusHours(hoursForward);
+
+        List<TimeSeriesDataPoint> historicalData = getHistoricalDiskData(companyDomain, deviceId, startTime, alignedNow);
+        List<TimeSeriesDataPoint> predictedData = getPredictedData(companyDomain, deviceId, "disk", alignedNow, endTime);
 
         return ResourcePredictionDto.builder()
                 .resourceType("disk")
                 .historicalData(historicalData)
                 .predictedData(predictedData)
-                .splitTime(now)
+                .splitTime(alignedNow)
                 .build();
     }
 
@@ -121,7 +116,6 @@ public class ResourcePredictionService {
      */
     private List<TimeSeriesDataPoint> getHistoricalCpuData(String companyDomain, String deviceId,
                                                            LocalDateTime startTime, LocalDateTime endTime) {
-        // ★★★ Flux 쿼리 로그 추가 ★★★
         String fluxQuery = String.format("""
             from(bucket: "%s")
             |> range(start: %s, stop: %s)
@@ -130,21 +124,18 @@ public class ResourcePredictionService {
             |> filter(fn: (r) => r["location"] == "server_resource_data")
             |> filter(fn: (r) => r["gatewayId"] == "cpu")
             |> filter(fn: (r) => r["measurement"] == "usage_idle")
-            |> aggregateWindow(every: 5m, fn: mean, createEmpty: false)
+            |> aggregateWindow(every: 30m, fn: mean, createEmpty: false)
             |> yield(name: "mean")
             """, influxBucket, startTime.atZone(ZoneId.systemDefault()).toInstant(),
                 endTime.atZone(ZoneId.systemDefault()).toInstant(), companyDomain, deviceId);
 
-        log.debug("InfluxDB Flux Query:\n{}", fluxQuery);
+        log.debug("InfluxDB Flux Query (30분 집계):\n{}", fluxQuery);
 
         try {
             List<FluxTable> tables = queryApi.query(fluxQuery, influxOrg);
-            log.info("InfluxDB 쿼리 결과: {} 개의 테이블", tables.size());
-
             List<TimeSeriesDataPoint> dataPoints = new ArrayList<>();
 
             for (FluxTable table : tables) {
-                log.info("테이블 레코드 수: {}", table.getRecords().size());
                 for (FluxRecord record : table.getRecords()) {
                     Double idleValue = (Double) record.getValue();
                     if (idleValue != null) {
@@ -165,7 +156,6 @@ public class ResourcePredictionService {
             return new ArrayList<>();
         }
     }
-
 
     /**
      * InfluxDB에서 과거 메모리 데이터 조회
@@ -197,7 +187,7 @@ public class ResourcePredictionService {
             |> filter(fn: (r) => r["location"] == "server_resource_data")
             |> filter(fn: (r) => r["gatewayId"] == "%s")
             |> filter(fn: (r) => r["measurement"] == "%s")
-            |> aggregateWindow(every: 5m, fn: mean, createEmpty: false)
+            |> aggregateWindow(every: 30m, fn: mean, createEmpty: false)
             |> yield(name: "mean")
             """, influxBucket, startTime.atZone(ZoneId.systemDefault()).toInstant(),
                 endTime.atZone(ZoneId.systemDefault()).toInstant(), companyDomain, deviceId, gatewayId, measurement);
@@ -228,18 +218,25 @@ public class ResourcePredictionService {
     }
 
     /**
-     * MySQL에서 예측 데이터 조회
+     * MySQL에서 예측 데이터 조회 - 있는 그대로만 반환
      */
     private List<TimeSeriesDataPoint> getPredictedData(String companyDomain, String deviceId,
                                                        String resourceType, LocalDateTime startTime, LocalDateTime endTime) {
-        // ★★★ MySQL 쿼리 로그 추가 ★★★
         log.info("MySQL 예측 데이터 조회: companyDomain={}, deviceId={}, resourceType={}, {} ~ {}",
                 companyDomain, deviceId, resourceType, startTime, endTime);
 
         List<LatestPrediction> predictions = predictionRepository.findPredictions(
                 companyDomain, deviceId, resourceType, startTime, endTime);
 
-        log.info("MySQL 조회 결과: {} 건의 예측 데이터", predictions.size());
+        log.info("MySQL 조회 결과: {} 건의 예측 데이터 (resourceType={})", predictions.size(), resourceType);
+
+        // ★★★ 디버그: 실제 DB에 있는 resourceType 값들 확인 ★★★
+        if (predictions.isEmpty() && "memory".equals(resourceType)) {
+            log.warn("'memory'로 조회 실패. 'mem'으로 재시도...");
+            predictions = predictionRepository.findPredictions(
+                    companyDomain, deviceId, "mem", startTime, endTime);
+            log.info("'mem'으로 재조회 결과: {} 건", predictions.size());
+        }
 
         return predictions.stream()
                 .map(p -> TimeSeriesDataPoint.builder()
@@ -247,10 +244,13 @@ public class ResourcePredictionService {
                         .value(p.getPredictedValue())
                         .confidenceScore(p.getConfidenceScore())
                         .build())
+                .sorted((a, b) -> a.getTimestamp().compareTo(b.getTimestamp()))
                 .collect(Collectors.toList());
     }
-    // ResourcePredictionService.java에 디버그 메서드 추가
 
+    /**
+     * 디버그 정보 조회 메서드
+     */
     public Map<String, Object> getDebugInfo(String companyDomain, String deviceId) {
         Map<String, Object> debugInfo = new HashMap<>();
 
@@ -276,33 +276,46 @@ public class ResourcePredictionService {
             debugInfo.put("influxError", e.getMessage());
         }
 
-        // 2. MySQL 예측 데이터 존재 여부 확인
-        List<LatestPrediction> predictions = predictionRepository.findPredictions(
-                companyDomain, deviceId, "cpu",
-                LocalDateTime.now().minusDays(7),
-                LocalDateTime.now().plusDays(7));
-
-        debugInfo.put("mysqlPredictionCount", predictions.size());
+        // 2. MySQL 예측 데이터 존재 여부 확인 (각 리소스 타입별)
+        Map<String, Integer> predictionCounts = new HashMap<>();
+        for (String resourceType : Arrays.asList("cpu", "memory", "disk")) {
+            List<LatestPrediction> predictions = predictionRepository.findPredictions(
+                    companyDomain, deviceId, resourceType,
+                    LocalDateTime.now().minusDays(1),
+                    LocalDateTime.now().plusDays(1));
+            predictionCounts.put(resourceType, predictions.size());
+        }
+        debugInfo.put("mysqlPredictionCounts", predictionCounts);
 
         // 3. 사용 가능한 companyDomain과 deviceId 목록
         String availableQuery = String.format("""
         from(bucket: "%s")
         |> range(start: -1h)
         |> filter(fn: (r) => r["location"] == "server_resource_data")
+        |> keep(columns: ["companyDomain", "deviceId"])
         |> group(columns: ["companyDomain", "deviceId"])
-        |> distinct(column: "companyDomain")
-        |> limit(n: 10)
+        |> first()
+        |> limit(n: 20)
         """, influxBucket);
 
         List<Map<String, String>> availableData = new ArrayList<>();
         try {
             List<FluxTable> tables = queryApi.query(availableQuery, influxOrg);
+            Set<String> uniquePairs = new HashSet<>();
+
             for (FluxTable table : tables) {
                 for (FluxRecord record : table.getRecords()) {
-                    Map<String, String> item = new HashMap<>();
-                    item.put("companyDomain", String.valueOf(record.getValueByKey("companyDomain")));
-                    item.put("deviceId", String.valueOf(record.getValueByKey("deviceId")));
-                    availableData.add(item);
+                    String domain = String.valueOf(record.getValueByKey("companyDomain"));
+                    String device = String.valueOf(record.getValueByKey("deviceId"));
+                    String pair = domain + "|" + device;
+
+                    if (!uniquePairs.contains(pair)) {
+                        uniquePairs.add(pair);
+                        Map<String, String> item = new HashMap<>();
+                        item.put("companyDomain", domain);
+                        item.put("deviceId", device);
+                        availableData.add(item);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -312,7 +325,24 @@ public class ResourcePredictionService {
         debugInfo.put("availableData", availableData);
         debugInfo.put("requestedCompanyDomain", companyDomain);
         debugInfo.put("requestedDeviceId", deviceId);
+        debugInfo.put("currentTime", LocalDateTime.now());
 
         return debugInfo;
+    }
+
+    /**
+     * 특정 시간대의 예측 신뢰도 조회
+     */
+    public Double getPredictionConfidence(String companyDomain, String deviceId,
+                                          String resourceType, LocalDateTime targetTime) {
+        List<LatestPrediction> predictions = predictionRepository.findPredictions(
+                companyDomain, deviceId, resourceType,
+                targetTime.minusMinutes(15),
+                targetTime.plusMinutes(15));
+
+        if (!predictions.isEmpty()) {
+            return predictions.get(0).getConfidenceScore();
+        }
+        return null;
     }
 }
