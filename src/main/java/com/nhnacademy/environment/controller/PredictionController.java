@@ -1,4 +1,4 @@
-package com.nhnacademy.environment.prediction.controller;
+package com.nhnacademy.environment.controller;
 
 
 import com.influxdb.query.FluxRecord;
