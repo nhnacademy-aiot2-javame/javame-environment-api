@@ -3,11 +3,13 @@ package com.nhnacademy.environment.controller;
 import com.nhnacademy.environment.config.annotation.CompanyDomainContext;
 import com.nhnacademy.environment.config.annotation.HasRole;
 import com.nhnacademy.environment.config.annotation.NormalizeCompanyDomain;
+import com.nhnacademy.environment.config.translation.TranslationConfig;
 import com.nhnacademy.environment.timeseries.dto.ChartDataDto;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.timeseries.service.TimeSeriesDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +30,9 @@ public class TimeSeriesDataController {
      * TimeSeriesDataService 를 받습니다.
      */
     private final TimeSeriesDataService timeSeriesDataService;
+
+    @Autowired
+    private final Map<String, String> translationMap;
 
     /**
      * 특정 origin 의 시계열 데이터를 필터 기준으로 조회.
@@ -78,13 +83,19 @@ public class TimeSeriesDataController {
     @NormalizeCompanyDomain
     @GetMapping("/dropdown/{tag}")
     //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
-    public List<String> getTagDropdown(
+    public List<Map<String, String>> getTagDropdown(
             @PathVariable String companyDomain,
             @PathVariable String tag,
             @RequestParam Map<String, String> filters
     ) {
         filters.put("companyDomain", CompanyDomainContext.get());
-        return timeSeriesDataService.getTagValues(tag, filters);
+        List<String> values = timeSeriesDataService.getTagValues(tag, filters);
+        return values.stream()
+                .map(v -> Map.of(
+                        "label", translationMap.getOrDefault(v, v),
+                        "value", v
+                ))
+                .toList();
     }
 
     /**
@@ -129,7 +140,7 @@ public class TimeSeriesDataController {
         filters.put("origin", origin);
         filters.put("companyDomain", CompanyDomainContext.get());
 
-        log.debug("chart called: companyDomain={}, origin={}, rangeMinutes={}", companyDomain, origin, rangeMinutes);
+        log.debug("chart called: companyDomain={}, origin={}, rangeMinutes={}", CompanyDomainContext.get(), origin, rangeMinutes);
         return timeSeriesDataService.getChartData(sensor, "value", filters, rangeMinutes);
     }
 

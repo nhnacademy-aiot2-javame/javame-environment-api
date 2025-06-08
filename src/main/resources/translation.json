@@ -43,5 +43,9 @@
   "thread_active_count": "활성 스레드 수",
   "disk_io_bytes_direction_read": "디스크 읽기량(Byte)",
   "disk_io_bytes_direction_write": "디스크 쓰기량(Byte)",
-  "입구": "출입구"
+  "입구": "출입구",
+  "Leq": "등가소음도(Leq)",
+  "Lmax": "최대소음도(Lmax)",
+  "SPL": "소음도(SPL)",
+  "battery": "배터리"
 }
