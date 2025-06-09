@@ -1,4 +1,3 @@
-// src/main/java/com/nhnacademy/environment/websocket/interceptor/AuthHandshakeInterceptor.java
 package com.nhnacademy.environment.websocket.interceptor;
 
 import com.nhnacademy.environment.websocket.dto.MemberResponse;
@@ -9,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -17,41 +17,48 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-/**
- * WebSocket Handshake 시 JWT 토큰 검증 및 companyDomain 추출을 담당하는 Interceptor
- * 검색 결과 [1][3][4]에서 보듯이 WebSocket JWT 인증의 핵심 구성요소
- */
 @Component
 @Slf4j
 public class AuthHandshakeInterceptor implements HandshakeInterceptor {
 
-    private final String jwtSecret;
-    private final WebClient webClient;
-    private final String memberMeUri;
+    @Value("${member.api.url:http://MEMBER-API}")
+    private String memberApiUrl;
 
-    public AuthHandshakeInterceptor(@Value("${jwt.secret}") String jwtSecret,
-                                    @Value("${member.api.url}") String memberApiUrl,
-                                    @Value("${member.api.me.uri:/members/me}") String memberMeUri,
-                                    @LoadBalanced WebClient.Builder webClientBuilder) {
-        this.jwtSecret = jwtSecret;
-        this.memberMeUri = memberMeUri;
-        this.webClient = webClientBuilder
-                .baseUrl(memberApiUrl)  // "http://MEMBER-API" 사용
+    @Value("${member.api.me.uri:/members/me}")
+    private String memberMeUri;
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
+    private WebClient webClient;
+
+    private final WebClient.Builder loadBalancedWebClientBuilder;
+
+    public AuthHandshakeInterceptor(@LoadBalanced WebClient.Builder webClientBuilder) {
+        this.loadBalancedWebClientBuilder = webClientBuilder;
+    }
+
+    @PostConstruct
+    public void initWebClient() {
+        this.webClient = loadBalancedWebClientBuilder
+                .baseUrl(memberApiUrl)
                 .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024 * 1024))
                 .build();
 
-        log.info("AuthHandshakeInterceptor 초기화 완료 - memberApiUrl: {}, memberMeUri: {}",
-                memberApiUrl, memberMeUri);
+        log.info("=== AuthHandshakeInterceptor 초기화 완료 ===");
+        log.info("memberApiUrl: {}", memberApiUrl);
+        log.info("memberMeUri: {}", memberMeUri);
     }
 
-    /**
-     * WebSocket Handshake 이전에 실행되는 메소드
-     * 검색 결과 [1][4]에서 보듯이 JWT 토큰 검증 및 사용자 정보 추출
-     */
     @Override
     public boolean beforeHandshake(ServerHttpRequest request,
                                    ServerHttpResponse response,
@@ -61,20 +68,20 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
         log.debug("WebSocket handshake 시작 - URI: {}", request.getURI());
 
         try {
-            // 1. JWT 토큰 추출 (검색 결과 [4] 참고)
+            // 1. JWT 토큰 추출
             String token = extractToken(request);
             if (token == null) {
                 log.warn("WebSocket handshake 실패 - JWT 토큰이 없습니다");
                 return false;
             }
 
-            // 2. JWT 토큰 검증 (검색 결과 [2][5] 참고)
+            // 2. JWT 토큰 검증
             if (!validateToken(token)) {
                 log.warn("WebSocket handshake 실패 - JWT 토큰이 유효하지 않습니다");
                 return false;
             }
 
-            // 3. JWT에서 사용자 정보 추출 (검색 결과 [2][5] 참고)
+            // 3. JWT에서 사용자 정보 추출
             Claims claims = parseTokenClaims(token);
             String userEmail = claims.getSubject();
             String userRole = claims.get("role", String.class);
@@ -84,25 +91,31 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
                 return false;
             }
 
-            // 4. Member API 호출해서 companyDomain 조회 (검색 결과 [1][3] 참고)
+            // 4. Member API 호출해서 companyDomain 조회 (필수)
             String companyDomain = getCompanyDomainFromMemberApi(userEmail, userRole);
             if (companyDomain == null) {
-                log.warn("WebSocket handshake 실패 - companyDomain을 조회할 수 없습니다. userEmail: {}", userEmail);
-                // ★★★ companyDomain 실패해도 연결 허용 (기본값 사용) ★★★
-                companyDomain = extractCompanyDomainFromEmail(userEmail);
+                log.error("Member API에서 companyDomain 조회 실패. 회사 소속이 없는 비정상적인 사용자로 판단하여 WebSocket 연결 거부. userEmail: {}", userEmail);
+                return false;
             }
 
-            // 5. WebSocket 세션에 인증 정보 저장 (검색 결과 [1][3] 참고)
-            attributes.put("companyDomain", companyDomain);
+            // ★★★ 서버에서 .com 제거 로직 추가 ★★★
+            String cleanCompanyDomain = companyDomain;
+            if (companyDomain.endsWith(".com")) {
+                cleanCompanyDomain = companyDomain.substring(0, companyDomain.length() - 4);
+                log.info("companyDomain에서 .com 제거: {} -> {}", companyDomain, cleanCompanyDomain);
+            }
+
+            // 5. WebSocket 세션에 인증 정보 저장 (정리된 도메인 사용)
+            attributes.put("companyDomain", cleanCompanyDomain); // ★★★ 정리된 도메인 저장 ★★★
             attributes.put("userEmail", userEmail);
             attributes.put("userRole", userRole);
             attributes.put("token", token);
 
-            log.info("WebSocket handshake 성공 - userEmail: {}, role: {}, companyDomain: {}",
-                    userEmail, userRole, companyDomain);
+            log.info("WebSocket handshake 성공 - userEmail: {}, role: {}, companyDomain: {} (원본: {})",
+                    userEmail, userRole, cleanCompanyDomain, companyDomain);
             return true;
 
-        } catch (Exception e) {
+        }catch (Exception e) {
             log.error("WebSocket handshake 중 오류 발생", e);
             return false;
         }
@@ -121,45 +134,59 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
     }
 
     /**
-     * HTTP 요청에서 JWT 토큰 추출 (검색 결과 [4] 참고)
-     * WebSocket에서는 query parameter 방식이 일반적
+     * HTTP 요청에서 JWT 토큰 추출 (accessToken 파라미터 지원)
      */
     private String extractToken(ServerHttpRequest request) {
-        // 1. Query parameter에서 토큰 추출 (우선순위 1)
         String query = request.getURI().getQuery();
-        if (query != null && query.contains("token=")) {
-            String[] params = query.split("&");
-            for (String param : params) {
-                if (param.startsWith("token=")) {
-                    String token = param.substring(6);
-                    log.debug("Query parameter에서 토큰 추출 성공");
-                    return token;
-                }
+
+        // Query parameter에서 토큰 추출
+        if (query != null) {
+            Map<String, String> queryParams = parseQueryString(query);
+
+            // accessToken 우선, token은 fallback
+            String token = queryParams.get("accessToken");
+            if (token != null) {
+                log.debug("accessToken 파라미터에서 토큰 추출 성공");
+                return token;
+            }
+
+            token = queryParams.get("token");
+            if (token != null) {
+                log.debug("token 파라미터에서 토큰 추출 성공");
+                return token;
             }
         }
 
-        // 2. Authorization 헤더에서 토큰 추출 (우선순위 2)
+        // Authorization 헤더에서 토큰 추출
         String authHeader = request.getHeaders().getFirst("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
             log.debug("Authorization 헤더에서 토큰 추출 성공");
-            return token;
-        }
-
-        // 3. Sec-WebSocket-Protocol 헤더에서 토큰 추출 (검색 결과 [4] 참고)
-        String protocolHeader = request.getHeaders().getFirst("Sec-WebSocket-Protocol");
-        if (protocolHeader != null && protocolHeader.startsWith("Bearer.")) {
-            String token = protocolHeader.substring(7);
-            log.debug("Sec-WebSocket-Protocol 헤더에서 토큰 추출 성공");
-            return token;
+            return authHeader.substring(7);
         }
 
         log.debug("JWT 토큰을 찾을 수 없습니다");
         return null;
     }
 
+    private Map<String, String> parseQueryString(String query) {
+        return Arrays.stream(query.split("&"))
+                .map(param -> param.split("=", 2))
+                .filter(parts -> parts.length == 2)
+                .collect(Collectors.toMap(
+                        parts -> parts[0],
+                        parts -> {
+                            try {
+                                return URLDecoder.decode(parts[1], StandardCharsets.UTF_8);
+                            } catch (Exception e) {
+                                return parts[1]; // 디코딩 실패 시 원본 반환
+                            }
+                        }
+                ));
+    }
+
+
     /**
-     * JWT 토큰 유효성 검증 (검색 결과 [2][5] 참고)
+     * JWT 토큰 유효성 검증
      */
     private boolean validateToken(String token) {
         try {
@@ -181,7 +208,7 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
     }
 
     /**
-     * JWT 토큰에서 Claims 추출 (검색 결과 [2][5] 참고)
+     * JWT 토큰에서 Claims 추출
      */
     private Claims parseTokenClaims(String token) {
         try {
@@ -206,79 +233,41 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
 
     /**
      * Member API를 호출하여 사용자의 companyDomain 조회
-     * 검색 결과 [1][3]에서 보듯이 WebClient를 사용한 비동기 호출
      */
     private String getCompanyDomainFromMemberApi(String userEmail, String userRole) {
         try {
-            log.debug("Member API 호출 시작 - userEmail: {}, role: {}, uri: {}",
-                    userEmail, userRole, memberMeUri);
+            log.info("=== Member API 호출 시작 ===");
+            log.info("URL: {}", memberApiUrl);
+            log.info("userEmail: {}", userEmail);
 
-            // ★★★ 필드의 webClient 사용 (로드밸런싱 적용) ★★★
             MemberResponse member = webClient.get()
                     .uri(memberMeUri)
                     .header("X-User-Email", userEmail)
                     .header("X-User-Role", userRole)
                     .retrieve()
-                    .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                            clientResponse -> {
-                                log.warn("Member API 호출 실패 - 상태코드: {}, userEmail: {}",
-                                        clientResponse.statusCode(), userEmail);
-                                return Mono.empty();
-                            })
+                    .onStatus(HttpStatusCode::is4xxClientError,
+                            response -> response.bodyToMono(String.class)
+                                    .doOnNext(body -> log.error("4xx 에러: {}", body))
+                                    .then(Mono.error(new RuntimeException("Member API 4xx 에러"))))
+                    .onStatus(HttpStatusCode::is5xxServerError,
+                            response -> response.bodyToMono(String.class)
+                                    .doOnNext(body -> log.error("5xx 에러: {}", body))
+                                    .then(Mono.error(new RuntimeException("Member API 5xx 에러"))))
                     .bodyToMono(MemberResponse.class)
-                    .timeout(Duration.ofSeconds(3))
-                    .onErrorReturn(null)
+                    .timeout(Duration.ofSeconds(5)) // 타임아웃 단축
                     .block();
 
-            if (member == null) {
-                log.warn("Member API 응답이 null입니다. userEmail: {}", userEmail);
-                return null;
+            if (member != null && member.getCompanyDomain() != null && !member.getCompanyDomain().isBlank()) {
+                log.info("companyDomain 조회 성공: {}", member.getCompanyDomain());
+                return member.getCompanyDomain();
             }
 
-            String companyDomain = member.getCompanyDomain();
-
-            if (companyDomain == null || companyDomain.isBlank()) {
-                log.warn("Member API에서 companyDomain이 비어있습니다. userEmail: {}", userEmail);
-                return null;
-            }
-
-            // .com 제거 (Gateway 필터와 동일한 로직)
-            if (companyDomain.endsWith(".com")) {
-                companyDomain = companyDomain.substring(0, companyDomain.length() - 4);
-                log.debug("companyDomain에서 .com 제거: {}", companyDomain);
-            }
-
-            log.debug("Member API에서 companyDomain 조회 성공: {}", companyDomain);
-            return companyDomain;
+            log.error("Member API 응답이 null이거나 companyDomain이 없음");
+            return null;
 
         } catch (Exception e) {
-            log.warn("Member API 호출 실패, fallback 사용. userEmail: {}, role: {}",
-                    userEmail, userRole, e);
+            log.error("Member API 호출 실패: {}", e.getMessage());
             return null;
         }
-    }
-
-    /**
-     * 이메일에서 companyDomain 추출 (fallback 방식)
-     * 검색 결과 [1]에서 보듯이 WebSocket에서는 fallback 전략이 중요
-     */
-    private String extractCompanyDomainFromEmail(String userEmail) {
-        try {
-            if (userEmail != null && userEmail.contains("@")) {
-                String emailDomain = userEmail.split("@")[1];
-
-                // .com 제거
-                if (emailDomain.endsWith(".com")) {
-                    emailDomain = emailDomain.substring(0, emailDomain.length() - 4);
-                }
-
-                log.debug("이메일에서 companyDomain 추출: {} -> {}", userEmail, emailDomain);
-                return emailDomain;
-            }
-        } catch (Exception e) {
-            log.warn("이메일에서 companyDomain 추출 실패: {}", userEmail, e);
-        }
-
-        return "default";
     }
 }
