@@ -124,7 +124,7 @@ public class TimeSeriesStatsController {
     }
 
     /**
-     * 아웃바운드 트래픽 조회
+     * 아웃바운드 트래픽 조회.
      */
     @GetMapping("/{companyDomain}/traffic/outbound")
     public ResponseEntity<Map<String, Object>> getOutboundTraffic(@PathVariable String companyDomain) {
@@ -158,11 +158,12 @@ public class TimeSeriesStatsController {
     }
 
     /**
-     * 통합 통계 정보 조회 (권장)
+     * 통합 통계 정보 조회. (권장)
      * 서비스/서버/센서 개수를 한 번에 조회하여 네트워크 효율성 향상
      */
     @GetMapping("/{companyDomain}/stats")
-    public ResponseEntity<Map<String, Object>> getDashboardStats(@PathVariable String companyDomain) {
+    public ResponseEntity<Map<String, Object>> getDashboardStats (@PathVariable String companyDomain) {
+
         log.info("통합 통계 조회 요청 - companyDomain: {}", companyDomain);
 
         Map<String, Object> stats = statsService.getDashboardStats(companyDomain);
