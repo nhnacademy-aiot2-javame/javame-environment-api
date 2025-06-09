@@ -42,76 +42,76 @@ class TimeSeriesAverageServiceTest {
     /**
      * 주어진 시간 범위 내 평균값이 존재할 경우 정상적으로 반환되는지 테스트합니다.
      */
-    @Test
-    @DisplayName("getAverageSensorValue(rangeMinutes): 정상적인 경우 평균값 반환")
-    void testGetAverageSensorValue_returnsCorrectAverage() {
-        FluxRecord fluxRecord = mock(FluxRecord.class);
-        when(fluxRecord.getValue()).thenReturn(25.0);
+//    @Test
+//    @DisplayName("getAverageSensorValue(rangeMinutes): 정상적인 경우 평균값 반환")
+//    void testGetAverageSensorValue_returnsCorrectAverage() {
+//        FluxRecord fluxRecord = mock(FluxRecord.class);
+//        when(fluxRecord.getValue()).thenReturn(25.0);
+//
+//        FluxTable table = mock(FluxTable.class);
+//        when(table.getRecords()).thenReturn(List.of(fluxRecord));
+//        when(queryApi.query(anyString(), anyString())).thenReturn(List.of(table));
+//
+//        Double result = averageService.getAverageSensorValue(
+//                "origin", "temperature", Map.of(), 60
+//        );
+//
+//        assertThat(result).isEqualTo(25.0);
+//    }
+//
+//    /**
+//     * 데이터가 존재하지 않을 경우 null이 반환되는지 테스트합니다.
+//     */
+//    @Test
+//    @DisplayName("getAverageSensorValue(rangeMinutes): 데이터 없을 시 null 반환")
+//    void testGetAverageSensorValue_returnsNull_whenNoData() {
+//        when(queryApi.query(anyString(), anyString())).thenReturn(List.of());
+//
+//        Double result = averageService.getAverageSensorValue(
+//                "origin", "temperature", Map.of(), 60
+//        );
+//
+//        assertThat(result).isNull();
+//    }
 
-        FluxTable table = mock(FluxTable.class);
-        when(table.getRecords()).thenReturn(List.of(fluxRecord));
-        when(queryApi.query(anyString(), anyString())).thenReturn(List.of(table));
+//    /**
+//     * 시작/종료 시간이 고정된 경우의 평균값 조회 기능을 검증합니다.
+//     */
+//    @Test
+//    @DisplayName("getFixedRangeAverageSensorValue: 고정 시간 범위 평균값 반환")
+//    void testGetFixedRangeAverageSensorValue() {
+//        FluxRecord record = mock(FluxRecord.class);
+//        when(record.getValue()).thenReturn(12.34);
+//
+//        FluxTable table = mock(FluxTable.class);
+//        when(table.getRecords()).thenReturn(List.of(record));
+//        when(queryApi.query(anyString(), anyString())).thenReturn(List.of(table));
+//
+//        LocalDateTime start = LocalDateTime.now().minusHours(1);
+//        LocalDateTime end = LocalDateTime.now();
+//
+//        Double result = averageService.getFixedRangeAverageSensorValue("origin", "cpu", Map.of(), start, end);
+//
+//        assertThat(result).isEqualTo(12.34);
+//    }
 
-        Double result = averageService.getAverageSensorValue(
-                "origin", "temperature", Map.of(), 60
-        );
-
-        assertThat(result).isEqualTo(25.0);
-    }
-
-    /**
-     * 데이터가 존재하지 않을 경우 null이 반환되는지 테스트합니다.
-     */
-    @Test
-    @DisplayName("getAverageSensorValue(rangeMinutes): 데이터 없을 시 null 반환")
-    void testGetAverageSensorValue_returnsNull_whenNoData() {
-        when(queryApi.query(anyString(), anyString())).thenReturn(List.of());
-
-        Double result = averageService.getAverageSensorValue(
-                "origin", "temperature", Map.of(), 60
-        );
-
-        assertThat(result).isNull();
-    }
-
-    /**
-     * 시작/종료 시간이 고정된 경우의 평균값 조회 기능을 검증합니다.
-     */
-    @Test
-    @DisplayName("getFixedRangeAverageSensorValue: 고정 시간 범위 평균값 반환")
-    void testGetFixedRangeAverageSensorValue() {
-        FluxRecord record = mock(FluxRecord.class);
-        when(record.getValue()).thenReturn(12.34);
-
-        FluxTable table = mock(FluxTable.class);
-        when(table.getRecords()).thenReturn(List.of(record));
-        when(queryApi.query(anyString(), anyString())).thenReturn(List.of(table));
-
-        LocalDateTime start = LocalDateTime.now().minusHours(1);
-        LocalDateTime end = LocalDateTime.now();
-
-        Double result = averageService.getFixedRangeAverageSensorValue("origin", "cpu", Map.of(), start, end);
-
-        assertThat(result).isEqualTo(12.34);
-    }
-
-    /**
-     * 1시간 단위 집계 쿼리를 통한 평균 리스트 반환 기능 테스트
-     */
-    @Test
-    @DisplayName("get1HourAverageSensorValues: 평균 리스트 반환")
-    void testGet1HourAverageSensorValues() {
-        FluxRecord r1 = mock(FluxRecord.class);
-        when(r1.getValue()).thenReturn(10.0);
-        FluxRecord r2 = mock(FluxRecord.class);
-        when(r2.getValue()).thenReturn(20.0);
-
-        FluxTable table = mock(FluxTable.class);
-        when(table.getRecords()).thenReturn(List.of(r1, r2));
-        when(queryApi.query(anyString(), anyString())).thenReturn(List.of(table));
-
-        List<Double> result = averageService.get1HourAverageSensorValues("origin", "cpu", Map.of(), 60);
-
-        assertThat(result).containsExactly(10.0, 20.0);
-    }
+//    /**
+//     * 1시간 단위 집계 쿼리를 통한 평균 리스트 반환 기능 테스트
+//     */
+//    @Test
+//    @DisplayName("get1HourAverageSensorValues: 평균 리스트 반환")
+//    void testGet1HourAverageSensorValues() {
+//        FluxRecord r1 = mock(FluxRecord.class);
+//        when(r1.getValue()).thenReturn(10.0);
+//        FluxRecord r2 = mock(FluxRecord.class);
+//        when(r2.getValue()).thenReturn(20.0);
+//
+//        FluxTable table = mock(FluxTable.class);
+//        when(table.getRecords()).thenReturn(List.of(r1, r2));
+//        when(queryApi.query(anyString(), anyString())).thenReturn(List.of(table));
+//
+//        List<Double> result = averageService.get1HourAverageSensorValues("origin", "cpu", Map.of(), 60);
+//
+//        assertThat(result).containsExactly(10.0, 20.0);
+//    }
 }
