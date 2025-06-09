@@ -38,8 +38,10 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
     private final TaskScheduler webSocketTaskScheduler;
     private final WebSocketSessionManager sessionManager;
 
-    // ★★★ 세션별 동기화 객체 관리 (검색 결과 [1] 참고) ★★★
-    private final Map<String, Object> sessionLocks = new ConcurrentHashMap<>();
+    /**
+     * 세션별 스케줄링 작업 관리
+     * Key: sessionId, Value: ScheduledFuture
+     */
     private final Map<String, ScheduledFuture<?>> scheduledTasks = new ConcurrentHashMap<>();
 
     /**
@@ -51,9 +53,6 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
         String companyDomain = (String) session.getAttributes().get("companyDomain");
         String userEmail = (String) session.getAttributes().get("userEmail");
 
-        // ★★★ 세션별 동기화 객체 생성 (검색 결과 [1] 참고) ★★★
-        sessionLocks.put(sessionId, new Object());
-
         // SessionManager에 세션 등록
         sessionManager.addSession(session);
 
@@ -62,7 +61,7 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
 
         // 연결 성공 메시지 전송
         WebSocketMessage connectionMsg = WebSocketMessage.connectionSuccess(companyDomain);
-        sendMessageSafely(session, connectionMsg);
+        sendMessage(session, connectionMsg);
 
         log.debug("현재 활성 세션 수: {}", sessionManager.getTotalSessionCount());
     }
@@ -83,7 +82,7 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
             String action = (String) request.get("action");
 
             if (action == null) {
-                sendErrorMessageSafely(session, "action 필드가 필요합니다.");
+                sendErrorMessage(session, "action 필드가 필요합니다.");
                 return;
             }
 
@@ -99,87 +98,86 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
                     handlePing(session);
                     break;
                 default:
-                    sendErrorMessageSafely(session, "알 수 없는 액션입니다: " + action);
+                    sendErrorMessage(session, "알 수 없는 액션입니다: " + action);
             }
 
         } catch (Exception e) {
             log.error("WebSocket 메시지 처리 중 오류 발생 - sessionId: {}", sessionId, e);
-            sendErrorMessageSafely(session, "메시지 처리 중 오류가 발생했습니다: " + e.getMessage());
+            sendErrorMessage(session, "메시지 처리 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 
     /**
-     * 실시간 데이터 구독 처리
+     * 실시간 데이터 구독 처리.
+     * @param session 세션
+     * @param request 응답
+     * @param companyDomain 회사 도메인
      */
     private void handleSubscribe(WebSocketSession session, Map<String, Object> request, String companyDomain) {
         String sessionId = session.getId();
         String measurement = (String) request.get("measurement");
         String gatewayId = (String) request.get("gatewayId");
-        Integer intervalSeconds = (Integer) request.getOrDefault("interval", 10); // ★★★ 기본 10초 ★★★
-
-        // 입력값 검증
-        if (measurement == null || gatewayId == null) {
-            sendErrorMessageSafely(session, "measurement와 gatewayId가 필요합니다.");
-            return;
-        }
-
-        if (intervalSeconds < 5 || intervalSeconds > 60) {
-            sendErrorMessageSafely(session, "interval은 5-60초 사이여야 합니다.");
-            return;
-        }
-
-        log.info("실시간 구독 시작 - sessionId: {}, measurement: {}, gatewayId: {}, companyDomain: {}, interval: {}초",
-                sessionId, measurement, gatewayId, companyDomain, intervalSeconds);
-
-        // SessionManager에 토픽 구독 등록
-        sessionManager.subscribeToTopic(sessionId, companyDomain, measurement, gatewayId);
+        Integer intervalSeconds = (Integer) request.getOrDefault("interval", 10); // 기본 10초
+        Integer rangeMinutes = (Integer) request.getOrDefault("rangeMinutes", 3); // 기본 3분
 
         // 기존 스케줄 취소
         cancelExistingSchedule(sessionId);
 
-        // ★★★ 새로운 실시간 데이터 전송 스케줄 시작 (검색 결과 [1] 참고) ★★★
+        // 실시간 데이터 전송 스케줄 시작
         ScheduledFuture<?> task = webSocketTaskScheduler.scheduleAtFixedRate(() -> {
             try {
                 if (!session.isOpen()) {
-                    log.debug("세션이 닫혀있어 스케줄 중단 - sessionId: {}", sessionId);
+                    log.warn("세션이 닫혀있어 스케줄 중단 - sessionId: {}", sessionId);
                     cancelExistingSchedule(sessionId);
                     return;
                 }
 
-                // InfluxDB에서 실시간 데이터 조회
+                // 핵심: rangeMinutes를 그대로 서비스로 넘김!
                 List<TimeSeriesDataDto> data = timeSeriesDataService.getRealtimeData(
-                        companyDomain, measurement, gatewayId
+                        companyDomain, measurement, gatewayId, rangeMinutes
                 );
 
                 log.info("전송 직전 데이터: {}", data);
-
                 log.info("조회된 데이터 건수: {} - sessionId: {}", data.size(), sessionId);
 
-                // WebSocket 메시지 생성
                 WebSocketMessage realtimeMsg = WebSocketMessage.realtimeData(
                         companyDomain, measurement, gatewayId, data
                 );
 
-                // ★★★ 동기화된 직접 세션 전송 (검색 결과 [1] 참고) ★★★
-                sendMessageSafely(session, realtimeMsg);
+                String jsonMessage = JsonUtils.toJson(realtimeMsg);
 
-                log.info("실시간 데이터 전송 완료 - sessionId: {}, 데이터 건수: {}",
-                        sessionId, data.size());
+                if (session.isOpen()) {
+                    session.sendMessage(new TextMessage(jsonMessage));
+                    log.info("실시간 데이터 직접 전송 완료 - sessionId: {}, 데이터 건수: {}",
+                            sessionId, data.size());
+                }
 
             } catch (Exception e) {
                 log.error("실시간 데이터 전송 오류 - sessionId: {}", sessionId, e);
-                sendErrorMessageSafely(session, "실시간 데이터 전송 중 오류: " + e.getMessage());
+                sendErrorMessage(session, "실시간 데이터 전송 중 오류: " + e.getMessage());
             }
         }, Duration.ofSeconds(intervalSeconds));
 
         scheduledTasks.put(sessionId, task);
 
         // 구독 성공 응답
-        WebSocketMessage subscribeMsg = WebSocketMessage.subscribeSuccess(measurement, gatewayId, intervalSeconds);
-        sendMessageSafely(session, subscribeMsg);
+        WebSocketMessage subscribeMsg = WebSocketMessage.builder()
+                .type("subscribe")
+                .status("success")
+                .companyDomain(companyDomain)
+                .measurement(measurement)
+                .gatewayId(gatewayId)
+                .timestamp(System.currentTimeMillis())
+                .extra(Map.of("interval", intervalSeconds))
+                .build();
 
-        log.info("실시간 구독 설정 완료 - sessionId: {}", sessionId);
+        sendMessage(session, subscribeMsg);
+
+        log.info("WebSocket subscribe: measurement={}, gatewayId={}, rangeMinutes={}", measurement, gatewayId, rangeMinutes);
+        log.info("실시간 구독 설정 완료 (직접 전송 방식) - sessionId: {}", sessionId);
     }
+
+
 
     /**
      * 실시간 데이터 구독 해제 처리
@@ -200,14 +198,16 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
         // 스케줄 작업 취소
         cancelExistingSchedule(sessionId);
 
-        // 구독 해제 성공 응답
+        // ★★★ 구독 해제 성공 응답에도 companyDomain 포함 ★★★
         WebSocketMessage unsubscribeMsg = WebSocketMessage.builder()
                 .type("unsubscribe")
                 .status("success")
+                .companyDomain(companyDomain)
                 .timestamp(System.currentTimeMillis())
                 .build();
-        sendMessageSafely(session, unsubscribeMsg);
+        sendMessage(session, unsubscribeMsg);
     }
+
 
     /**
      * Ping 요청 처리 (연결 상태 확인)
@@ -218,7 +218,7 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
                 .status("success")
                 .timestamp(System.currentTimeMillis())
                 .build();
-        sendMessageSafely(session, pongMsg);
+        sendMessage(session, pongMsg);
     }
 
     /**
@@ -238,9 +238,6 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
         // 스케줄 작업 정리
         cancelExistingSchedule(sessionId);
 
-        // ★★★ 동기화 객체 정리 (검색 결과 [1] 참고) ★★★
-        sessionLocks.remove(sessionId);
-
         log.debug("현재 활성 세션 수: {}", sessionManager.getTotalSessionCount());
     }
 
@@ -255,7 +252,6 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
         // 오류 발생 시 세션 정리
         sessionManager.removeSession(session);
         cancelExistingSchedule(sessionId);
-        sessionLocks.remove(sessionId);
     }
 
     /**
@@ -266,41 +262,27 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
         return false;
     }
 
-    // ==================== 헬퍼 메소드들 ====================
 
     /**
-     * ★★★ 동기화된 메시지 전송 메소드 (검색 결과 [1] 참고) ★★★
+     * WebSocket 메시지 전송
      */
-    private void sendMessageSafely(WebSocketSession session, WebSocketMessage message) {
-        String sessionId = session.getId();
-        Object lock = sessionLocks.get(sessionId);
-
-        if (lock == null) {
-            log.warn("세션 동기화 객체를 찾을 수 없습니다 - sessionId: {}", sessionId);
-            return;
-        }
-
-        synchronized (lock) {
-            try {
-                if (session.isOpen()) {
-                    String jsonMessage = JsonUtils.toJson(message);
-                    session.sendMessage(new TextMessage(jsonMessage));
-                    log.debug("메시지 전송 성공 - sessionId: {}, type: {}", sessionId, message.getType());
-                } else {
-                    log.warn("세션이 닫혀있어 메시지 전송 실패 - sessionId: {}", sessionId);
-                }
-            } catch (Exception e) {
-                log.error("WebSocket 메시지 전송 실패 - sessionId: {}", sessionId, e);
+    private void sendMessage(WebSocketSession session, WebSocketMessage message) {
+        try {
+            if (session.isOpen()) {
+                String jsonMessage = JsonUtils.toJson(message);
+                session.sendMessage(new TextMessage(jsonMessage));
             }
+        } catch (Exception e) {
+            log.error("WebSocket 메시지 전송 실패 - sessionId: {}", session.getId(), e);
         }
     }
 
     /**
-     * ★★★ 동기화된 에러 메시지 전송 ★★★
+     * 에러 메시지 전송
      */
-    private void sendErrorMessageSafely(WebSocketSession session, String errorMessage) {
+    private void sendErrorMessage(WebSocketSession session, String errorMessage) {
         WebSocketMessage errorMsg = WebSocketMessage.error(errorMessage);
-        sendMessageSafely(session, errorMsg);
+        sendMessage(session, errorMsg);
     }
 
     /**

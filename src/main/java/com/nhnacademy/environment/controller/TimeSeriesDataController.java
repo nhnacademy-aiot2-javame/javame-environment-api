@@ -39,7 +39,7 @@ public class TimeSeriesDataController {
      */
     @NormalizeCompanyDomain
     @GetMapping("/time-series")
-//    //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
+    //@HasRole({"ROLE_ADMIN", "ROLE_OWNER", "ROLE_USER"})
     public Map<String, List<TimeSeriesDataDto>> getTimeSeriesData(
             @PathVariable String companyDomain,
             @RequestParam(defaultValue = "180") int range,

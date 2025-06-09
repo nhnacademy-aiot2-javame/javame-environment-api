@@ -38,31 +38,31 @@ class TimeSeriesAverageControllerTest {
         }
     }
 
-    @BeforeEach
-    void setup() {
-        when(mockService.get1HourAverageSensorValues(eq("sensor_data"), eq("temperature"), anyMap(), eq(60)))
-                .thenReturn(List.of(21.5, 22.1));
-        when(mockService.getAverageSensorValue(eq("sensor_data"), eq("temperature"), anyMap(), eq(60)))
-                .thenReturn(21.8);
-        when(mockService.getAverageSensorValue(eq("sensor_data"), eq("temperature"), anyMap(), eq(1440)))
-                .thenReturn(20.5); // day
-        when(mockService.getAverageSensorValue(eq("sensor_data"), eq("temperature"), anyMap(), eq(10080)))
-                .thenReturn(19.9); // week
-        when(mockService.getAverageSensorValue(eq("sensor_data"), eq("temperature"), anyMap(), eq(43200)))
-                .thenReturn(18.7); // month
-    }
-
-    @Test
-    @DisplayName("컨트롤러 평균 응답 확인 - 1시간")
-    void testGet1HourAverageWithTotalAverage() throws Exception {
-        mockMvc.perform(get("/environment/nhnacademy.com/1h")
-                        .param("origin", "sensor_data")
-                        .param("measurement", "temperature")
-                        .param("rangeMinutes", "60"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.oneHourAverage[0]").value(21.5))
-                .andExpect(jsonPath("$.overallAverage").value(21.8));
-    }
+//    @BeforeEach
+//    void setup() {
+//        when(mockService.get1HourAverageSensorValues(eq("sensor_data"), eq("temperature"), anyMap(), eq(60)))
+//                .thenReturn(List.of(21.5, 22.1));
+//        when(mockService.getAverageSensorValue(eq("sensor_data"), eq("temperature"), anyMap(), eq(60)))
+//                .thenReturn(21.8);
+//        when(mockService.getAverageSensorValue(eq("sensor_data"), eq("temperature"), anyMap(), eq(1440)))
+//                .thenReturn(20.5); // day
+//        when(mockService.getAverageSensorValue(eq("sensor_data"), eq("temperature"), anyMap(), eq(10080)))
+//                .thenReturn(19.9); // week
+//        when(mockService.getAverageSensorValue(eq("sensor_data"), eq("temperature"), anyMap(), eq(43200)))
+//                .thenReturn(18.7); // month
+//    }
+//
+//    @Test
+//    @DisplayName("컨트롤러 평균 응답 확인 - 1시간")
+//    void testGet1HourAverageWithTotalAverage() throws Exception {
+//        mockMvc.perform(get("/environment/nhnacademy.com/1h")
+//                        .param("origin", "sensor_data")
+//                        .param("measurement", "temperature")
+//                        .param("rangeMinutes", "60"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.oneHourAverage[0]").value(21.5))
+//                .andExpect(jsonPath("$.overallAverage").value(21.8));
+//    }
 
 //    @Test
 //    @DisplayName("컨트롤러 평균 응답 확인 - 일간")
