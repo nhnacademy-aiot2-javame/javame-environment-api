@@ -18,17 +18,20 @@ import lombok.NoArgsConstructor;
 public class ChartDataDto {
 
     /**
-     * X축 라벨 목록. (예: 시간대, 측정 항목 이름 등)
+     * 한글 label.
      */
     private List<String> labels;
 
     /**
-     * Y축 값 목록. (예: 온도, CPU 사용률 등)
+     * 영문 value (실제로는 숫자 값이지만 아래에서 Map 형태로 변환).
      */
-    private List<Double> values;
+    private List<String> values;
+
+    /** 차트 제목.*/
+    private String title;
 
     /**
-     * 차트 제목 또는 데이터 식별용 문자열.
+     * 파이차트 데이터(숫자).
      */
-    private String title;
+    private List<Double> data;
 }

@@ -6,6 +6,7 @@ import com.influxdb.query.FluxTable;
 import com.nhnacademy.environment.timeseries.dto.ChartDataDto;
 import com.nhnacademy.environment.timeseries.dto.TimeSeriesDataDto;
 import com.nhnacademy.environment.util.InfluxUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cglib.core.Local;
@@ -34,19 +35,25 @@ public class TimeSeriesDataService {
     /** InfluxDB 조직 이름 입니다. */
     private final String influxOrg;
 
+    /** translation.json 의 영문 -> 한글 번역을 위해 사용합니다.*/
+    private final Map<String, String> translationMap;
+
     /**
      * 생성자 - 필수 설정 값들 주입 합니다.
      *
      * @param queryApi InfluxDB 쿼리 API
      * @param bucket InfluxDB 버킷 이름
      * @param influxOrg InfluxDB 조직 이름
+     * @param translationMap 한글 번역
      */
     public TimeSeriesDataService(QueryApi queryApi,
                                  @Qualifier("influxBucket") String bucket,
-                                 @Qualifier("influxOrganization") String influxOrg) {
+                                 @Qualifier("influxOrganization") String influxOrg,
+                                 Map<String, String> translationMap) {
         this.queryApi = queryApi;
         this.bucket = bucket;
         this.influxOrg = influxOrg;
+        this.translationMap = translationMap;
     }
 
     /**
@@ -204,8 +211,9 @@ public class TimeSeriesDataService {
 
         flux.append(" |> sort(columns: [\"_time\"])");
 
-        List<String> labels = new ArrayList<>();
-        List<Double> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();      // X축 라벨 (예: 시간)
+        List<Double> data = new ArrayList<>();        // 차트 값
+        List<String> values = new ArrayList<>();      // 영문 value (여기선 의미 없음, 빈 배열로)
 
         try {
             List<FluxTable> tables = queryApi.query(flux.toString(), influxOrg);
@@ -218,14 +226,16 @@ public class TimeSeriesDataService {
                     Double value = ((Number) record.getValue()).doubleValue();
 
                     labels.add(label);
-                    values.add(value);
+                    data.add(value);
                 }
             }
         } catch (Exception e) {
             log.error("ChartData 쿼리 실패", e);
         }
-        return new ChartDataDto(labels, values, measurement + "_" + field);
+        // values는 X축 카테고리/영문값이 없는 경우 빈 배열로 리턴 (혹은 필요에 따라 세팅)
+        return new ChartDataDto(labels, values, measurement + "_" + field, data);
     }
+
 
     /**
      * 파이 차트용 측정값별 데이터 개수 집계를 반환합니다.
@@ -247,8 +257,9 @@ public class TimeSeriesDataService {
         flux.append(" |> group(columns: [\"_measurement\"]) |> count()" +
                 " |> keep(columns: [\"_measurement\", \"_value\"])");
 
-        List<String> labels = new ArrayList<>();
-        List<Double> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>(); // 한글
+        List<String> values = new ArrayList<>(); // 영문
+        List<Double> data = new ArrayList<>();   // 숫자
 
         try {
             List<FluxTable> tables = queryApi.query(flux.toString(), influxOrg);
@@ -256,16 +267,20 @@ public class TimeSeriesDataService {
                 for (FluxRecord record : table.getRecords()) {
                     String measurement = (String) record.getValueByKey("_measurement");
                     Double count = ((Number) record.getValue()).doubleValue();
+                    String label = translationMap.getOrDefault(measurement, measurement);
 
-                    labels.add(measurement);
-                    values.add(count);
+                    labels.add(label);        // 한글
+                    values.add(measurement);  // 영문
+                    data.add(count);          // 값
                 }
             }
         } catch (Exception e) {
             log.error("PieChart 쿼리 실패", e);
         }
-        return new ChartDataDto(labels, values, "Measurement 분포");
+        // 네 개 필드 모두 넣어서 리턴!
+        return new ChartDataDto(labels, values, "Measurement 분포", data);
     }
+
 
     /**
      * 주어진 필터 조건에 맞는 가장 최근의 시계열 데이터 하나를 조회합니다.
@@ -476,14 +491,13 @@ public class TimeSeriesDataService {
 
         // aggregateWindow 사용하여 집계
         flux.append(String.format(" |> aggregateWindow(every: %s, fn: mean, createEmpty: false)", aggregationInterval));
-        // fn: mean 외에 max, min, sum, count 등 필요에 따라 변경 가능
 
         flux.append(" |> sort(columns: [\"_time\"])");
 
         log.debug("[AggregatedChartData] Flux query = {}", flux.toString());
 
         List<String> labels = new ArrayList<>();
-        List<Double> values = new ArrayList<>();
+        List<Double> data = new ArrayList<>();
         String chartTitle = measurement + " (" + aggregationInterval + " 집계)"; // 차트 제목 개선 가능
 
         try {
@@ -493,16 +507,17 @@ public class TimeSeriesDataService {
                     Instant time = record.getTime();
                     // X축 라벨 포맷팅 (파라미터로 받은 xAxisLabelFormatter 사용)
                     String label = xAxisLabelFormatter.withZone(ZoneId.of("Asia/Seoul")).format(time);
-                    Double value = ((Number) record.getValue()).doubleValue(); // _value 타입 확인 필요
+                    Double value = ((Number) record.getValue()).doubleValue();
 
                     labels.add(label);
-                    values.add(value);
+                    data.add(value);
                 }
             }
         } catch (Exception e) {
             log.error("AggregatedChartData query 실패 - measurement: {}, filters: {}", measurement, filters, e);
         }
-        return new ChartDataDto(labels, values, chartTitle);
+        // values(4번째 파라미터)는 라인/영역 차트 등에서는 보통 필요 없음 → 빈 배열로 리턴
+        return new ChartDataDto(labels, Collections.emptyList(), chartTitle, data);
     }
 
     /**

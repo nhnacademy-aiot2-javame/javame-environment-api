@@ -56,6 +56,12 @@ public class BuildTreeService {
         String currentTag = tagLevels.get(level);
         List<String> values = timeSeriesDataService.getTagValues(currentTag, filters);
 
+        if (values.isEmpty()) {
+            // gatewayId 등에서 값이 없으면, 이 단계를 건너뛰고 다음 단계로 진행
+            buildRecursive(parent, tagLevels, level + 1, filters);
+            return;
+        }
+
         for (String value : values) {
             String label = translationMap.getOrDefault(value, value);
             TreeNode child = new TreeNode(label, currentTag, value);
