@@ -195,6 +195,47 @@ public class TimeSeriesAverageController {
     }
 
     /**
+     * ★★★ 서비스 목록 조회 엔드포인트 추가 ★★★
+     */
+    @GetMapping("/{companyDomain}/services")
+    public Map<String, Object> getAvailableServices(
+            @PathVariable String companyDomain,
+            @RequestParam(defaultValue = "server_data") String origin,
+            @RequestParam(defaultValue = "service_resource_data") String location
+    ) {
+        log.info("서비스 목록 API 호출 - companyDomain: {}, origin: {}, location: {}",
+                companyDomain, origin, location);
+
+        try {
+            Map<String, Object> result = timeSeriesAverageService.getAvailableServices(
+                    companyDomain, origin, location);
+
+            if ((Boolean) result.getOrDefault("success", false)) {
+                log.info("서비스 목록 조회 성공 - companyDomain: {}, 서비스 수: {}",
+                        companyDomain, result.get("count"));
+                return result;
+            } else {
+                log.warn("서비스 목록 조회 실패 - companyDomain: {}, 오류: {}",
+                        companyDomain, result.get("errorMessage"));
+                return result;
+            }
+
+        } catch (Exception e) {
+            log.error("서비스 목록 API 오류 - companyDomain: {}", companyDomain, e);
+
+            return Map.of(
+                    "services", List.of(),
+                    "count", 0,
+                    "error", true,
+                    "errorMessage", e.getMessage(),
+                    "success", false,
+                    "timestamp", System.currentTimeMillis()
+            );
+        }
+    }
+
+
+    /**
      * ★★★ 헬스체크 엔드포인트 ★★★
      */
     @GetMapping("/health")
