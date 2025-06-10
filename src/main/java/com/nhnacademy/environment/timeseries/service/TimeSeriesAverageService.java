@@ -70,52 +70,6 @@ public class TimeSeriesAverageService {
         }
     }
 
-    // ★★★ 통합 평균 데이터 조회 메소드 (기존 유지) ★★★
-    public Map<String, Object> getAverageData(String origin, String measurement,
-                                              Map<String, String> filters,
-                                              TimeRange timeRange) {
-
-        log.info("평균 데이터 조회 - measurement: {}, timeRange: {}", measurement, timeRange.getDisplayName());
-
-        try {
-            Map<String, String> processedFilters = new HashMap<>(filters != null ? filters : Map.of());
-
-            LocalDateTime endTime = LocalDateTime.now();
-            LocalDateTime startTime = endTime.minusMinutes(timeRange.getMinutes());
-
-            // 시간별 평균 리스트
-            List<Double> timeSeriesAverages = getTimeSeriesAverages(
-                    origin, measurement, processedFilters, startTime, endTime, timeRange
-            );
-
-            // 전체 평균값
-            Double overallAverage = getOverallAverage(
-                    origin, measurement, processedFilters, startTime, endTime
-            );
-
-            return Map.of(
-                    "timeSeriesAverage", timeSeriesAverages,
-                    "overallAverage", overallAverage != null ? overallAverage : 0.0,
-                    "timeRange", timeRange.getCode(),
-                    "displayName", timeRange.getDisplayName(),
-                    "dataPoints", timeSeriesAverages.size(),
-                    "hasData", overallAverage != null && overallAverage > 0,
-                    "success", true
-            );
-
-        } catch (Exception e) {
-            log.error("평균 데이터 조회 실패 - measurement: {}, timeRange: {}", measurement, timeRange, e);
-
-            return Map.of(
-                    "timeSeriesAverage", List.of(),
-                    "overallAverage", 0.0,
-                    "timeRange", timeRange.getCode(),
-                    "error", true,
-                    "success", false
-            );
-        }
-    }
-
     // ★★★ 배치 서비스용 평균값 계산 메소드 (새로 추가) ★★★
     public Double getAverageSensorValue(String origin, String measurement,
                                         Map<String, String> filters,
@@ -187,49 +141,6 @@ public class TimeSeriesAverageService {
         return flux.toString();
     }
 
-    // ★★★ 기존 메소드들 (그대로 유지) ★★★
-
-    private List<Double> getTimeSeriesAverages(String origin, String measurement,
-                                               Map<String, String> filters,
-                                               LocalDateTime startTime, LocalDateTime endTime,
-                                               TimeRange timeRange) {
-
-        String aggregateInterval = getAggregateInterval(timeRange);
-        String flux = buildFluxQuery(origin, measurement, filters, startTime, endTime, aggregateInterval, true);
-
-        try {
-            return queryApi.query(flux, influxOrg).stream()
-                    .flatMap(t -> t.getRecords().stream())
-                    .map(r -> (Double) r.getValue())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-
-        } catch (Exception e) {
-            log.error("시간별 평균 조회 실패 - measurement: {}", measurement, e);
-            return List.of();
-        }
-    }
-
-    private Double getOverallAverage(String origin, String measurement,
-                                     Map<String, String> filters,
-                                     LocalDateTime startTime, LocalDateTime endTime) {
-
-        String flux = buildFluxQuery(origin, measurement, filters, startTime, endTime, null, false);
-
-        try {
-            return queryApi.query(flux, influxOrg).stream()
-                    .flatMap(t -> t.getRecords().stream())
-                    .map(r -> (Double) r.getValue())
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElse(null);
-
-        } catch (Exception e) {
-            log.error("전체 평균 조회 실패 - measurement: {}", measurement, e);
-            return null;
-        }
-    }
-
     private String getAggregateInterval(TimeRange timeRange) {
         switch (timeRange) {
             case HOURLY:
@@ -243,42 +154,6 @@ public class TimeSeriesAverageService {
         }
     }
 
-    private String buildFluxQuery(String origin, String measurement,
-                                  Map<String, String> filters,
-                                  LocalDateTime startTime, LocalDateTime endTime,
-                                  String aggregateInterval, boolean isTimeSeries) {
-
-        ZoneId zone = ZoneId.of("Asia/Seoul");
-        String start = startTime.atZone(zone).toInstant().toString();
-        String end = endTime.atZone(zone).toInstant().toString();
-
-        StringBuilder flux = new StringBuilder()
-                .append(String.format("from(bucket: \"%s\")", bucket))
-                .append(String.format(" |> range(start: time(v: \"%s\"), stop: time(v: \"%s\"))", start, end))
-                .append(String.format(" |> filter(fn: (r) => r[\"origin\"] == \"%s\")", origin))
-                .append(String.format(" |> filter(fn: (r) => r[\"_measurement\"] == \"%s\")", measurement))
-                .append(" |> filter(fn: (r) => r[\"_field\"] == \"value\")");
-
-        // 필터 조건 추가
-        if (filters != null) {
-            filters.forEach((k, v) -> {
-                if (!List.of("origin", "measurement", "field").contains(k)) {
-                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", k, v));
-                }
-            });
-        }
-
-        // 시간별 집계 또는 전체 평균
-        if (isTimeSeries && aggregateInterval != null) {
-            flux.append(String.format(" |> aggregateWindow(every: %s, fn: mean, createEmpty: false)", aggregateInterval));
-        } else {
-            flux.append(" |> mean()");
-        }
-
-        return flux.toString();
-    }
-
-    // ★★★ 시간 범위를 지원하는 평균 데이터 조회 (새로 추가) ★★★
     // ★★★ 시간 범위를 지원하는 평균 데이터 조회 (검색 결과 [3] Period Over Period 방식) ★★★
     public Map<String, Object> getAverageDataWithTimeRange(String origin, String measurement,
                                                            Map<String, String> filters,
@@ -415,5 +290,53 @@ public class TimeSeriesAverageService {
         }
 
         return flux.toString();
+    }
+
+    /**
+     * 서비스 목록 조회 - 최소 버전 (색상 제거)
+     */
+    public Map<String, Object> getAvailableServices(String companyDomain, String origin, String location) {
+        String processedDomain = companyDomain.endsWith(".com") ?
+                companyDomain.substring(0, companyDomain.length() - 4) : companyDomain;
+
+        log.info("서비스 목록 조회 - 원본 도메인: {}, 처리된 도메인: {}, origin: {}, location: {}",
+                companyDomain, processedDomain, origin, location);
+
+        try {
+            String flux = String.format(
+                    "from(bucket: \"%s\") " +
+                            "|> range(start: -7d) " +
+                            "|> filter(fn: (r) => r[\"companyDomain\"] == \"%s\") " + // ★★★ 처리된 도메인 사용 ★★★
+                            "|> filter(fn: (r) => r[\"origin\"] == \"%s\") " +
+                            "|> filter(fn: (r) => r[\"location\"] == \"%s\") " +
+                            "|> group(columns: [\"gatewayId\"]) " +
+                            "|> distinct(column: \"gatewayId\") " +
+                            "|> group()",
+                    bucket, processedDomain, origin, location // ★★★ 처리된 도메인 사용 ★★★
+            );
+
+            List<String> gatewayIds = queryApi.query(flux, influxOrg).stream()
+                    .flatMap(t -> t.getRecords().stream())
+                    .map(r -> (String) r.getValueByKey("gatewayId"))
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .sorted()
+                    .toList();
+
+            return Map.of(
+                    "services", gatewayIds,
+                    "count", gatewayIds.size(),
+                    "success", true
+            );
+
+        } catch (Exception e) {
+            log.error("서비스 목록 조회 실패", e);
+            return Map.of(
+                    "services", List.of(),
+                    "count", 0,
+                    "error", true,
+                    "success", false
+            );
+        }
     }
 }
