@@ -249,21 +249,21 @@ public class ResourcePredictionService {
     }
 
     /**
-     * 디버그 정보 조회 메서드
+     * 디버그 정보 조회 메서드 (수정된 버전)
      */
     public Map<String, Object> getDebugInfo(String companyDomain, String deviceId) {
         Map<String, Object> debugInfo = new HashMap<>();
 
         // 1. InfluxDB 데이터 존재 여부 확인
         String fluxQuery = String.format("""
-        from(bucket: "%s")
-        |> range(start: -24h)
-        |> filter(fn: (r) => r["companyDomain"] == "%s")
-        |> filter(fn: (r) => r["deviceId"] == "%s")
-        |> filter(fn: (r) => r["location"] == "server_resource_data")
-        |> group()
-        |> count()
-        """, influxBucket, companyDomain, deviceId);
+    from(bucket: "%s")
+    |> range(start: -24h)
+    |> filter(fn: (r) => r["companyDomain"] == "%s")
+    |> filter(fn: (r) => r["deviceId"] == "%s")
+    |> filter(fn: (r) => r["location"] == "server_resource_data")
+    |> group()
+    |> count()
+    """, influxBucket, companyDomain, deviceId);
 
         try {
             List<FluxTable> tables = queryApi.query(fluxQuery, influxOrg);
@@ -278,7 +278,7 @@ public class ResourcePredictionService {
 
         // 2. MySQL 예측 데이터 존재 여부 확인 (각 리소스 타입별)
         Map<String, Integer> predictionCounts = new HashMap<>();
-        for (String resourceType : Arrays.asList("cpu", "memory", "disk")) {
+        for (String resourceType : Arrays.asList("cpu", "memory", "mem", "disk")) {
             List<LatestPrediction> predictions = predictionRepository.findPredictions(
                     companyDomain, deviceId, resourceType,
                     LocalDateTime.now().minusDays(1),
@@ -287,30 +287,30 @@ public class ResourcePredictionService {
         }
         debugInfo.put("mysqlPredictionCounts", predictionCounts);
 
-        // 3. 사용 가능한 companyDomain과 deviceId 목록
+        // 3. 현재 회사의 사용 가능한 deviceId 목록만 조회
         String availableQuery = String.format("""
-        from(bucket: "%s")
-        |> range(start: -1h)
-        |> filter(fn: (r) => r["location"] == "server_resource_data")
-        |> keep(columns: ["companyDomain", "deviceId"])
-        |> group(columns: ["companyDomain", "deviceId"])
-        |> first()
-        |> limit(n: 20)
-        """, influxBucket);
+    from(bucket: "%s")
+    |> range(start: -1h)
+    |> filter(fn: (r) => r["companyDomain"] == "%s")
+    |> filter(fn: (r) => r["location"] == "server_resource_data")
+    |> keep(columns: ["companyDomain", "deviceId"])
+    |> group(columns: ["companyDomain", "deviceId"])
+    |> first()
+    |> limit(n: 20)
+    """, influxBucket, companyDomain);
 
         List<Map<String, String>> availableData = new ArrayList<>();
         try {
             List<FluxTable> tables = queryApi.query(availableQuery, influxOrg);
-            Set<String> uniquePairs = new HashSet<>();
+            Set<String> uniqueDeviceIds = new HashSet<>();
 
             for (FluxTable table : tables) {
                 for (FluxRecord record : table.getRecords()) {
                     String domain = String.valueOf(record.getValueByKey("companyDomain"));
                     String device = String.valueOf(record.getValueByKey("deviceId"));
-                    String pair = domain + "|" + device;
 
-                    if (!uniquePairs.contains(pair)) {
-                        uniquePairs.add(pair);
+                    if (!uniqueDeviceIds.contains(device) && domain.equals(companyDomain)) {
+                        uniqueDeviceIds.add(device);
                         Map<String, String> item = new HashMap<>();
                         item.put("companyDomain", domain);
                         item.put("deviceId", device);
@@ -318,6 +318,9 @@ public class ResourcePredictionService {
                     }
                 }
             }
+
+            log.info("회사 {} 의 사용 가능한 디바이스: {}", companyDomain, uniqueDeviceIds);
+
         } catch (Exception e) {
             log.error("사용 가능한 데이터 조회 실패", e);
         }
