@@ -1,7 +1,7 @@
 package com.nhnacademy.environment.report.controller;
 
-import com.nhnacademy.environment.report.dto.ReportRequestDto;
-import com.nhnacademy.environment.report.dto.ReportResponseDto;
+import com.nhnacademy.environment.report.dto.ReportRequest;
+import com.nhnacademy.environment.report.dto.ReportResponse;
 import com.nhnacademy.environment.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +18,8 @@ public class ReportController {
     private final ReportService reportService;
 
     @PostMapping("/generate")
-    public ResponseEntity<ReportResponseDto> generateReport(@RequestBody ReportRequestDto reportRequestDto) {
-        ReportResponseDto reportResponseDto = reportService.generateReport(reportRequestDto);
-        return ResponseEntity.ok(reportResponseDto);
+    public ResponseEntity<ReportResponse> generateReport(@RequestBody ReportRequest reportRequest) {
+        ReportResponse reportResponse = reportService.generateReport(reportRequest);
+        return ResponseEntity.ok(reportResponse);
     }
 }

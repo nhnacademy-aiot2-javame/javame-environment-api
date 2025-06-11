@@ -3,7 +3,7 @@ package com.nhnacademy.environment.timeseries.service;
 import com.influxdb.client.QueryApi;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -13,25 +13,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
- * InfluxDB 에서 시계열 데이터의 평균 값을 계산하는 서비스 클래스입니다.
- * 1시간, 24시간, 주별 평균을 지원합니다.
+ * 통합 대시보드용 평균 데이터 서비스
+ * 1시간, 24시간, 1주 평균 + 배치 처리용 메소드 지원
  */
 @Slf4j
 @Service
 public class TimeSeriesAverageService {
 
-    /** InfluxDB 쿼리 API 입니다. */
     private final QueryApi queryApi;
-
-    /** InfluxDB 버킷 이름 입니다. */
     private final String bucket;
-
-    /** InfluxDB 조직 이름 입니다. */
     private final String influxOrg;
 
-    /**
-     * 생성자 - QueryApi, 버킷 이름, 조직 이름 주입 합니다.
-     */
     public TimeSeriesAverageService(QueryApi queryApi,
                                     @Qualifier("influxBucket") String bucket,
                                     @Qualifier("influxOrganization") String influxOrg) {
@@ -40,7 +32,7 @@ public class TimeSeriesAverageService {
         this.influxOrg = influxOrg;
     }
 
-    // ★★★ 시간 범위 열거형 (검색 결과 [2][4] 패턴 참고) ★★★
+    // ★★★ 시간 범위 열거형 (필수 3개만) ★★★
     public enum TimeRange {
         HOURLY("1h", 60, "1시간"),
         DAILY("24h", 1440, "24시간"),
@@ -56,9 +48,17 @@ public class TimeSeriesAverageService {
             this.displayName = displayName;
         }
 
-        public String getCode() { return code; }
-        public int getMinutes() { return minutes; }
-        public String getDisplayName() { return displayName; }
+        public String getCode() {
+            return code;
+        }
+
+        public int getMinutes() {
+            return minutes;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
 
         public static TimeRange fromCode(String code) {
             for (TimeRange range : values()) {
@@ -66,255 +66,277 @@ public class TimeSeriesAverageService {
                     return range;
                 }
             }
-            return HOURLY; // 기본값
+            return HOURLY;
         }
     }
 
-    // ★★★ 통합 평균 데이터 조회 메소드 (검색 결과 [3] aggregateWindow 패턴) ★★★
-    public Map<String, Object> getAverageData(String origin, String measurement,
-                                              Map<String, String> filters,
-                                              TimeRange timeRange) {
+    // ★★★ 배치 서비스용 평균값 계산 메소드 (새로 추가) ★★★
+    public Double getAverageSensorValue(String origin, String measurement,
+                                        Map<String, String> filters,
+                                        String field,
+                                        LocalDateTime startTime, LocalDateTime endTime,
+                                        boolean windowed) {
 
-        log.info("평균 데이터 조회 시작 - measurement: {}, timeRange: {}", measurement, timeRange.getDisplayName());
-
-        try {
-            // 현재 시간 기준 범위 계산
-            LocalDateTime endTime = LocalDateTime.now();
-            LocalDateTime startTime = endTime.minusMinutes(timeRange.getMinutes());
-
-            // 시간별 평균 리스트 조회
-            List<Double> timeSeriesAverages = getTimeSeriesAverages(
-                    origin, measurement, filters, startTime, endTime, timeRange
-            );
-
-            // 전체 평균값 조회
-            Double overallAverage = getOverallAverage(
-                    origin, measurement, filters, startTime, endTime
-            );
-
-            // 결과 구성
-            Map<String, Object> result = Map.of(
-                    "timeSeriesAverage", timeSeriesAverages,
-                    "overallAverage", overallAverage != null ? overallAverage : 0.0,
-                    "timeRange", timeRange.getCode(),
-                    "displayName", timeRange.getDisplayName(),
-                    "dataPoints", timeSeriesAverages.size(),
-                    "startTime", startTime.toString(),
-                    "endTime", endTime.toString(),
-                    "hasData", overallAverage != null && overallAverage > 0
-            );
-
-            log.info("평균 데이터 조회 완료 - timeRange: {}, dataPoints: {}, overall: {}",
-                    timeRange.getDisplayName(), timeSeriesAverages.size(), overallAverage);
-
-            return result;
-
-        } catch (Exception e) {
-            log.error("평균 데이터 조회 실패 - measurement: {}, timeRange: {}", measurement, timeRange, e);
-
-            // 오류 시 기본 응답
-            return Map.of(
-                    "timeSeriesAverage", List.of(),
-                    "overallAverage", 0.0,
-                    "timeRange", timeRange.getCode(),
-                    "error", true,
-                    "errorMessage", e.getMessage()
-            );
-        }
-    }
-
-    // ★★★ 시간별 평균 리스트 조회 (검색 결과 [3][4] aggregateWindow 패턴) ★★★
-    public List<Double> getTimeSeriesAverages(String origin, String measurement,
-                                              Map<String, String> filters,
-                                              LocalDateTime startTime, LocalDateTime endTime,
-                                              TimeRange timeRange) {
-
-        String aggregateInterval = getAggregateInterval(timeRange);
-        String flux = buildTimeSeriesFluxQuery(origin, measurement, "value", filters,
-                startTime, endTime, aggregateInterval);
-
-        log.info("시간별 평균 Flux 쿼리 ({}): {}", timeRange.getDisplayName(), flux);
+        log.debug("배치용 평균값 계산 - origin: {}, measurement: {}, start: {}, end: {}, windowed: {}",
+                origin, measurement, startTime, endTime, windowed);
 
         try {
-            List<Double> results = queryApi.query(flux, influxOrg).stream()
-                    .flatMap(t -> t.getRecords().stream())
-                    .map(r -> (Double) r.getValue())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+            String flux = buildBatchFluxQuery(origin, measurement, filters, field, startTime, endTime, windowed);
 
-            log.info("시간별 평균 조회 결과 ({}): {}건", timeRange.getDisplayName(), results.size());
-            return results;
+            log.debug("배치용 Flux 쿼리: {}", flux);
 
-        } catch (Exception e) {
-            log.error("시간별 평균 조회 실패 - measurement: {}, timeRange: {}", measurement, timeRange, e);
-            return List.of();
-        }
-    }
-
-    // ★★★ 전체 평균값 조회 (검색 결과 [3] mean() 패턴) ★★★
-    public Double getOverallAverage(String origin, String measurement,
-                                    Map<String, String> filters,
-                                    LocalDateTime startTime, LocalDateTime endTime) {
-
-        String flux = buildOverallAverageFluxQuery(origin, measurement, "value", filters,
-                startTime, endTime);
-
-        log.info("전체 평균 Flux 쿼리: {}", flux);
-
-        try {
-            Double result = queryApi.query(flux, influxOrg).stream()
+            return queryApi.query(flux, influxOrg).stream()
                     .flatMap(t -> t.getRecords().stream())
                     .map(r -> (Double) r.getValue())
                     .filter(Objects::nonNull)
                     .findFirst()
                     .orElse(null);
 
-            log.info("전체 평균 조회 결과: {}", result);
-            return result;
-
         } catch (Exception e) {
-            log.error("전체 평균 조회 실패 - measurement: {}", measurement, e);
+            log.error("배치용 평균값 계산 실패 - origin: {}, measurement: {}", origin, measurement, e);
             return null;
         }
     }
 
-    // ★★★ 시간별 집계 간격 결정 (검색 결과 [2][4] 패턴) ★★★
+    // ★★★ 배치용 Flux 쿼리 빌더 ★★★
+    private String buildBatchFluxQuery(String origin, String measurement,
+                                       Map<String, String> filters,
+                                       String field,
+                                       LocalDateTime startTime, LocalDateTime endTime,
+                                       boolean windowed) {
+
+        ZoneId zone = ZoneId.of("Asia/Seoul");
+        String start = startTime.atZone(zone).toInstant().toString();
+        String end = endTime.atZone(zone).toInstant().toString();
+
+        StringBuilder flux = new StringBuilder()
+                .append(String.format("from(bucket: \"%s\")", bucket))
+                .append(String.format(" |> range(start: time(v: \"%s\"), stop: time(v: \"%s\"))", start, end))
+                .append(String.format(" |> filter(fn: (r) => r[\"origin\"] == \"%s\")", origin))
+                .append(String.format(" |> filter(fn: (r) => r[\"_measurement\"] == \"%s\")", measurement));
+
+        // field 필터 (기본값: "value")
+        String targetField = field != null ? field : "value";
+        flux.append(String.format(" |> filter(fn: (r) => r[\"_field\"] == \"%s\")", targetField));
+
+        // 필터 조건 추가
+        if (filters != null) {
+            filters.forEach((k, v) -> {
+                if (!List.of("origin", "measurement", "field").contains(k)) {
+                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", k, v));
+                }
+            });
+        }
+
+        // 윈도우 평균 또는 전체 평균
+        if (windowed) {
+            // 슬라이딩 윈도우 평균 (1시간 단위)
+            flux.append(" |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)")
+                    .append(" |> mean()");
+        } else {
+            // 전체 기간 평균
+            flux.append(" |> mean()");
+        }
+
+        return flux.toString();
+    }
+
     private String getAggregateInterval(TimeRange timeRange) {
         switch (timeRange) {
             case HOURLY:
-                return "10m"; // 1시간을 6개 구간으로 나누어 10분 단위
+                return "10m"; // 1시간을 6개 구간
             case DAILY:
-                return "1h"; // 24시간을 24개 구간으로 나누어 1시간 단위
+                return "1h";  // 24시간을 24개 구간
             case WEEKLY:
-                return "6h"; // 1주를 28개 구간으로 나누어 6시간 단위
+                return "6h";  // 1주를 28개 구간
             default:
                 return "1h";
         }
     }
 
-    private String buildTimeSeriesFluxQuery(String origin, String measurement, String field,
-                                            Map<String, String> filters,
-                                            LocalDateTime startTime, LocalDateTime endTime,
-                                            String aggregateInterval) {
+    // ★★★ 시간 범위를 지원하는 평균 데이터 조회 (검색 결과 [3] Period Over Period 방식) ★★★
+    public Map<String, Object> getAverageDataWithTimeRange(String origin, String measurement,
+                                                           Map<String, String> filters,
+                                                           TimeRange timeRange,
+                                                           LocalDateTime startTime,
+                                                           LocalDateTime endTime) {
 
-        ZoneId zone = ZoneId.of("Asia/Seoul");
-        String start = startTime.atZone(zone).toInstant().toString();
-        String end = endTime.atZone(zone).toInstant().toString();
+        log.info("시간 범위 평균 데이터 조회 - measurement: {}, timeRange: {}, start: {}, end: {}",
+                measurement, timeRange.getDisplayName(), startTime, endTime);
 
-        StringBuilder flux = new StringBuilder(
-                String.format("from(bucket: \"%s\")", bucket)
-        );
+        try {
+            Map<String, String> processedFilters = new HashMap<>(filters != null ? filters : Map.of());
 
-        flux.append(String.format(" |> range(start: time(v: \"%s\"), stop: time(v: \"%s\"))", start, end))
-                .append(String.format(" |> filter(fn: (r) => r[\"origin\"] == \"%s\")", origin))
-                .append(String.format(" |> filter(fn: (r) => r[\"_measurement\"] == \"%s\")", measurement))
-                .append(String.format(" |> filter(fn: (r) => r[\"_field\"] == \"%s\")", field));
+            // ★★★ 검색 결과 [3] Period Over Period 방식: 정확한 시간 범위 설정 ★★★
+            LocalDateTime actualEndTime = endTime != null ? endTime : LocalDateTime.now();
+            LocalDateTime actualStartTime = startTime != null ? startTime :
+                    actualEndTime.minusMinutes(timeRange.getMinutes());
 
-        // 필터 조건 추가
-        if (filters != null) {
-            filters.forEach((k, v) -> {
-                if (!List.of("origin", "measurement", "field").contains(k)) {
-                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", k, v));
-                }
-            });
-        }
+            log.info("실제 시간 범위: {} ~ {}", actualStartTime, actualEndTime);
 
-        // ★★★ aggregateWindow로 시간별 집계 (검색 결과 [3] 패턴) ★★★
-        flux.append(String.format(" |> aggregateWindow(every: %s, fn: mean, createEmpty: false)", aggregateInterval));
+            // 시간별 평균 리스트 (정확한 시간 범위 적용)
+            List<Double> timeSeriesAverages = getTimeSeriesAveragesWithTimeRange(
+                    origin, measurement, processedFilters, actualStartTime, actualEndTime, timeRange
+            );
 
-        return flux.toString();
-    }
+            // 전체 평균값 (정확한 시간 범위 적용)
+            Double overallAverage = getOverallAverageWithTimeRange(
+                    origin, measurement, processedFilters, actualStartTime, actualEndTime
+            );
 
-    private String buildOverallAverageFluxQuery(String origin, String measurement, String field,
-                                                Map<String, String> filters,
-                                                LocalDateTime startTime, LocalDateTime endTime) {
+            return Map.of(
+                    "timeSeriesAverage", timeSeriesAverages,
+                    "overallAverage", overallAverage != null ? overallAverage : 0.0,
+                    "timeRange", timeRange.getCode(),
+                    "displayName", timeRange.getDisplayName(),
+                    "dataPoints", timeSeriesAverages.size(),
+                    "hasData", overallAverage != null && overallAverage > 0,
+                    "success", true,
+                    "actualStartTime", actualStartTime.toString(),
+                    "actualEndTime", actualEndTime.toString()
+            );
 
-        ZoneId zone = ZoneId.of("Asia/Seoul");
-        String start = startTime.atZone(zone).toInstant().toString();
-        String end = endTime.atZone(zone).toInstant().toString();
+        } catch (Exception e) {
+            log.error("시간 범위 평균 데이터 조회 실패 - measurement: {}, timeRange: {}", measurement, timeRange, e);
 
-        StringBuilder flux = new StringBuilder(
-                String.format("from(bucket: \"%s\")", bucket)
-        );
-
-        flux.append(String.format(" |> range(start: time(v: \"%s\"), stop: time(v: \"%s\"))", start, end))
-                .append(String.format(" |> filter(fn: (r) => r[\"origin\"] == \"%s\")", origin))
-                .append(String.format(" |> filter(fn: (r) => r[\"_measurement\"] == \"%s\")", measurement))
-                .append(String.format(" |> filter(fn: (r) => r[\"_field\"] == \"%s\")", field));
-
-        // 필터 조건 추가
-        if (filters != null) {
-            filters.forEach((k, v) -> {
-                if (!List.of("origin", "measurement", "field").contains(k)) {
-                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", k, v));
-                }
-            });
-        }
-
-        // ★★★ 전체 평균 계산 (검색 결과 [3] mean() 패턴) ★★★
-        flux.append(" |> mean()");
-
-        return flux.toString();
-    }
-
-    // ★★★ 기존 메소드들 (하위 호환성 유지) ★★★
-
-    /**
-     * 최근 rangeMinutes 내의 데이터를 1시간 단위 평균값으로 집계하여 리스트로 반환합니다.
-     */
-    public List<Double> get1HourAverageSensorValues(String origin,
-                                                    String measurement,
-                                                    Map<String, String> filters,
-                                                    int rangeMinutes) {
-
-        LocalDateTime endTime = LocalDateTime.now();
-        LocalDateTime startTime = endTime.minusMinutes(rangeMinutes);
-
-        return getTimeSeriesAverages(origin, measurement, filters, startTime, endTime, TimeRange.HOURLY);
-    }
-
-    /**
-     * 최근 rangeMinutes 기준으로 전체 평균값을 계산합니다.
-     */
-    public Double getAverageSensorValue(String origin,
-                                        String measurement,
-                                        Map<String, String> filters,
-                                        int rangeMinutes) {
-
-        LocalDateTime endTime = LocalDateTime.now();
-        LocalDateTime startTime = endTime.minusMinutes(rangeMinutes);
-
-        return getOverallAverage(origin, measurement, filters, startTime, endTime);
-    }
-
-    /**
-     * 지정된 시간 범위의 전체 평균값을 계산합니다.
-     */
-    public Double getAverageSensorValue(String origin,
-                                        String measurement,
-                                        Map<String, String> filters,
-                                        Integer rangeMinutes,
-                                        LocalDateTime startTime,
-                                        LocalDateTime endTime,
-                                        boolean windowed) {
-
-        if (rangeMinutes != null) {
-            LocalDateTime end = LocalDateTime.now();
-            LocalDateTime start = end.minusMinutes(rangeMinutes);
-            return getOverallAverage(origin, measurement, filters, start, end);
-        } else if (startTime != null && endTime != null) {
-            return getOverallAverage(origin, measurement, filters, startTime, endTime);
-        } else {
-            throw new IllegalArgumentException("rangeMinutes 또는 start/end 중 하나는 필수");
+            return Map.of(
+                    "timeSeriesAverage", List.of(),
+                    "overallAverage", 0.0,
+                    "timeRange", timeRange.getCode(),
+                    "error", true,
+                    "success", false
+            );
         }
     }
 
-    /**
-     * 고정된 시간 구간(start ~ end) 기준 평균값을 계산합니다.
-     */
-    public Double getFixedRangeAverageSensorValue(String origin, String measurement,
+    // ★★★ 시간 범위를 적용한 시간별 평균 리스트 조회 ★★★
+    private List<Double> getTimeSeriesAveragesWithTimeRange(String origin, String measurement,
+                                                            Map<String, String> filters,
+                                                            LocalDateTime startTime, LocalDateTime endTime,
+                                                            TimeRange timeRange) {
+
+        String aggregateInterval = getAggregateInterval(timeRange);
+        String flux = buildFluxQueryWithTimeRange(origin, measurement, filters, startTime, endTime, aggregateInterval, true);
+
+        log.debug("시간별 평균 Flux 쿼리: {}", flux);
+
+        try {
+            return queryApi.query(flux, influxOrg).stream()
+                    .flatMap(t -> t.getRecords().stream())
+                    .map(r -> (Double) r.getValue())
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            log.error("시간 범위 시간별 평균 조회 실패 - measurement: {}", measurement, e);
+            return List.of();
+        }
+    }
+
+    // ★★★ 시간 범위를 적용한 전체 평균값 조회 ★★★
+    private Double getOverallAverageWithTimeRange(String origin, String measurement,
                                                   Map<String, String> filters,
-                                                  LocalDateTime start, LocalDateTime end) {
-        return getOverallAverage(origin, measurement, filters, start, end);
+                                                  LocalDateTime startTime, LocalDateTime endTime) {
+
+        String flux = buildFluxQueryWithTimeRange(origin, measurement, filters, startTime, endTime, null, false);
+
+        log.debug("전체 평균 Flux 쿼리: {}", flux);
+
+        try {
+            return queryApi.query(flux, influxOrg).stream()
+                    .flatMap(t -> t.getRecords().stream())
+                    .map(r -> (Double) r.getValue())
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
+
+        } catch (Exception e) {
+            log.error("시간 범위 전체 평균 조회 실패 - measurement: {}", measurement, e);
+            return null;
+        }
+    }
+
+    // ★★★ 시간 범위를 적용한 Flux 쿼리 빌더 ★★★
+    private String buildFluxQueryWithTimeRange(String origin, String measurement,
+                                               Map<String, String> filters,
+                                               LocalDateTime startTime, LocalDateTime endTime,
+                                               String aggregateInterval, boolean isTimeSeries) {
+
+        ZoneId zone = ZoneId.of("Asia/Seoul");
+        String start = startTime.atZone(zone).toInstant().toString();
+        String end = endTime.atZone(zone).toInstant().toString();
+
+        StringBuilder flux = new StringBuilder()
+                .append(String.format("from(bucket: \"%s\")", bucket))
+                .append(String.format(" |> range(start: time(v: \"%s\"), stop: time(v: \"%s\"))", start, end))
+                .append(String.format(" |> filter(fn: (r) => r[\"origin\"] == \"%s\")", origin))
+                .append(String.format(" |> filter(fn: (r) => r[\"_measurement\"] == \"%s\")", measurement))
+                .append(" |> filter(fn: (r) => r[\"_field\"] == \"value\")");
+
+        // 필터 조건 추가
+        if (filters != null) {
+            filters.forEach((k, v) -> {
+                if (!List.of("origin", "measurement", "field").contains(k)) {
+                    flux.append(String.format(" |> filter(fn: (r) => r[\"%s\"] == \"%s\")", k, v));
+                }
+            });
+        }
+
+        // 시간별 집계 또는 전체 평균
+        if (isTimeSeries && aggregateInterval != null) {
+            flux.append(String.format(" |> aggregateWindow(every: %s, fn: mean, createEmpty: false)", aggregateInterval));
+        } else {
+            flux.append(" |> mean()");
+        }
+
+        return flux.toString();
+    }
+
+    /**
+     * 서비스 목록 조회 - 최소 버전 (색상 제거)
+     */
+    public Map<String, Object> getAvailableServices(String companyDomain, String origin, String location) {
+        String processedDomain = companyDomain.endsWith(".com") ?
+                companyDomain.substring(0, companyDomain.length() - 4) : companyDomain;
+
+        log.info("서비스 목록 조회 - 원본 도메인: {}, 처리된 도메인: {}, origin: {}, location: {}",
+                companyDomain, processedDomain, origin, location);
+
+        try {
+            String flux = String.format(
+                    "from(bucket: \"%s\") " +
+                            "|> range(start: -7d) " +
+                            "|> filter(fn: (r) => r[\"companyDomain\"] == \"%s\") " + // ★★★ 처리된 도메인 사용 ★★★
+                            "|> filter(fn: (r) => r[\"origin\"] == \"%s\") " +
+                            "|> filter(fn: (r) => r[\"location\"] == \"%s\") " +
+                            "|> group(columns: [\"gatewayId\"]) " +
+                            "|> distinct(column: \"gatewayId\") " +
+                            "|> group()",
+                    bucket, processedDomain, origin, location // ★★★ 처리된 도메인 사용 ★★★
+            );
+
+            List<String> gatewayIds = queryApi.query(flux, influxOrg).stream()
+                    .flatMap(t -> t.getRecords().stream())
+                    .map(r -> (String) r.getValueByKey("gatewayId"))
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .sorted()
+                    .toList();
+
+            return Map.of(
+                    "services", gatewayIds,
+                    "count", gatewayIds.size(),
+                    "success", true
+            );
+
+        } catch (Exception e) {
+            log.error("서비스 목록 조회 실패", e);
+            return Map.of(
+                    "services", List.of(),
+                    "count", 0,
+                    "error", true,
+                    "success", false
+            );
+        }
     }
 }

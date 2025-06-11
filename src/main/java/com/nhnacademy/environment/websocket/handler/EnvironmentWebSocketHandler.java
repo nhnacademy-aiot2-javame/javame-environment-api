@@ -161,7 +161,16 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
         scheduledTasks.put(sessionId, task);
 
         // 구독 성공 응답
-        WebSocketMessage subscribeMsg = WebSocketMessage.subscribeSuccess(measurement, gatewayId, intervalSeconds);
+        WebSocketMessage subscribeMsg = WebSocketMessage.builder()
+                .type("subscribe")
+                .status("success")
+                .companyDomain(companyDomain)
+                .measurement(measurement)
+                .gatewayId(gatewayId)
+                .timestamp(System.currentTimeMillis())
+                .extra(Map.of("interval", intervalSeconds))
+                .build();
+
         sendMessage(session, subscribeMsg);
 
         log.info("WebSocket subscribe: measurement={}, gatewayId={}, rangeMinutes={}", measurement, gatewayId, rangeMinutes);
@@ -189,14 +198,16 @@ public class EnvironmentWebSocketHandler extends TextWebSocketHandler {
         // 스케줄 작업 취소
         cancelExistingSchedule(sessionId);
 
-        // 구독 해제 성공 응답
+        // ★★★ 구독 해제 성공 응답에도 companyDomain 포함 ★★★
         WebSocketMessage unsubscribeMsg = WebSocketMessage.builder()
                 .type("unsubscribe")
                 .status("success")
+                .companyDomain(companyDomain)
                 .timestamp(System.currentTimeMillis())
                 .build();
         sendMessage(session, unsubscribeMsg);
     }
+
 
     /**
      * Ping 요청 처리 (연결 상태 확인)
